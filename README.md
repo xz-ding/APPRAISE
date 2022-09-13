@@ -1,6 +1,6 @@
-# APPRAISE for ranking receptor binding propensities of engineered proteins
+# APPRAISE
 
-Utilities and tools for use in the APPRAISE pipeline.
+***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer.
 
 ## Environment
 
