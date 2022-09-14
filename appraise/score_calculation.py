@@ -93,3 +93,5 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
 
         #calculate the difference
         df_measurements['constrained_interface_energy_score_difference'] = df_measurements['constrained_interface_energy_score'] - df_measurements['constrained_interface_energy_score_competitor']
+        
+    return df_measurements.copy()
