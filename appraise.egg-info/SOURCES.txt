@@ -1,0 +1,12 @@
+README.md
+setup.py
+appraise/HullRadV8.1.py
+appraise/__init__.py
+appraise/input_fasta_prep.py
+appraise/pymol_quantify_peptide_binding.py
+appraise/score_calculation.py
+appraise/utilities.py
+appraise.egg-info/PKG-INFO
+appraise.egg-info/SOURCES.txt
+appraise.egg-info/dependency_links.txt
+appraise.egg-info/top_level.txt
