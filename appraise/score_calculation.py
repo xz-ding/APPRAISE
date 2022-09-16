@@ -30,7 +30,7 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
         #Summarize the results
         df_measurements['B_POI'] = df_measurements['interface_energy_score']
         df_measurements['B_competitor'] = df_measurements['interface_energy_score_competitor']
-        df_measurements['Delat_B'] = df_measurements['interface_energy_score_difference']
+        df_measurements['Delta_B'] = df_measurements['interface_energy_score_difference']
 
     if version == 1.1:
         #Development note: v1.1 ranks 9P36 to #2, Ly6a ROC AUC=0.92, but it doesn't give much signal in TTD rankings.
@@ -66,7 +66,7 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
         #Summarize the results
         df_measurements['B_POI'] = df_measurements['constrained_interface_energy_score']
         df_measurements['B_competitor'] = df_measurements['constrained_interface_energy_score_competitor']
-        df_measurements['Delat_B'] = df_measurements['constrained_interface_energy_score_difference']
+        df_measurements['Delta_B'] = df_measurements['constrained_interface_energy_score_difference']
 
     if version == 1.2:
 
@@ -106,6 +106,6 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
         #Summarize the results
         df_measurements['B_POI'] = df_measurements['constrained_interface_energy_score']
         df_measurements['B_competitor'] = df_measurements['constrained_interface_energy_score_competitor']
-        df_measurements['Delat_B'] = df_measurements['constrained_interface_energy_score_difference']
+        df_measurements['Delta_B'] = df_measurements['constrained_interface_energy_score_difference']
 
     return df_measurements.copy()

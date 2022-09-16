@@ -18,22 +18,28 @@ def interactive_input(var_name='', default_value=''):
         var_value = default_value
     return var_value
 
-def get_peptide_list_from_model_names(df, sorting_metric_name = 'constrained_interface_energy_score'):
+def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):
     """
     Get a list of peptide from a database dataframe.
 
     """
     df['competition_name'] = df['model_name'].str.slice_replace(-15, None, '')
 
-    list_peptides = []
+    list_peptide_names = []
+    list_peptide_seqs = []
 
     for competition_name in set(df['competition_name']):
         df_competition = df[df['competition_name'] == competition_name].copy()
         df_competition_mean = df_competition.groupby(by=['peptide_name', 'peptide_seq']).mean().reset_index()
         df_competition_mean = df_competition_mean.sort_values(by=sorting_metric_name, ascending=False).reset_index()
-        list_peptides.append([df_competition_mean.loc[0]['peptide_name'], df_competition_mean.loc[0]['peptide_seq']])
+        for i in range(len(df_competition_mean)):
+            peptide_name = df_competition_mean.loc[i]['peptide_name']
+            peptide_seq = df_competition_mean.loc[i]['peptide_seq']
+            if peptide_name not in list_peptide_names:
+                list_peptide_names.append(peptide_name)
+                list_peptide_seqs.append(peptide_seq)
 
-    return list_peptides
+    return list_peptide_names, list_peptide_seqs
 
 
 def sort_df_by_peptides_and_cleanup(df, list_peptide_order, consider_competitor_name=True):
