@@ -1,0 +1,504 @@
+2022-08-07 18:54:22,880 Found 7 citations for tools or databases
+2022-08-07 18:54:35,748 Query 1/25: Ly6a_and_SRK-13_vs_SRK-60_vs_SRK-75_vs_SRK-74 (length 143)
+2022-08-07 18:54:36,599 Sleeping for 10s. Reason: PENDING
+2022-08-07 18:54:47,425 Sleeping for 10s. Reason: RUNNING
+2022-08-07 18:55:04,897 Sequence 0 found no templates
+2022-08-07 18:55:04,899 Sequence 1 found no templates
+2022-08-07 18:55:04,900 Sequence 2 found no templates
+2022-08-07 18:55:04,901 Sequence 3 found no templates
+2022-08-07 18:55:16,060 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 18:55:16,882 Sleeping for 9s. Reason: PENDING
+2022-08-07 18:55:27,706 Running model_3
+2022-08-07 18:56:09,555 model_3 took 41.8s (3 recycles) with pLDDT 53.5, ptmscore 0.572 and iptm 0.16
+2022-08-07 18:56:21,847 Running model_4
+2022-08-07 18:56:30,470 model_4 took 8.6s (3 recycles) with pLDDT 53.5, ptmscore 0.565 and iptm 0.168
+2022-08-07 18:56:42,391 Running model_5
+2022-08-07 18:56:51,049 model_5 took 8.7s (3 recycles) with pLDDT 56.4, ptmscore 0.578 and iptm 0.176
+2022-08-07 18:57:03,286 Running model_1
+2022-08-07 18:57:34,863 model_1 took 31.6s (3 recycles) with pLDDT 53.2, ptmscore 0.566 and iptm 0.169
+2022-08-07 18:57:46,702 Running model_2
+2022-08-07 18:57:55,319 model_2 took 8.6s (3 recycles) with pLDDT 53.9, ptmscore 0.568 and iptm 0.19
+2022-08-07 18:58:07,168 reranking models by multimer
+2022-08-07 18:58:09,194 Query 2/25: Ly6a_and_SRK-16_vs_PHP.B_vs_SRK-93_vs_SRK-41 (length 143)
+2022-08-07 18:58:10,018 Sleeping for 8s. Reason: PENDING
+2022-08-07 18:58:18,832 Sleeping for 6s. Reason: RUNNING
+2022-08-07 18:58:32,605 Sequence 0 found no templates
+2022-08-07 18:58:32,606 Sequence 1 found no templates
+2022-08-07 18:58:32,607 Sequence 2 found no templates
+2022-08-07 18:58:32,608 Sequence 3 found no templates
+2022-08-07 18:58:34,682 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 18:58:35,511 Sleeping for 7s. Reason: PENDING
+2022-08-07 18:58:44,340 Running model_3
+2022-08-07 18:58:52,976 model_3 took 8.6s (3 recycles) with pLDDT 54.4, ptmscore 0.586 and iptm 0.212
+2022-08-07 18:59:04,716 Running model_4
+2022-08-07 18:59:13,360 model_4 took 8.6s (3 recycles) with pLDDT 52.5, ptmscore 0.562 and iptm 0.163
+2022-08-07 18:59:25,091 Running model_5
+2022-08-07 18:59:33,702 model_5 took 8.6s (3 recycles) with pLDDT 56.6, ptmscore 0.587 and iptm 0.207
+2022-08-07 18:59:45,422 Running model_1
+2022-08-07 18:59:54,090 model_1 took 8.7s (3 recycles) with pLDDT 52.4, ptmscore 0.56 and iptm 0.168
+2022-08-07 19:00:05,824 Running model_2
+2022-08-07 19:00:14,437 model_2 took 8.6s (3 recycles) with pLDDT 54.7, ptmscore 0.583 and iptm 0.213
+2022-08-07 19:00:26,105 reranking models by multimer
+2022-08-07 19:00:28,065 Query 3/25: Ly6a_and_SRK-22_vs_SRK-10_vs_SRK-52_vs_SRK-76 (length 143)
+2022-08-07 19:00:28,883 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:00:34,695 Sleeping for 8s. Reason: RUNNING
+2022-08-07 19:00:50,405 Sequence 0 found no templates
+2022-08-07 19:00:50,407 Sequence 1 found no templates
+2022-08-07 19:00:50,408 Sequence 2 found no templates
+2022-08-07 19:00:50,409 Sequence 3 found no templates
+2022-08-07 19:00:52,488 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:00:53,329 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:01:03,138 Running model_3
+2022-08-07 19:01:11,773 model_3 took 8.6s (3 recycles) with pLDDT 53, ptmscore 0.567 and iptm 0.158
+2022-08-07 19:01:24,296 Running model_4
+2022-08-07 19:01:32,921 model_4 took 8.6s (3 recycles) with pLDDT 55, ptmscore 0.572 and iptm 0.187
+2022-08-07 19:01:44,525 Running model_5
+2022-08-07 19:01:53,115 model_5 took 8.6s (3 recycles) with pLDDT 55.6, ptmscore 0.578 and iptm 0.179
+2022-08-07 19:02:04,762 Running model_1
+2022-08-07 19:02:13,387 model_1 took 8.6s (3 recycles) with pLDDT 54.5, ptmscore 0.553 and iptm 0.145
+2022-08-07 19:02:25,075 Running model_2
+2022-08-07 19:02:33,691 model_2 took 8.6s (3 recycles) with pLDDT 56.4, ptmscore 0.587 and iptm 0.216
+2022-08-07 19:02:46,119 reranking models by multimer
+2022-08-07 19:02:48,147 Query 4/25: Ly6a_and_SRK-24_vs_SRK-2_vs_SRK-27_vs_SRK-26 (length 143)
+2022-08-07 19:02:48,984 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:02:59,791 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:03:13,411 Sequence 0 found no templates
+2022-08-07 19:03:13,413 Sequence 1 found no templates
+2022-08-07 19:03:13,414 Sequence 2 found no templates
+2022-08-07 19:03:13,415 Sequence 3 found no templates
+2022-08-07 19:03:15,479 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:03:16,318 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:03:23,135 Running model_3
+2022-08-07 19:03:31,771 model_3 took 8.6s (3 recycles) with pLDDT 54.2, ptmscore 0.587 and iptm 0.192
+2022-08-07 19:03:43,702 Running model_4
+2022-08-07 19:03:52,351 model_4 took 8.6s (3 recycles) with pLDDT 54.9, ptmscore 0.58 and iptm 0.193
+2022-08-07 19:04:04,167 Running model_5
+2022-08-07 19:04:12,822 model_5 took 8.7s (3 recycles) with pLDDT 58.7, ptmscore 0.61 and iptm 0.258
+2022-08-07 19:04:24,776 Running model_1
+2022-08-07 19:04:33,416 model_1 took 8.6s (3 recycles) with pLDDT 52.4, ptmscore 0.548 and iptm 0.123
+2022-08-07 19:04:45,219 Running model_2
+2022-08-07 19:04:53,835 model_2 took 8.6s (3 recycles) with pLDDT 58.9, ptmscore 0.618 and iptm 0.338
+2022-08-07 19:05:05,601 reranking models by multimer
+2022-08-07 19:05:07,532 Query 5/25: Ly6a_and_SRK-29_vs_SRK-94_vs_SRK-12_vs_SRK-69 (length 143)
+2022-08-07 19:05:08,347 Sleeping for 6s. Reason: PENDING
+2022-08-07 19:05:15,161 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:05:21,976 Sleeping for 5s. Reason: RUNNING
+2022-08-07 19:05:34,531 Sequence 0 found no templates
+2022-08-07 19:05:34,533 Sequence 1 found no templates
+2022-08-07 19:05:34,534 Sequence 2 found no templates
+2022-08-07 19:05:34,534 Sequence 3 found no templates
+2022-08-07 19:05:36,585 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:05:37,415 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:05:49,193 Running model_3
+2022-08-07 19:05:57,839 model_3 took 8.6s (3 recycles) with pLDDT 54.8, ptmscore 0.584 and iptm 0.197
+2022-08-07 19:06:10,038 Running model_4
+2022-08-07 19:06:18,680 model_4 took 8.6s (3 recycles) with pLDDT 55.8, ptmscore 0.581 and iptm 0.223
+2022-08-07 19:06:30,578 Running model_5
+2022-08-07 19:06:39,179 model_5 took 8.6s (3 recycles) with pLDDT 57.1, ptmscore 0.558 and iptm 0.149
+2022-08-07 19:06:51,084 Running model_1
+2022-08-07 19:06:59,715 model_1 took 8.6s (3 recycles) with pLDDT 54.2, ptmscore 0.547 and iptm 0.143
+2022-08-07 19:07:12,614 Running model_2
+2022-08-07 19:07:21,234 model_2 took 8.6s (3 recycles) with pLDDT 56, ptmscore 0.555 and iptm 0.16
+2022-08-07 19:07:33,082 reranking models by multimer
+2022-08-07 19:07:35,050 Query 6/25: Ly6a_and_SRK-36_vs_SRK-1_vs_SRK-39_vs_SRK-57 (length 143)
+2022-08-07 19:07:35,867 Sleeping for 7s. Reason: PENDING
+2022-08-07 19:07:43,690 Sleeping for 10s. Reason: RUNNING
+2022-08-07 19:08:01,160 Sequence 0 found no templates
+2022-08-07 19:08:01,162 Sequence 1 found no templates
+2022-08-07 19:08:01,163 Sequence 2 found no templates
+2022-08-07 19:08:01,163 Sequence 3 found no templates
+2022-08-07 19:08:03,238 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:08:04,092 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:08:10,882 Running model_3
+2022-08-07 19:08:19,511 model_3 took 8.6s (3 recycles) with pLDDT 52.4, ptmscore 0.561 and iptm 0.156
+2022-08-07 19:08:31,253 Running model_4
+2022-08-07 19:08:39,942 model_4 took 8.7s (3 recycles) with pLDDT 52.9, ptmscore 0.57 and iptm 0.178
+2022-08-07 19:08:51,753 Running model_5
+2022-08-07 19:09:00,354 model_5 took 8.6s (3 recycles) with pLDDT 55.7, ptmscore 0.569 and iptm 0.167
+2022-08-07 19:09:12,092 Running model_1
+2022-08-07 19:09:20,741 model_1 took 8.6s (3 recycles) with pLDDT 52, ptmscore 0.557 and iptm 0.151
+2022-08-07 19:09:32,437 Running model_2
+2022-08-07 19:09:41,048 model_2 took 8.6s (3 recycles) with pLDDT 54.2, ptmscore 0.572 and iptm 0.183
+2022-08-07 19:09:52,747 reranking models by multimer
+2022-08-07 19:09:54,725 Query 7/25: Ly6a_and_SRK-38_vs_SRK-40_vs_SRK-66_vs_SRK-54 (length 143)
+2022-08-07 19:09:55,544 Sleeping for 9s. Reason: PENDING
+2022-08-07 19:10:05,354 Sleeping for 7s. Reason: RUNNING
+2022-08-07 19:10:20,079 Sequence 0 found no templates
+2022-08-07 19:10:20,082 Sequence 1 found no templates
+2022-08-07 19:10:20,083 Sequence 2 found no templates
+2022-08-07 19:10:20,083 Sequence 3 found no templates
+2022-08-07 19:10:22,134 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:10:22,994 Sleeping for 7s. Reason: PENDING
+2022-08-07 19:10:31,807 Running model_3
+2022-08-07 19:10:40,446 model_3 took 8.6s (3 recycles) with pLDDT 54.2, ptmscore 0.574 and iptm 0.183
+2022-08-07 19:10:52,196 Running model_4
+2022-08-07 19:11:00,863 model_4 took 8.7s (3 recycles) with pLDDT 55.2, ptmscore 0.569 and iptm 0.175
+2022-08-07 19:11:12,628 Running model_5
+2022-08-07 19:11:21,230 model_5 took 8.6s (3 recycles) with pLDDT 56.5, ptmscore 0.571 and iptm 0.17
+2022-08-07 19:11:33,898 Running model_1
+2022-08-07 19:11:42,540 model_1 took 8.6s (3 recycles) with pLDDT 56.9, ptmscore 0.573 and iptm 0.2
+2022-08-07 19:11:54,272 Running model_2
+2022-08-07 19:12:02,889 model_2 took 8.6s (3 recycles) with pLDDT 57.5, ptmscore 0.593 and iptm 0.235
+2022-08-07 19:12:14,581 reranking models by multimer
+2022-08-07 19:12:16,517 Query 8/25: Ly6a_and_SRK-3_vs_SRK-83_vs_SRK-17_vs_SRK-14 (length 143)
+2022-08-07 19:12:17,349 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:12:28,190 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:12:41,806 Sequence 0 found no templates
+2022-08-07 19:12:41,807 Sequence 1 found no templates
+2022-08-07 19:12:41,808 Sequence 2 found no templates
+2022-08-07 19:12:41,809 Sequence 3 found no templates
+2022-08-07 19:12:43,879 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:12:44,690 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:12:51,518 Running model_3
+2022-08-07 19:13:00,181 model_3 took 8.7s (3 recycles) with pLDDT 54, ptmscore 0.575 and iptm 0.184
+2022-08-07 19:13:11,923 Running model_4
+2022-08-07 19:13:20,565 model_4 took 8.6s (3 recycles) with pLDDT 54, ptmscore 0.567 and iptm 0.167
+2022-08-07 19:13:32,218 Running model_5
+2022-08-07 19:13:40,838 model_5 took 8.6s (3 recycles) with pLDDT 57.7, ptmscore 0.577 and iptm 0.197
+2022-08-07 19:13:52,486 Running model_1
+2022-08-07 19:14:01,138 model_1 took 8.7s (3 recycles) with pLDDT 58.6, ptmscore 0.591 and iptm 0.37
+2022-08-07 19:14:12,812 Running model_2
+2022-08-07 19:14:21,427 model_2 took 8.6s (3 recycles) with pLDDT 55.3, ptmscore 0.57 and iptm 0.181
+2022-08-07 19:14:33,886 reranking models by multimer
+2022-08-07 19:14:36,642 Query 9/25: Ly6a_and_SRK-42_vs_SRK-30_vs_SRK-73_vs_Dis90 (length 143)
+2022-08-07 19:14:37,474 Sleeping for 9s. Reason: PENDING
+2022-08-07 19:14:47,282 Sleeping for 7s. Reason: RUNNING
+2022-08-07 19:15:01,943 Sequence 0 found no templates
+2022-08-07 19:15:01,944 Sequence 1 found no templates
+2022-08-07 19:15:01,945 Sequence 2 found no templates
+2022-08-07 19:15:01,946 Sequence 3 found no templates
+2022-08-07 19:15:04,017 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:15:04,845 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:15:14,651 Running model_3
+2022-08-07 19:15:23,270 model_3 took 8.6s (3 recycles) with pLDDT 53.5, ptmscore 0.578 and iptm 0.191
+2022-08-07 19:15:35,151 Running model_4
+2022-08-07 19:15:43,793 model_4 took 8.6s (3 recycles) with pLDDT 54.1, ptmscore 0.563 and iptm 0.162
+2022-08-07 19:15:56,409 Running model_5
+2022-08-07 19:16:05,012 model_5 took 8.6s (3 recycles) with pLDDT 55.5, ptmscore 0.578 and iptm 0.176
+2022-08-07 19:16:16,778 Running model_1
+2022-08-07 19:16:25,421 model_1 took 8.6s (3 recycles) with pLDDT 53.2, ptmscore 0.569 and iptm 0.178
+2022-08-07 19:16:37,319 Running model_2
+2022-08-07 19:16:45,927 model_2 took 8.6s (3 recycles) with pLDDT 54.6, ptmscore 0.571 and iptm 0.185
+2022-08-07 19:16:57,669 reranking models by multimer
+2022-08-07 19:16:59,674 Query 10/25: Ly6a_and_SRK-43_vs_SRK-55_vs_SRK-70_vs_SRK-79 (length 143)
+2022-08-07 19:17:00,491 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:17:11,301 Sleeping for 10s. Reason: RUNNING
+2022-08-07 19:17:28,796 Sequence 0 found no templates
+2022-08-07 19:17:28,798 Sequence 1 found no templates
+2022-08-07 19:17:28,799 Sequence 2 found no templates
+2022-08-07 19:17:28,800 Sequence 3 found no templates
+2022-08-07 19:17:30,856 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:17:31,679 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:17:41,486 Running model_3
+2022-08-07 19:17:50,149 model_3 took 8.7s (3 recycles) with pLDDT 53.1, ptmscore 0.571 and iptm 0.175
+2022-08-07 19:18:01,841 Running model_4
+2022-08-07 19:18:10,496 model_4 took 8.7s (3 recycles) with pLDDT 54.2, ptmscore 0.574 and iptm 0.185
+2022-08-07 19:18:22,332 Running model_5
+2022-08-07 19:18:30,940 model_5 took 8.6s (3 recycles) with pLDDT 56.1, ptmscore 0.557 and iptm 0.141
+2022-08-07 19:18:42,683 Running model_1
+2022-08-07 19:18:51,360 model_1 took 8.7s (3 recycles) with pLDDT 53.9, ptmscore 0.564 and iptm 0.167
+2022-08-07 19:19:03,005 Running model_2
+2022-08-07 19:19:11,634 model_2 took 8.6s (3 recycles) with pLDDT 55, ptmscore 0.573 and iptm 0.187
+2022-08-07 19:19:23,259 reranking models by multimer
+2022-08-07 19:19:25,173 Query 11/25: Ly6a_and_SRK-45_vs_SRK-32_vs_SRK-23_vs_SRK-51 (length 143)
+2022-08-07 19:19:25,984 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:19:34,831 Sleeping for 7s. Reason: RUNNING
+2022-08-07 19:19:49,537 Sequence 0 found no templates
+2022-08-07 19:19:49,538 Sequence 1 found no templates
+2022-08-07 19:19:49,539 Sequence 2 found no templates
+2022-08-07 19:19:49,540 Sequence 3 found no templates
+2022-08-07 19:19:51,591 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:19:52,406 Sleeping for 9s. Reason: PENDING
+2022-08-07 19:20:03,205 Running model_3
+2022-08-07 19:20:11,847 model_3 took 8.6s (3 recycles) with pLDDT 54.5, ptmscore 0.57 and iptm 0.169
+2022-08-07 19:20:24,477 Running model_4
+2022-08-07 19:20:33,136 model_4 took 8.7s (3 recycles) with pLDDT 54.8, ptmscore 0.567 and iptm 0.16
+2022-08-07 19:20:44,819 Running model_5
+2022-08-07 19:20:53,425 model_5 took 8.6s (3 recycles) with pLDDT 57.6, ptmscore 0.568 and iptm 0.159
+2022-08-07 19:21:05,122 Running model_1
+2022-08-07 19:21:13,752 model_1 took 8.6s (3 recycles) with pLDDT 55.4, ptmscore 0.569 and iptm 0.165
+2022-08-07 19:21:25,466 Running model_2
+2022-08-07 19:21:34,084 model_2 took 8.6s (3 recycles) with pLDDT 55.2, ptmscore 0.566 and iptm 0.161
+2022-08-07 19:21:46,766 reranking models by multimer
+2022-08-07 19:21:48,697 Query 12/25: Ly6a_and_SRK-46_vs_SRK-7_vs_SRK-15_vs_SRK-20 (length 143)
+2022-08-07 19:21:49,514 Sleeping for 9s. Reason: PENDING
+2022-08-07 19:21:59,329 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:22:13,049 Sequence 0 found no templates
+2022-08-07 19:22:13,050 Sequence 1 found no templates
+2022-08-07 19:22:13,051 Sequence 2 found no templates
+2022-08-07 19:22:13,052 Sequence 3 found no templates
+2022-08-07 19:22:15,163 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:22:15,993 Sleeping for 7s. Reason: PENDING
+2022-08-07 19:22:24,838 Running model_3
+2022-08-07 19:22:33,485 model_3 took 8.6s (3 recycles) with pLDDT 53.3, ptmscore 0.568 and iptm 0.172
+2022-08-07 19:22:45,171 Running model_4
+2022-08-07 19:22:53,811 model_4 took 8.6s (3 recycles) with pLDDT 52.6, ptmscore 0.554 and iptm 0.149
+2022-08-07 19:23:05,482 Running model_5
+2022-08-07 19:23:14,133 model_5 took 8.6s (3 recycles) with pLDDT 55.7, ptmscore 0.558 and iptm 0.152
+2022-08-07 19:23:25,791 Running model_1
+2022-08-07 19:23:34,446 model_1 took 8.7s (3 recycles) with pLDDT 53.5, ptmscore 0.554 and iptm 0.149
+2022-08-07 19:23:46,222 Running model_2
+2022-08-07 19:23:54,858 model_2 took 8.6s (3 recycles) with pLDDT 52.9, ptmscore 0.56 and iptm 0.167
+2022-08-07 19:24:06,507 reranking models by multimer
+2022-08-07 19:24:08,457 Query 13/25: Ly6a_and_SRK-48_vs_SRK-11_vs_SRK-85_vs_SRK-56 (length 143)
+2022-08-07 19:24:09,287 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:24:18,116 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:24:31,780 Sequence 0 found no templates
+2022-08-07 19:24:31,781 Sequence 1 found no templates
+2022-08-07 19:24:31,782 Sequence 2 found no templates
+2022-08-07 19:24:31,783 Sequence 3 found no templates
+2022-08-07 19:24:33,857 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:24:34,667 Sleeping for 7s. Reason: PENDING
+2022-08-07 19:24:43,498 Running model_3
+2022-08-07 19:24:52,144 model_3 took 8.6s (3 recycles) with pLDDT 54.1, ptmscore 0.573 and iptm 0.177
+2022-08-07 19:25:03,819 Running model_4
+2022-08-07 19:25:12,475 model_4 took 8.7s (3 recycles) with pLDDT 62.7, ptmscore 0.626 and iptm 0.502
+2022-08-07 19:25:24,251 Running model_5
+2022-08-07 19:25:32,843 model_5 took 8.6s (3 recycles) with pLDDT 66.4, ptmscore 0.643 and iptm 0.578
+2022-08-07 19:25:44,528 Running model_1
+2022-08-07 19:25:53,176 model_1 took 8.6s (3 recycles) with pLDDT 56.6, ptmscore 0.568 and iptm 0.192
+2022-08-07 19:26:05,808 Running model_2
+2022-08-07 19:26:14,428 model_2 took 8.6s (3 recycles) with pLDDT 55.5, ptmscore 0.562 and iptm 0.163
+2022-08-07 19:26:26,140 reranking models by multimer
+2022-08-07 19:26:28,083 Query 14/25: Ly6a_and_SRK-49_vs_SRK-67_vs_SRK-37_vs_SRK-87 (length 143)
+2022-08-07 19:26:28,910 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:26:37,717 Sleeping for 7s. Reason: RUNNING
+2022-08-07 19:26:52,317 Sequence 0 found no templates
+2022-08-07 19:26:52,319 Sequence 1 found no templates
+2022-08-07 19:26:52,320 Sequence 2 found no templates
+2022-08-07 19:26:52,321 Sequence 3 found no templates
+2022-08-07 19:26:54,406 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:26:55,240 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:27:05,035 Running model_3
+2022-08-07 19:27:13,693 model_3 took 8.7s (3 recycles) with pLDDT 53.4, ptmscore 0.563 and iptm 0.161
+2022-08-07 19:27:25,554 Running model_4
+2022-08-07 19:27:34,219 model_4 took 8.7s (3 recycles) with pLDDT 54.3, ptmscore 0.563 and iptm 0.164
+2022-08-07 19:27:46,024 Running model_5
+2022-08-07 19:27:54,623 model_5 took 8.6s (3 recycles) with pLDDT 57.3, ptmscore 0.561 and iptm 0.155
+2022-08-07 19:28:06,442 Running model_1
+2022-08-07 19:28:15,077 model_1 took 8.6s (3 recycles) with pLDDT 53.7, ptmscore 0.549 and iptm 0.139
+2022-08-07 19:28:26,959 Running model_2
+2022-08-07 19:28:35,582 model_2 took 8.6s (3 recycles) with pLDDT 56.9, ptmscore 0.535 and iptm 0.116
+2022-08-07 19:28:47,689 reranking models by multimer
+2022-08-07 19:28:49,696 Query 15/25: Ly6a_and_SRK-5_vs_SRK-6_vs_SRK-65_vs_SRK-68 (length 143)
+2022-08-07 19:28:50,517 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:28:56,349 Sleeping for 9s. Reason: RUNNING
+2022-08-07 19:29:12,932 Sequence 0 found no templates
+2022-08-07 19:29:12,934 Sequence 1 found no templates
+2022-08-07 19:29:12,935 Sequence 2 found no templates
+2022-08-07 19:29:12,936 Sequence 3 found no templates
+2022-08-07 19:29:15,001 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:29:15,834 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:29:27,656 Running model_3
+2022-08-07 19:29:36,288 model_3 took 8.6s (3 recycles) with pLDDT 52.5, ptmscore 0.551 and iptm 0.138
+2022-08-07 19:29:48,312 Running model_4
+2022-08-07 19:29:56,968 model_4 took 8.7s (3 recycles) with pLDDT 54.6, ptmscore 0.578 and iptm 0.189
+2022-08-07 19:30:08,957 Running model_5
+2022-08-07 19:30:17,566 model_5 took 8.6s (3 recycles) with pLDDT 55.6, ptmscore 0.541 and iptm 0.129
+2022-08-07 19:30:30,387 Running model_1
+2022-08-07 19:30:39,038 model_1 took 8.7s (3 recycles) with pLDDT 52.8, ptmscore 0.54 and iptm 0.139
+2022-08-07 19:30:51,023 Running model_2
+2022-08-07 19:30:59,646 model_2 took 8.6s (3 recycles) with pLDDT 56.5, ptmscore 0.554 and iptm 0.173
+2022-08-07 19:31:11,507 reranking models by multimer
+2022-08-07 19:31:13,416 Query 16/25: Ly6a_and_SRK-62_vs_SRK-28_vs_SRK-96_vs_SRK-34 (length 143)
+2022-08-07 19:31:14,244 Sleeping for 7s. Reason: PENDING
+2022-08-07 19:31:22,061 Sleeping for 9s. Reason: RUNNING
+2022-08-07 19:31:38,848 Sequence 0 found no templates
+2022-08-07 19:31:38,850 Sequence 1 found no templates
+2022-08-07 19:31:38,851 Sequence 2 found no templates
+2022-08-07 19:31:38,851 Sequence 3 found no templates
+2022-08-07 19:31:40,966 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:31:41,788 Sleeping for 9s. Reason: PENDING
+2022-08-07 19:31:52,610 Running model_3
+2022-08-07 19:32:01,250 model_3 took 8.6s (3 recycles) with pLDDT 56.5, ptmscore 0.602 and iptm 0.243
+2022-08-07 19:32:13,072 Running model_4
+2022-08-07 19:32:21,721 model_4 took 8.6s (3 recycles) with pLDDT 54, ptmscore 0.566 and iptm 0.158
+2022-08-07 19:32:33,375 Running model_5
+2022-08-07 19:32:41,977 model_5 took 8.6s (3 recycles) with pLDDT 57.8, ptmscore 0.583 and iptm 0.197
+2022-08-07 19:32:53,692 Running model_1
+2022-08-07 19:33:02,332 model_1 took 8.6s (3 recycles) with pLDDT 53.3, ptmscore 0.558 and iptm 0.157
+2022-08-07 19:33:14,180 Running model_2
+2022-08-07 19:33:22,817 model_2 took 8.6s (3 recycles) with pLDDT 56.8, ptmscore 0.577 and iptm 0.192
+2022-08-07 19:33:34,502 reranking models by multimer
+2022-08-07 19:33:36,470 Query 17/25: Ly6a_and_SRK-72_vs_SRK-18_vs_SRK-91_vs_SRK-21 (length 143)
+2022-08-07 19:33:37,303 Sleeping for 6s. Reason: PENDING
+2022-08-07 19:33:44,120 Sleeping for 10s. Reason: RUNNING
+2022-08-07 19:34:01,787 Sequence 0 found no templates
+2022-08-07 19:34:01,789 Sequence 1 found no templates
+2022-08-07 19:34:01,790 Sequence 2 found no templates
+2022-08-07 19:34:01,791 Sequence 3 found no templates
+2022-08-07 19:34:03,859 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:34:04,674 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:34:14,495 Running model_3
+2022-08-07 19:34:23,145 model_3 took 8.6s (3 recycles) with pLDDT 52.9, ptmscore 0.567 and iptm 0.167
+2022-08-07 19:34:34,900 Running model_4
+2022-08-07 19:34:43,580 model_4 took 8.7s (3 recycles) with pLDDT 55.1, ptmscore 0.568 and iptm 0.172
+2022-08-07 19:34:55,291 Running model_5
+2022-08-07 19:35:03,892 model_5 took 8.6s (3 recycles) with pLDDT 58.4, ptmscore 0.577 and iptm 0.184
+2022-08-07 19:35:15,511 Running model_1
+2022-08-07 19:35:24,133 model_1 took 8.6s (3 recycles) with pLDDT 55.8, ptmscore 0.561 and iptm 0.153
+2022-08-07 19:35:35,865 Running model_2
+2022-08-07 19:35:44,474 model_2 took 8.6s (3 recycles) with pLDDT 57.3, ptmscore 0.566 and iptm 0.17
+2022-08-07 19:35:56,317 reranking models by multimer
+2022-08-07 19:35:59,158 Query 18/25: Ly6a_and_SRK-77_vs_SRK-33_vs_SRK-64_vs_SRK-78 (length 143)
+2022-08-07 19:36:00,014 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:36:08,826 Sleeping for 8s. Reason: RUNNING
+2022-08-07 19:36:24,430 Sequence 0 found no templates
+2022-08-07 19:36:24,431 Sequence 1 found no templates
+2022-08-07 19:36:24,432 Sequence 2 found no templates
+2022-08-07 19:36:24,433 Sequence 3 found no templates
+2022-08-07 19:36:26,510 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:36:27,335 Sleeping for 6s. Reason: PENDING
+2022-08-07 19:36:35,152 Running model_3
+2022-08-07 19:36:43,802 model_3 took 8.6s (3 recycles) with pLDDT 53.6, ptmscore 0.566 and iptm 0.164
+2022-08-07 19:36:55,609 Running model_4
+2022-08-07 19:37:04,257 model_4 took 8.6s (3 recycles) with pLDDT 54.9, ptmscore 0.57 and iptm 0.183
+2022-08-07 19:37:16,316 Running model_5
+2022-08-07 19:37:24,907 model_5 took 8.6s (3 recycles) with pLDDT 55.5, ptmscore 0.576 and iptm 0.183
+2022-08-07 19:37:37,705 Running model_1
+2022-08-07 19:37:46,350 model_1 took 8.6s (3 recycles) with pLDDT 54.3, ptmscore 0.562 and iptm 0.154
+2022-08-07 19:37:58,064 Running model_2
+2022-08-07 19:38:06,685 model_2 took 8.6s (3 recycles) with pLDDT 55.3, ptmscore 0.574 and iptm 0.2
+2022-08-07 19:38:18,444 reranking models by multimer
+2022-08-07 19:38:20,357 Query 19/25: Ly6a_and_SRK-80_vs_SRK-31_vs_SRK-50_vs_SRK-19 (length 143)
+2022-08-07 19:38:21,173 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:38:29,996 Sleeping for 10s. Reason: RUNNING
+2022-08-07 19:38:47,538 Sequence 0 found no templates
+2022-08-07 19:38:47,540 Sequence 1 found no templates
+2022-08-07 19:38:47,541 Sequence 2 found no templates
+2022-08-07 19:38:47,542 Sequence 3 found no templates
+2022-08-07 19:38:49,646 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:38:50,469 Sleeping for 6s. Reason: PENDING
+2022-08-07 19:38:58,446 Running model_3
+2022-08-07 19:39:07,099 model_3 took 8.7s (3 recycles) with pLDDT 52.8, ptmscore 0.57 and iptm 0.166
+2022-08-07 19:39:18,856 Running model_4
+2022-08-07 19:39:27,502 model_4 took 8.6s (3 recycles) with pLDDT 54.8, ptmscore 0.579 and iptm 0.198
+2022-08-07 19:39:39,239 Running model_5
+2022-08-07 19:39:47,855 model_5 took 8.6s (3 recycles) with pLDDT 55.9, ptmscore 0.571 and iptm 0.165
+2022-08-07 19:39:59,511 Running model_1
+2022-08-07 19:40:08,161 model_1 took 8.6s (3 recycles) with pLDDT 53.9, ptmscore 0.569 and iptm 0.173
+2022-08-07 19:40:19,925 Running model_2
+2022-08-07 19:40:28,594 model_2 took 8.7s (3 recycles) with pLDDT 55.1, ptmscore 0.578 and iptm 0.191
+2022-08-07 19:40:40,316 reranking models by multimer
+2022-08-07 19:40:42,316 Query 20/25: Ly6a_and_SRK-84_vs_SRK-81_vs_SRK-82_vs_SRK-71 (length 143)
+2022-08-07 19:40:43,132 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:40:48,950 Sleeping for 10s. Reason: RUNNING
+2022-08-07 19:41:06,663 Sequence 0 found no templates
+2022-08-07 19:41:06,665 Sequence 1 found no templates
+2022-08-07 19:41:06,666 Sequence 2 found no templates
+2022-08-07 19:41:06,666 Sequence 3 found no templates
+2022-08-07 19:41:08,725 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:41:09,550 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:41:19,403 Running model_3
+2022-08-07 19:41:28,033 model_3 took 8.6s (3 recycles) with pLDDT 55, ptmscore 0.582 and iptm 0.199
+2022-08-07 19:41:39,682 Running model_4
+2022-08-07 19:41:48,354 model_4 took 8.7s (3 recycles) with pLDDT 54.2, ptmscore 0.571 and iptm 0.18
+2022-08-07 19:42:00,609 Running model_5
+2022-08-07 19:42:09,212 model_5 took 8.6s (3 recycles) with pLDDT 57.4, ptmscore 0.577 and iptm 0.179
+2022-08-07 19:42:21,221 Running model_1
+2022-08-07 19:42:29,858 model_1 took 8.6s (3 recycles) with pLDDT 53.2, ptmscore 0.558 and iptm 0.15
+2022-08-07 19:42:41,449 Running model_2
+2022-08-07 19:42:50,068 model_2 took 8.6s (3 recycles) with pLDDT 57.9, ptmscore 0.592 and iptm 0.228
+2022-08-07 19:43:01,767 reranking models by multimer
+2022-08-07 19:43:03,708 Query 21/25: Ly6a_and_SRK-86_vs_SRK-4_vs_SRK-58_vs_AAV9 (length 136)
+2022-08-07 19:43:04,530 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:43:10,354 Sleeping for 6s. Reason: RUNNING
+2022-08-07 19:43:17,180 Sleeping for 5s. Reason: RUNNING
+2022-08-07 19:43:29,806 Sequence 0 found no templates
+2022-08-07 19:43:29,808 Sequence 1 found no templates
+2022-08-07 19:43:29,808 Sequence 2 found no templates
+2022-08-07 19:43:29,809 Sequence 3 found no templates
+2022-08-07 19:43:31,831 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:43:32,661 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:43:39,490 Running model_3
+2022-08-07 19:44:12,834 model_3 took 33.3s (3 recycles) with pLDDT 55.4, ptmscore 0.583 and iptm 0.154
+2022-08-07 19:44:24,276 Running model_4
+2022-08-07 19:44:32,336 model_4 took 8.1s (3 recycles) with pLDDT 57.1, ptmscore 0.594 and iptm 0.191
+2022-08-07 19:44:44,520 Running model_5
+2022-08-07 19:44:52,514 model_5 took 8.0s (3 recycles) with pLDDT 60.3, ptmscore 0.604 and iptm 0.19
+2022-08-07 19:45:03,930 Running model_1
+2022-08-07 19:45:32,006 model_1 took 28.1s (3 recycles) with pLDDT 56.2, ptmscore 0.583 and iptm 0.162
+2022-08-07 19:45:43,286 Running model_2
+2022-08-07 19:45:51,406 model_2 took 8.1s (3 recycles) with pLDDT 57.6, ptmscore 0.598 and iptm 0.2
+2022-08-07 19:46:02,683 reranking models by multimer
+2022-08-07 19:46:05,055 Query 22/25: Ly6a_and_SRK-89_vs_SRK-44_vs_SRK-9_vs_SRK-63 (length 143)
+2022-08-07 19:46:05,890 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:46:11,725 Sleeping for 7s. Reason: RUNNING
+2022-08-07 19:46:26,394 Sequence 0 found no templates
+2022-08-07 19:46:26,396 Sequence 1 found no templates
+2022-08-07 19:46:26,397 Sequence 2 found no templates
+2022-08-07 19:46:26,398 Sequence 3 found no templates
+2022-08-07 19:46:28,441 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:46:29,267 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:46:39,072 Running model_3
+2022-08-07 19:46:47,738 model_3 took 8.7s (3 recycles) with pLDDT 53.4, ptmscore 0.561 and iptm 0.155
+2022-08-07 19:46:59,488 Running model_4
+2022-08-07 19:47:08,107 model_4 took 8.6s (3 recycles) with pLDDT 54.9, ptmscore 0.574 and iptm 0.198
+2022-08-07 19:47:19,995 Running model_5
+2022-08-07 19:47:28,630 model_5 took 8.6s (3 recycles) with pLDDT 56.1, ptmscore 0.56 and iptm 0.146
+2022-08-07 19:47:41,250 Running model_1
+2022-08-07 19:47:49,873 model_1 took 8.6s (3 recycles) with pLDDT 53.1, ptmscore 0.559 and iptm 0.147
+2022-08-07 19:48:01,683 Running model_2
+2022-08-07 19:48:10,336 model_2 took 8.7s (3 recycles) with pLDDT 55.8, ptmscore 0.57 and iptm 0.182
+2022-08-07 19:48:22,196 reranking models by multimer
+2022-08-07 19:48:24,117 Query 23/25: Ly6a_and_SRK-92_vs_SRK-25_vs_SRK-88_vs_SRK-59 (length 143)
+2022-08-07 19:48:24,937 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:48:33,770 Sleeping for 9s. Reason: RUNNING
+2022-08-07 19:48:50,446 Sequence 0 found no templates
+2022-08-07 19:48:50,448 Sequence 1 found no templates
+2022-08-07 19:48:50,449 Sequence 2 found no templates
+2022-08-07 19:48:50,450 Sequence 3 found no templates
+2022-08-07 19:48:52,530 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:48:53,367 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:49:00,162 Running model_3
+2022-08-07 19:49:08,799 model_3 took 8.6s (3 recycles) with pLDDT 53.8, ptmscore 0.565 and iptm 0.163
+2022-08-07 19:49:20,737 Running model_4
+2022-08-07 19:49:29,382 model_4 took 8.6s (3 recycles) with pLDDT 54.7, ptmscore 0.562 and iptm 0.151
+2022-08-07 19:49:41,339 Running model_5
+2022-08-07 19:49:49,969 model_5 took 8.6s (3 recycles) with pLDDT 56.4, ptmscore 0.573 and iptm 0.169
+2022-08-07 19:50:01,826 Running model_1
+2022-08-07 19:50:10,429 model_1 took 8.6s (3 recycles) with pLDDT 54.7, ptmscore 0.569 and iptm 0.173
+2022-08-07 19:50:23,090 Running model_2
+2022-08-07 19:50:31,721 model_2 took 8.6s (3 recycles) with pLDDT 56, ptmscore 0.594 and iptm 0.237
+2022-08-07 19:50:43,621 reranking models by multimer
+2022-08-07 19:50:45,589 Query 24/25: Ly6a_and_SRK-95_vs_SRK-61_vs_SRK-90_vs_SRK-35 (length 143)
+2022-08-07 19:50:46,432 Sleeping for 10s. Reason: PENDING
+2022-08-07 19:50:57,262 Sleeping for 5s. Reason: RUNNING
+2022-08-07 19:51:09,808 Sequence 0 found no templates
+2022-08-07 19:51:09,810 Sequence 1 found no templates
+2022-08-07 19:51:09,811 Sequence 2 found no templates
+2022-08-07 19:51:09,812 Sequence 3 found no templates
+2022-08-07 19:51:11,879 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:51:12,692 Sleeping for 8s. Reason: PENDING
+2022-08-07 19:51:22,524 Running model_3
+2022-08-07 19:51:31,139 model_3 took 8.6s (3 recycles) with pLDDT 53.2, ptmscore 0.581 and iptm 0.187
+2022-08-07 19:51:43,086 Running model_4
+2022-08-07 19:51:51,747 model_4 took 8.7s (3 recycles) with pLDDT 60.2, ptmscore 0.631 and iptm 0.426
+2022-08-07 19:52:03,628 Running model_5
+2022-08-07 19:52:12,251 model_5 took 8.6s (3 recycles) with pLDDT 64.2, ptmscore 0.646 and iptm 0.504
+2022-08-07 19:52:24,055 Running model_1
+2022-08-07 19:52:32,664 model_1 took 8.6s (3 recycles) with pLDDT 55.4, ptmscore 0.57 and iptm 0.185
+2022-08-07 19:52:44,730 Running model_2
+2022-08-07 19:52:53,367 model_2 took 8.6s (3 recycles) with pLDDT 56.6, ptmscore 0.579 and iptm 0.191
+2022-08-07 19:53:05,197 reranking models by multimer
+2022-08-07 19:53:07,147 Query 25/25: Ly6a_and_SRK-97_vs_SRK-53_vs_SRK-8_vs_SRK-47 (length 143)
+2022-08-07 19:53:07,948 Sleeping for 6s. Reason: PENDING
+2022-08-07 19:53:14,769 Sleeping for 9s. Reason: RUNNING
+2022-08-07 19:53:31,465 Sequence 0 found no templates
+2022-08-07 19:53:31,467 Sequence 1 found no templates
+2022-08-07 19:53:31,468 Sequence 2 found no templates
+2022-08-07 19:53:31,468 Sequence 3 found no templates
+2022-08-07 19:53:33,560 Sequence 4 found templates: ['6zze_A', '6gbi_A', '6oau_D', '6ob0_E', '6ob0_G', '6zso_A', '3laq_V', '3u74_U', '3bt1_U', '6zss_A', '2n99_A', '2fd6_U', '3laq_V', '2l03_A', '3bt1_U', '3bt1_U', '3u74_U', '2fd6_U', '3u74_U', '6aex_U']
+2022-08-07 19:53:34,381 Sleeping for 5s. Reason: PENDING
+2022-08-07 19:53:41,210 Running model_3
+2022-08-07 19:53:49,851 model_3 took 8.6s (3 recycles) with pLDDT 52.7, ptmscore 0.57 and iptm 0.173
+2022-08-07 19:54:01,546 Running model_4
+2022-08-07 19:54:10,164 model_4 took 8.6s (3 recycles) with pLDDT 54.3, ptmscore 0.562 and iptm 0.162
+2022-08-07 19:54:21,845 Running model_5
+2022-08-07 19:54:30,492 model_5 took 8.6s (3 recycles) with pLDDT 57.4, ptmscore 0.58 and iptm 0.191
+2022-08-07 19:54:43,042 Running model_1
+2022-08-07 19:54:51,663 model_1 took 8.6s (3 recycles) with pLDDT 54.7, ptmscore 0.566 and iptm 0.169
+2022-08-07 19:55:03,454 Running model_2
+2022-08-07 19:55:12,103 model_2 took 8.6s (3 recycles) with pLDDT 55.1, ptmscore 0.572 and iptm 0.183
+2022-08-07 19:55:23,847 reranking models by multimer
+2022-08-07 19:55:25,793 Done
