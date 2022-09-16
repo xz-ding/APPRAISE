@@ -104,7 +104,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
         return df_average.groupby(by=['peptide_name']).mean().sort_values(by=[metric_name], ascending=False).reset_index()['peptide_name'].to_list(), tie_threshold, None
 
 
-def plot_heatmap(df_average, feature_of_interest, receptor_of_interest='receptor', \
+def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
     feature_to_plot_with='auto', feature_to_rank_with='auto', fig_size='auto', \
     tie_threshold='auto', vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
