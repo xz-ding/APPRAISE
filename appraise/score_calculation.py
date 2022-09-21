@@ -6,7 +6,7 @@ Email: xding@caltech.edu, dingxiaozhe@gmail.com
 import pandas as pd
 import numpy as np
 
-def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
+def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_constraint=True, \
     insert_constraint=True, direction_constraint=True, depth_constraint=True):
     """
     Function for getting interactive input in the notebook.
@@ -21,9 +21,9 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
     if version == 1:
 
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number']
+        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number'] * penalize_clash
         df_measurements['interface_energy_score'] = df_measurements['interface_energy_score'] * (df_measurements['interface_energy_score'] > 0)
-        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor']
+        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor'] * penalize_clash
         df_measurements['interface_energy_score_competitor'] = df_measurements['interface_energy_score_competitor'] * (df_measurements['interface_energy_score_competitor'] > 0)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
@@ -36,9 +36,9 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
         #Development note: v1.1 ranks 9P36 to #2, Ly6a ROC AUC=0.92, but it doesn't give much signal in TTD rankings.
 
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number']
+        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number'] * penalize_clash
         df_measurements['interface_energy_score'] = df_measurements['interface_energy_score'] * (df_measurements['interface_energy_score'] > 0)
-        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor']
+        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor'] * penalize_clash
         df_measurements['interface_energy_score_competitor'] = df_measurements['interface_energy_score_competitor'] * (df_measurements['interface_energy_score_competitor'] > 0)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
@@ -72,9 +72,9 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
 
         # Works pretty well across receptors -- except PHP.C1 ranking #2
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number']
+        df_measurements['interface_energy_score'] = df_measurements['total_contact_atom_in_interface'] - 1000 * df_measurements['clash_number'] * penalize_clash
         df_measurements['interface_energy_score'] = df_measurements['interface_energy_score'] * (df_measurements['interface_energy_score'] > 0)
-        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor']
+        df_measurements['interface_energy_score_competitor'] = df_measurements['total_contact_atom_in_interface_competitor'] - 1000 * df_measurements['clash_number_competitor'] * penalize_clash
         df_measurements['interface_energy_score_competitor'] = df_measurements['interface_energy_score_competitor'] * (df_measurements['interface_energy_score_competitor'] > 0)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
