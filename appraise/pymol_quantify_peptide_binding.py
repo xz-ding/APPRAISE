@@ -153,7 +153,7 @@ def find_chain_IDs(model_name, auto_find_receptor=True, receptor_chain='last'):
 
 def quantify_contact_atom(peptide_chain, receptor_chain, pep_mod_start_resi_global=False, pep_mod_end_resi_global=False, b_threshold=0, b_weighted=False):
     if pep_mod_start_resi_global == 0 and pep_mod_end_resi_global == 0:
-        # count contacting atoms
+        # Default: count contacting atoms in the  whole peptide
         contact_atom_in_peptide = cmd.count_atoms('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
         contact_atom_in_receptor = cmd.count_atoms('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
         if b_weighted:
@@ -226,9 +226,10 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
             else:
                 peptide_name = "NA"
 
-            if peptide_name == 'AAV9':
-                pep_mod_start_resi_global = mod_start_resi_global - 1
-                pep_mod_end_resi_global = mod_end_resi_global - 6
+            # An AAV9-specific modification to account for shorter peptide length (because of lack of insertion)
+            if peptide_name == 'AAV9' and mod_start_resi_global > 2:
+                pep_mod_start_resi_global = max(mod_start_resi_global - 1, 0)
+                pep_mod_end_resi_global = max(mod_end_resi_global - 6, 0)
             else:
                 pep_mod_start_resi_global = mod_start_resi_global
                 pep_mod_end_resi_global = mod_end_resi_global
@@ -552,7 +553,6 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
 
 # Read from command line
 if len(sys.argv) > 1:
-    print(sys.argv)
     print("> Processing folder {} using default settings".format(sys.argv[-1]))
     AF2_results_path = sys.argv[-1]
     quantify_results_folder(AF2_results_path)
