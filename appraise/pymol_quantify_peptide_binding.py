@@ -1,3 +1,9 @@
+'''
+Pymol script for quantifying peptide-receptor models.
+Author: Xiaozhe Ding
+Email: xding@caltech.edu, dingxiaozhe@gmail.com
+'''
+
 import platform
 import sys
 import glob
@@ -10,13 +16,14 @@ import numpy.linalg as LA
 from pymol import cmd
 from pymol import stored
 
-
-'''
-
-'''
-
-from pymol import cmd
-
+use_relaxed_global = False
+mod_start_resi_global = 0
+mod_end_resi_global = 0
+pLDDT_threshold_global = 0
+receptor_chain_global = 'last'
+anchor_site_global = 'C-term'
+pdb_path = ' '
+database_path = ' '
 
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
     '''
@@ -62,7 +69,8 @@ def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_th
 
 def average_b(selection):
     """
-    Function for extracting the pLDDT score from residues.
+    Function for extracting the b value (pLDDT score in AlphaFold-predicted
+    modelss) from residues of selection.
     Source: https://pymolwiki.org/index.php/Average_b
     Author: Gregor Hagelueken
     """
@@ -78,7 +86,7 @@ def average_b(selection):
 
 def get_pLDDT_weighted_coordinates(selection):
     """
-    Calculate pLDDT_weighted coordinates
+    Calculate pLDDT_weighted coordinates from residues of selection.
     """
     stored.tempfactor = 0
     stored.atomnumber = 0
@@ -98,7 +106,8 @@ def get_pLDDT_weighted_coordinates(selection):
 
 def get_pLDDT_weighted_linear_center(selection):
     """
-    Calculate pLDDT_weighted coordinates
+    Find the coordinates of the center of the primary sequences
+    of residues of selection.
     """
     stored.tempfactor = 0
     stored.rank_product = 0
@@ -109,20 +118,20 @@ def get_pLDDT_weighted_linear_center(selection):
     weighted_rank = round(stored.rank_product / stored.tempfactor)
     return cmd.get_coords("rank {} and ({})".format(str(weighted_rank), selection))[0]
 
-def generate_pdb_path_list(AF2_results_path, use_relaxed_global=True):
+def generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global):
     """
-    get a list of pdb paths from AF2 running results
+    get a list of pdb paths from colabfold-alphafold output results.
     """
-    if use_relaxed_global:
+    if use_relaxed:
         list_pdb_path = glob.glob(AF2_results_path + '*_relaxed_*.pdb')
     else:
         list_pdb_path = glob.glob(AF2_results_path + '*_unrelaxed_*.pdb')
     return list_pdb_path
 
 #to do next
-def decipher_pdb_file_name(pdb_path, use_relaxed_global=True):
+def decipher_pdb_file_name(pdb_path):
     """
-    parse out the peptide name and receptor name from pdb file names
+    Parse out the peptide name and receptor name from pdb file names.
     """
     if use_relaxed_global:
         pdb_string = pdb_path.split('/')[-1][0:-4].split('_relaxed_')[0]
@@ -133,13 +142,16 @@ def decipher_pdb_file_name(pdb_path, use_relaxed_global=True):
     return receptor_name, list_peptide_name
 
 
-def find_chain_IDs(model_name, auto_find_receptor=True, receptor_chain='last'):
+def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
-    If auto mode is off, the receptor chain ID (the last chain) must be provided.
+
+    model_name(string): name of the model
+    receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
+    the last chain in the model will be automatically assigned to be the receptor.
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
-    if auto_find_receptor:
+    if receptor_chain=='last':
         chain_list = cmd.get_chains(model_name)
         receptor_chain = chain_list[-1]
         list_peptide_chain = chain_list[0:-1]
@@ -151,8 +163,21 @@ def find_chain_IDs(model_name, auto_find_receptor=True, receptor_chain='last'):
     return receptor_chain, list_peptide_chain
 
 
-def quantify_contact_atom(peptide_chain, receptor_chain, pep_mod_start_resi_global=False, pep_mod_end_resi_global=False, b_threshold=0, b_weighted=False):
-    if pep_mod_start_resi_global == 0 and pep_mod_end_resi_global == 0:
+def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
+    pep_mod_start_resi=0, pep_mod_end_resi=0, b_threshold=0, b_weighted=False):
+    """
+    A script to quantify the number of contact atoms beween a peptide and the receptor.
+
+    peptide_chain (string): chain ID of the peptide.
+    receptor_chain (string): chain ID of the receptor.
+    pep_mod_start_resi (int): the start residue index of the range of peptide to be considered. If 0, the whole peptide will be considered.
+    pep_mod_end_resi (int): the end residue index of the range of peptide to be considered. If 0, the whole peptide will be considered.
+    b_threshold (float): the pLDDT threshold for an residue to be considered.
+    b_weighted (boolean): if True, the a pLDDT-weighted number of contact atoms will be counted.
+
+    """
+
+    if pep_mod_start_resi == 0 or pep_mod_end_resi == 0:
         # Default: count contacting atoms in the  whole peptide
         contact_atom_in_peptide = cmd.count_atoms('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
         contact_atom_in_receptor = cmd.count_atoms('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
@@ -164,39 +189,41 @@ def quantify_contact_atom(peptide_chain, receptor_chain, pep_mod_start_resi_glob
         return total_contact_atom_in_interface
     else:
         # count contacting atoms with the insertion only
-        contact_atom_in_peptide_ins_only = cmd.count_atoms('(chain {} and resi {}-{} and b > {}) within 5 of chain {}'.format(peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), str(b_threshold), receptor_chain))
-        contact_atom_in_receptor_ins_only = cmd.count_atoms('chain {} within 5 of (chain {} and resi {}-{} and b > {})'.format(receptor_chain, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), str(b_threshold)))
+        contact_atom_in_peptide_ins_only = cmd.count_atoms('(chain {} and resi {}-{} and b > {}) within 5 of chain {}'.format(peptide_chain, str(pep_mod_start_resi), str(pep_mod_end_resi), str(b_threshold), receptor_chain))
+        contact_atom_in_receptor_ins_only = cmd.count_atoms('chain {} within 5 of (chain {} and resi {}-{} and b > {})'.format(receptor_chain, peptide_chain, str(pep_mod_start_resi), str(pep_mod_end_resi), str(b_threshold)))
         if b_weighted:
-            contact_atom_in_peptide_ins_only = contact_atom_in_peptide_ins_only * average_b('(chain {} and resi {}-{} and b > {}) within 5 of chain {}'.format(peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), str(b_threshold), receptor_chain))
-            contact_atom_in_receptor_ins_only = contact_atom_in_receptor_ins_only * average_b('chain {} within 5 of (chain {} and resi {}-{} and b > {})'.format(receptor_chain, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), str(b_threshold)))
+            contact_atom_in_peptide_ins_only = contact_atom_in_peptide_ins_only * average_b('(chain {} and resi {}-{} and b > {}) within 5 of chain {}'.format(peptide_chain, str(pep_mod_start_resi), str(pep_mod_end_resi), str(b_threshold), receptor_chain))
+            contact_atom_in_receptor_ins_only = contact_atom_in_receptor_ins_only * average_b('chain {} within 5 of (chain {} and resi {}-{} and b > {})'.format(receptor_chain, peptide_chain, str(pep_mod_start_resi), str(pep_mod_end_resi), str(b_threshold)))
 
 
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
         return total_contact_atom_in_interface_ins_only
 
-def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
-    receptor_chain='last', use_relaxed_global=True, anchor_site='C-term'):
+def quantify_peptide_binding_main(pairwise_mode=True, \
+    receptor_chain=receptor_chain_global):
     """
     The main function to measure different metrics for quantifying peptid-receptor binding
-
+    pairwise_mode(boolean): if true, only one competitor will be analyzed, and
+    the difference between the two peptides will be caulculated as well.
+    receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
+    the last chain in the model will be automatically assigned to be the receptor.
     """
 
     object_list = cmd.get_object_list('all')
 
 
     for i, model_name in enumerate(object_list):
-        print(model_name)
+        print('> Processing model {}'.format(model_name))
 
         # find out the receptor chain ID and generate a list of chain IDs for peptides
-        receptor_chain, list_peptide_chain = find_chain_IDs(model_name, auto_find_receptor=auto_find_receptor, receptor_chain=receptor_chain)
+        receptor_chain, list_peptide_chain = find_chain_IDs(model_name, receptor_chain=receptor_chain)
 
         # clean up the view
         if i > 0:
             cmd.align('{} and chain {}'.format(object_list[i], receptor_chain),  '{} and chain {}'.format(object_list[0], receptor_chain))
 
-
         # get metainfo from the pdb file name
-        receptor_name, list_peptide_name = decipher_pdb_file_name(pdb_path, use_relaxed_global=use_relaxed_global)
+        receptor_name, list_peptide_name = decipher_pdb_file_name(pdb_path)
 
 
 
@@ -205,12 +232,12 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
         receptor_center = np.mean(receptor_coordinates, axis=0)
         receptor_Rg = np.sqrt(np.sum((receptor_coordinates - receptor_center)**2) / len(receptor_coordinates))
 
-        if anchor_site == 'C-term' or anchor_site == 'C':
+        if anchor_site_global == 'C-term' or anchor_site_global == 'C':
             anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {}'.format(model_name, receptor_chain ))[-30:]), axis=0)
-        elif anchor_site == 'N-term' or anchor_site == 'N':
+        elif anchor_site_global == 'N-term' or anchor_site_global == 'N':
             anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {}'.format(model_name, receptor_chain ))[0:30]), axis=0)
-        elif type(anchor_site) == int or type(anchor_site) == float:
-            anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, receptor_chain, anchor_site))), axis=0)
+        elif type(anchor_site_global) == int or type(anchor_site_global) == float:
+            anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, receptor_chain, anchor_site_global))), axis=0)
         else:
             print("> Unrecognized membrane anchor site. Using C terminus of the receptor by default.")
             anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {}'.format(model_name, receptor_chain ))[-30:]), axis=0)
@@ -298,7 +325,7 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
             total_contact_atom_in_interface_thresholded = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=pLDDT_threshold_global)
             total_contact_atom_in_interface_ins_only = quantify_contact_atom(peptide_chain, receptor_chain, pep_mod_start_resi_global, pep_mod_end_resi_global, b_threshold=0)
             total_contact_atom_in_interface_weighted = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=0, b_weighted=True)
-            total_contact_atom_in_interface = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=0)
+            total_contact_atom_in_interface = quantify_contact_atom(peptide_chain, receptor_chain, 0, 0, 0)
 
             #calculate angle-factored contact atom number using a logistic function
             binding_angle_factor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_peptide)))
@@ -371,7 +398,7 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
                 total_contact_atom_in_interface_competitor_thresholded = quantify_contact_atom(list_competitor_chains[0], receptor_chain, b_threshold=pLDDT_threshold_global)
                 total_contact_atom_in_interface_competitor_ins_only = quantify_contact_atom(list_competitor_chains[0], receptor_chain, pep_mod_start_resi_global_competitor, pep_mod_end_resi_global_competitor, b_threshold=0)
                 total_contact_atom_in_interface_weighted_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, b_threshold=0, b_weighted=True)
-                total_contact_atom_in_interface_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, b_threshold=0)
+                total_contact_atom_in_interface_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, 0, 0, 0)
 
                 #calculate angle-factored contact atom number using a logistic function
                 binding_angle_factor_competitor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_competitor_peptide)))
@@ -418,7 +445,7 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
                 total_contact_atom_in_interface_difference = None
 
             list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
-                    list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site,\
+                    list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
                     str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, \
                     weighted_peptide_receptor_distance, peptide_tip_receptor_distance, pLDDT_threshold_globaled_peptide_receptor_distance, \
                     peptide_receptor_distance_difference, weighted_peptide_receptor_distance_difference, peptide_tip_receptor_distance_difference, pLDDT_threshold_globaled_peptide_receptor_distance_difference,\
@@ -452,42 +479,51 @@ def quantify_peptide_binding_main(auto_find_receptor=True, pairwise_mode=True, \
     return
 
 def quantify_results_folder(AF2_results_path='./*result*/', \
-    use_relaxed=False, time_stamp=True, mod_start_resi=3, mod_end_resi=9,
-    pLDDT_threshold=25, anchor_site='C-term'):
+    receptor_chain='last', anchor_site='C-term', use_relaxed=False, time_stamp=True,
+    mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0):
     """
     AF2_results_path: path to the folder(s) that contain the AF2 modeling results
         # Format requirement of the pdb file (pdb files generated by the pipeline should already meet the requirements):
         # Filname should look like ReceptorName_and_Peptide1Name_vs_Peptide2Name(_vs_...PeptideXName)_relaxed_rank_X_model_X
-        # The pdb should have more than 1 chains ('A', 'B', ...),
+        # The pdb should have more than 1 chains (('A'), 'B', 'C'...),
         # The last chain should be the receptor, with all the chains ahead being peptide(s)
-        # For example: chain A = peptide 1, chain B = peptide 2, chain C = receptor
+        # Example 1: chain A = peptide 1, chain B = peptide 2, chain C = receptor
+        # Example 2: chain B = peptide 2, chain C = receptor
 
-    database_path: location of the .csv file to store the measurements
+    database_path: (string) location of the .csv file to store the measurements
 
-    use_relaxed_global: whether to use Amber-relaxed models for the quantification
+    use_relaxed: (boolean) whether to use Amber-relaxed models for the quantification
 
-    time_stamp: whether to add timestamp to the output file name (to avoid complications between multiple measurements)
+    time_stamp: (boolean) whether to add timestamp to the output file name (to avoid complications between multiple measurements)
 
-    mod_start_resi_global: Define the start of the modified residues (insert or substitution) within the peptide
+    receptor_chain(string): chain ID of the receptor. Can be 'last' or 'A', 'B', 'C' etc.. If 'last', then the last chain will be asigned as the receptor chain.
 
-    mod_end_resi_global: Define the end of the modified residues (insert or substitution) within the peptide
+    anchor_site: (string or integer) anchor site used for calculating binding angle theta. Can be 'N-term', 'N', 'C-term', 'C', or an integer. If it's an integer, the reisdue with that index will be assigned as the anchor site.
 
-    pLDDT_threshold_global: pLDDT threshold for the thresholed measurements
+    mod_start_resi: (int) Define the start of the modified residues (insert or substitution) within the peptide (for new features being developped)
+
+    mod_end_resi: (int) Define the end of the modified residues (insert or substitution) within the peptide (for new features being developped)
+
+    pLDDT_threshold_global: (int) pLDDT threshold for the thresholed measurements (for new features being developped)
 
     """
+
     global use_relaxed_global
     global mod_start_resi_global
     global mod_end_resi_global
     global pLDDT_threshold_global
+    global receptor_chain_global
+    global anchor_site_global
     global pdb_path
     global database_path
 
-
+    #Update the global variables according to function argument
     use_relaxed_global = use_relaxed
     mod_start_resi_global = mod_start_resi
     mod_end_resi_global = mod_end_resi
     pLDDT_threshold_global = pLDDT_threshold
-
+    anchor_site_global = anchor_site
+    receptor_chain_global = receptor_chain
 
 
     #clean up format of the paths
@@ -506,12 +542,12 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
 
 
     # list out all pdb files in the folder
-    list_pdb_path = generate_pdb_path_list(AF2_results_path, use_relaxed_global=use_relaxed_global)
+    list_pdb_path = generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global)
 
     # Create a new row
     list_to_append = ["model_name", "receptor_name", "peptide_chain", "peptide_name", \
             'competitors', "peptide_seq", "peptide_length", "receptor_Rg", "anchor_site",\
-            "pep_mod_start_resi_global", "pep_mod_end_resi_global", "peptide_receptor_distance", \
+            "pep_mod_start_resi", "pep_mod_end_resi", "peptide_receptor_distance", \
             "pLDDT_weighted_peptide_receptor_distance", "peptide_tip_receptor_distance", "pLDDT_threshold_globaled_peptide_receptor_distance", \
             "peptide_receptor_distance_difference", "weighted_peptide_receptor_distance_difference", "peptide_tip_receptor_distance_difference", "pLDDT_threshold_globaled_peptide_receptor_distance_difference",\
             "total_contact_atom_in_interface_thresholded", "total_contact_atom_in_interface_ins_only", \
@@ -542,16 +578,17 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         csv_writer.writerow(list_to_append)
 
     # measure the pdb files one by one
-    for pdb_path in list_pdb_path:
+    for loaded_pdb_path in list_pdb_path:
+        pdb_path = loaded_pdb_path
         cmd.load(pdb_path)
-        quantify_peptide_binding_main(use_relaxed_global=use_relaxed_global, anchor_site=anchor_site)
+        quantify_peptide_binding_main()
         cmd.do('delete all')
 
     print("> Finished! Results are saved in {}".format(database_path))
 
     return
 
-# Read from command line
+# Read input from command line
 if len(sys.argv) > 1:
     print("> Processing folder {} using default settings".format(sys.argv[-1]))
     AF2_results_path = sys.argv[-1]
