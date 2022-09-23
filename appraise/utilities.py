@@ -65,17 +65,22 @@ def sort_df_by_peptides_and_cleanup(df, list_peptide_order, consider_competitor_
     return df_sorted
 
 def rank_tournament_results(df_average, metric_name='interface_energy_score_difference',\
-    by_match_points=True, tie_threshold='auto', p_value_threshold=0.1, points=[1, 0, -1]):
+    by_match_points=True, tie_threshold='auto', p_value_threshold=0.1, points=[1, 0, -1],\
+    number_of_repeats=10):
     """
     Rank a dataframe (averaged between replicates) by counting match results and
     calculating total points.
     """
-    df_average[metric_name+'_standarized'] = (df_average[metric_name] - np.mean(df_average[metric_name]))/(np.sqrt(np.var(df_average[metric_name])/10))
+
+    df_average[metric_name+'_tstat'] = (df_average[metric_name] - np.mean(df_average[metric_name]))/(np.sqrt(np.var(df_average[metric_name])/number_of_repeats))
 
     if tie_threshold == 'auto':
-        tie_threshold = scipy.stats.norm.ppf(1 - p_value_threshold/2)
+        #Get the critical threshold corresponding to the t value
+        degree_of_freedom = number_of_repeats - 1
+        tie_threshold = scipy.stats.t.ppf(1 - p_value_threshold/2, degree_of_freedom)
+
         print('Used p-value threshold of {:.3f}'.format(p_value_threshold))
-    print('Tie threshold to be {:.2f} of standard deviation: {:.2f}'.format(tie_threshold, np.mean(df_average[metric_name]) + tie_threshold*np.sqrt(np.var(df_average[metric_name])/10)))
+    print('Tie threshold to be {:.2f} of standard deviation: {:.2f}'.format(tie_threshold, np.mean(df_average[metric_name]) + tie_threshold*np.sqrt(np.var(df_average[metric_name])/number_of_repeats)))
 
     if by_match_points:
         if len(points) != 3:
@@ -89,9 +94,9 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             df_peptide = df_average[df_average['peptide_name'] == peptide_name]
 
             #Count number of winning, losing or tie matches
-            n_contact_win = np.sum(df_peptide[metric_name+'_standarized'] > tie_threshold)
-            n_contact_tie = np.sum(df_peptide[metric_name+'_standarized']**2 <= tie_threshold**2)
-            n_contact_lose = np.sum(df_peptide[metric_name+'_standarized'] < -tie_threshold)
+            n_contact_win = np.sum(df_peptide[metric_name+'_tstat'] > tie_threshold)
+            n_contact_tie = np.sum(df_peptide[metric_name+'_tstat']**2 <= tie_threshold**2)
+            n_contact_lose = np.sum(df_peptide[metric_name+'_tstat'] < -tie_threshold)
 
 
             #calculate points
