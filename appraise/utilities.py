@@ -115,7 +115,8 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 
 def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
     feature_to_plot_with='auto', feature_to_rank_with='auto', fig_size='auto', \
-    tie_threshold='auto', p_value_threshold=0.1, vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
+    tie_threshold='auto', p_value_threshold=0.1, number_of_repeats=10, \
+    vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
     xlabel='Competitor peptide', ylabel='Peptide of interest (POI)',\
     xticklabels='auto', yticklabels='auto'):
@@ -129,7 +130,7 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         feature_to_rank_with = feature_of_interest
 
     #Get a ranked square matrix
-    list_peptide_order, tie_threshold, _ = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold)
+    list_peptide_order, tie_threshold, _ = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold, number_of_repeats=number_of_repeats)
     df_average = sort_df_by_peptides_and_cleanup(df_average, list_peptide_order)
     square_matrix = df_average.pivot(index='peptide_name', columns='competitor', values=feature_to_plot_with)
 
