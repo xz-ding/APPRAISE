@@ -5,6 +5,7 @@ Email: xding@caltech.edu, dingxiaozhe@gmail.com
 """
 import pandas as pd
 import numpy as np
+import scipy
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -64,14 +65,17 @@ def sort_df_by_peptides_and_cleanup(df, list_peptide_order, consider_competitor_
     return df_sorted
 
 def rank_tournament_results(df_average, metric_name='interface_energy_score_difference',\
-    by_match_points=True, tie_threshold='auto', points=[1, 0, -1]):
+    by_match_points=True, tie_threshold='auto', p_value_threshold=0.05, points=[1, 0, -1]):
     """
     Rank a dataframe (averaged between replicates) by counting match results and
     calculating total points.
     """
+    df_average[metric_name+'_standarized'] = (df_average[metric_name] - np.mean(df_average[metric_name]))/(np.sqrt(np.var(df_average[metric_name])/10))
+
     if tie_threshold == 'auto':
-        tie_threshold = np.sqrt(np.var(df_average[metric_name]))/10
-        print('Automatically determined the tie threshold to be {:.2f}'.format(tie_threshold))
+        tie_threshold = scipy.stats.norm.ppf(1 - p_value_threshold/2)
+        print('Used p-value threshold of {:.3f}'.format(p_value_threshold))
+    print('Tie threshold to be {:.2f} of standard deviation: {:.2f}'.format(tie_threshold, np.mean(df_average[metric_name]) + tie_threshold*np.sqrt(np.var(df_average[metric_name])/10)))
 
     if by_match_points:
         if len(points) != 3:
@@ -85,9 +89,9 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             df_peptide = df_average[df_average['peptide_name'] == peptide_name]
 
             #Count number of winning, losing or tie matches
-            n_contact_win = np.sum(df_peptide[metric_name] > tie_threshold)
-            n_contact_tie = np.sum(df_peptide[metric_name]**2 <= tie_threshold**2)
-            n_contact_lose = np.sum(df_peptide[metric_name] < -tie_threshold)
+            n_contact_win = np.sum(df_peptide[metric_name+'_standarized'] > tie_threshold)
+            n_contact_tie = np.sum(df_peptide[metric_name+'_standarized']**2 <= tie_threshold**2)
+            n_contact_lose = np.sum(df_peptide[metric_name+'_standarized'] < -tie_threshold)
 
 
             #calculate points
@@ -106,7 +110,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 
 def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
     feature_to_plot_with='auto', feature_to_rank_with='auto', fig_size='auto', \
-    tie_threshold='auto', vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
+    tie_threshold='auto', p_value_threshold=0.05, vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
     xlabel='Competitor peptide', ylabel='Peptide of interest (POI)',\
     xticklabels='auto', yticklabels='auto'):
@@ -120,7 +124,7 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         feature_to_rank_with = feature_of_interest
 
     #Get a ranked square matrix
-    list_peptide_order, tie_threshold, _ = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold)
+    list_peptide_order, tie_threshold, _ = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold)
     df_average = sort_df_by_peptides_and_cleanup(df_average, list_peptide_order)
     square_matrix = df_average.pivot(index='peptide_name', columns='competitor', values=feature_to_plot_with)
 
@@ -144,9 +148,9 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         fig_size = len(square_matrix)/2.5#/3
 
     if vmin == 'auto':
-        vmin = -20 * tie_threshold
+        vmin = -2 * np.sqrt(np.var(df_average[feature_to_plot_with]))
     if vmax == 'auto':
-        vmax = 20 * tie_threshold
+        vmax = 2 * np.sqrt(np.var(df_average[feature_to_plot_with]))
 
 
     sns.set(rc={'figure.figsize':(fig_size,fig_size)})
