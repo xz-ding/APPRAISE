@@ -180,15 +180,12 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
     if pep_mod_start_resi == 0 or pep_mod_end_resi == 0:
         # Default: count contacting atoms in the  whole peptide
         contact_atom_in_peptide = cmd.count_atoms('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
-        print('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
         contact_atom_in_receptor = cmd.count_atoms('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
-        print('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
         if b_weighted:
             contact_atom_in_peptide = contact_atom_in_peptide * average_b('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
             contact_atom_in_receptor = contact_atom_in_receptor * average_b('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
 
         total_contact_atom_in_interface = contact_atom_in_peptide + contact_atom_in_receptor
-        print(peptide_chain, receptor_chain, pep_mod_start_resi, pep_mod_end_resi, b_threshold, b_weighted, contact_atom_in_peptide, contact_atom_in_receptor, total_contact_atom_in_interface)
         return total_contact_atom_in_interface
     else:
         # count contacting atoms with the insertion only
@@ -200,7 +197,6 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
 
 
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
-        print(peptide_chain, receptor_chain, pep_mod_start_resi, pep_mod_end_resi, b_threshold, b_weighted, total_contact_atom_in_interface_ins_only)
         return total_contact_atom_in_interface_ins_only
 
 def quantify_peptide_binding_main(pairwise_mode=True, \
