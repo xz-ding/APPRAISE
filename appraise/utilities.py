@@ -130,7 +130,7 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         feature_to_rank_with = feature_of_interest
 
     #Get a ranked square matrix
-    list_peptide_order, tie_threshold, _ = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold, number_of_repeats=number_of_repeats)
+    list_peptide_order, tie_threshold, list_match_points = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=rank_by_tournament, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold, number_of_repeats=number_of_repeats)
     df_average = sort_df_by_peptides_and_cleanup(df_average, list_peptide_order)
     square_matrix = df_average.pivot(index='peptide_name', columns='competitor', values=feature_to_plot_with)
 
@@ -172,4 +172,4 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
     if save_figure:
         plt.savefig('{}_ranked_by_{}.png'.format(receptor_of_interest, feature_to_rank_with), bbox_inches = 'tight', dpi=300)
 
-    return xticklabels, yticklabels
+    return xticklabels, yticklabels, list_match_points
