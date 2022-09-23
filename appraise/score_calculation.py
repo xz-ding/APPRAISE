@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_constraint=True, \
-    insert_constraint=True, direction_constraint=True, depth_constraint=True):
+    direction_constraint=True, depth_constraint=True):
     """
     Function for getting interactive input in the notebook.
     """
@@ -47,17 +47,12 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
         df_measurements['constrained_interface_energy_score'] = df_measurements['interface_energy_score']
         if angle_constraint == True:
             df_measurements['constrained_interface_energy_score'] -= (np.cos(df_measurements['angle_between_membrane_anchor_and_peptide']) + 1)**6
-        if insert_constraint == True:
-            df_measurements['constrained_interface_energy_score'] -= (df_measurements['peptide_tip_receptor_distance'] / 5)**6
         df_measurements['constrained_interface_energy_score'] = df_measurements['constrained_interface_energy_score'] * (df_measurements['constrained_interface_energy_score'] > 0)
 
         #calculate constrained interface energy score for the competitor peptide
-        df_measurements['peptide_tip_receptor_distance_competitor'] = df_measurements['peptide_tip_receptor_distance'] + df_measurements['peptide_tip_receptor_distance_difference']
         df_measurements['constrained_interface_energy_score_competitor'] = df_measurements['interface_energy_score_competitor']
         if angle_constraint == True:
             df_measurements['constrained_interface_energy_score_competitor'] -= (np.cos(df_measurements['angle_between_membrane_anchor_and_competitor_peptide']) + 1)**6
-        if insert_constraint == True:
-            df_measurements['constrained_interface_energy_score_competitor'] -= (df_measurements['peptide_tip_receptor_distance_competitor'] / 5)**6
         df_measurements['constrained_interface_energy_score_competitor'] = df_measurements['constrained_interface_energy_score_competitor'] * (df_measurements['constrained_interface_energy_score_competitor'] > 0)
 
         #calculate the difference
