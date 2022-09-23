@@ -180,12 +180,15 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
     if pep_mod_start_resi == 0 or pep_mod_end_resi == 0:
         # Default: count contacting atoms in the  whole peptide
         contact_atom_in_peptide = cmd.count_atoms('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
+        print('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
         contact_atom_in_receptor = cmd.count_atoms('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
+        print('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
         if b_weighted:
             contact_atom_in_peptide = contact_atom_in_peptide * average_b('(chain {} and b > {}) within 5 of chain {}'.format(peptide_chain, str(b_threshold), receptor_chain))
             contact_atom_in_receptor = contact_atom_in_receptor * average_b('chain {} within 5 of (chain {} and b > {})'.format(receptor_chain, peptide_chain, str(b_threshold)))
 
         total_contact_atom_in_interface = contact_atom_in_peptide + contact_atom_in_receptor
+        print(peptide_chain, receptor_chain, pep_mod_start_resi, pep_mod_end_resi, b_threshold, b_weighted, contact_atom_in_peptide, contact_atom_in_receptor, total_contact_atom_in_interface)
         return total_contact_atom_in_interface
     else:
         # count contacting atoms with the insertion only
@@ -197,6 +200,7 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
 
 
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
+        print(peptide_chain, receptor_chain, pep_mod_start_resi, pep_mod_end_resi, b_threshold, b_weighted, total_contact_atom_in_interface_ins_only)
         return total_contact_atom_in_interface_ins_only
 
 def quantify_peptide_binding_main(pairwise_mode=True, \
@@ -208,9 +212,10 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
     receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
     """
-
+    #Clean up and load the new pdb file
+    cmd.do('delete all')
+    cmd.load(pdb_path)
     object_list = cmd.get_object_list('all')
-
 
     for i, model_name in enumerate(object_list):
         print('> Processing model {}'.format(model_name))
@@ -244,7 +249,14 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
 
         weighted_receptor_center = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, receptor_chain ))), axis=0)
 
+        # Loop through each chain in the model
         for j, peptide_chain in enumerate(list_peptide_chain):
+
+            # Clean up and load the same model to avoid some internal pymol bug
+            cmd.do('delete all')
+            cmd.load(pdb_path)
+
+            # Measure peptide liength
             peptide_length = len(cmd.get_model('{} and chain {}'.format(model_name, peptide_chain)).get_residues())
 
             # find the name of the peptide
@@ -325,7 +337,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
             total_contact_atom_in_interface_thresholded = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=pLDDT_threshold_global)
             total_contact_atom_in_interface_ins_only = quantify_contact_atom(peptide_chain, receptor_chain, pep_mod_start_resi_global, pep_mod_end_resi_global, b_threshold=0)
             total_contact_atom_in_interface_weighted = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=0, b_weighted=True)
-            total_contact_atom_in_interface = quantify_contact_atom(peptide_chain, receptor_chain, 0, 0, 0)
+            total_contact_atom_in_interface = quantify_contact_atom(peptide_chain, receptor_chain, 0, 0, 0, False)
 
             #calculate angle-factored contact atom number using a logistic function
             binding_angle_factor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_peptide)))
@@ -398,7 +410,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
                 total_contact_atom_in_interface_competitor_thresholded = quantify_contact_atom(list_competitor_chains[0], receptor_chain, b_threshold=pLDDT_threshold_global)
                 total_contact_atom_in_interface_competitor_ins_only = quantify_contact_atom(list_competitor_chains[0], receptor_chain, pep_mod_start_resi_global_competitor, pep_mod_end_resi_global_competitor, b_threshold=0)
                 total_contact_atom_in_interface_weighted_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, b_threshold=0, b_weighted=True)
-                total_contact_atom_in_interface_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, 0, 0, 0)
+                total_contact_atom_in_interface_competitor = quantify_contact_atom(list_competitor_chains[0], receptor_chain, 0, 0, 0, False)
 
                 #calculate angle-factored contact atom number using a logistic function
                 binding_angle_factor_competitor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_competitor_peptide)))
@@ -476,6 +488,8 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
                 csv_writer = csv.writer(write_obj)
                 # Add contents of list as last row in the csv file
                 csv_writer.writerow(list_to_append)
+    #Clean up all pdbs
+    cmd.do('delete all')
     return
 
 def quantify_results_folder(AF2_results_path='./*result*/', \
@@ -580,9 +594,9 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     # measure the pdb files one by one
     for loaded_pdb_path in list_pdb_path:
         pdb_path = loaded_pdb_path
-        cmd.load(pdb_path)
+        #cmd.load(pdb_path)
         quantify_peptide_binding_main()
-        cmd.do('delete all')
+        #cmd.do('delete all')
 
     print("> Finished! Results are saved in {}".format(database_path))
 
