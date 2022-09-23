@@ -65,7 +65,7 @@ def sort_df_by_peptides_and_cleanup(df, list_peptide_order, consider_competitor_
     return df_sorted
 
 def rank_tournament_results(df_average, metric_name='interface_energy_score_difference',\
-    by_match_points=True, tie_threshold='auto', p_value_threshold=0.05, points=[1, 0, -1]):
+    by_match_points=True, tie_threshold='auto', p_value_threshold=0.1, points=[1, 0, -1]):
     """
     Rank a dataframe (averaged between replicates) by counting match results and
     calculating total points.
@@ -110,7 +110,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 
 def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
     feature_to_plot_with='auto', feature_to_rank_with='auto', fig_size='auto', \
-    tie_threshold='auto', p_value_threshold=0.05, vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
+    tie_threshold='auto', p_value_threshold=0.1, vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
     xlabel='Competitor peptide', ylabel='Peptide of interest (POI)',\
     xticklabels='auto', yticklabels='auto'):
