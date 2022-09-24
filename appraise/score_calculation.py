@@ -79,8 +79,8 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
         if angle_constraint == True:
             df_measurements['constrained_interface_energy_score'] -= (df_measurements['angle_between_membrane_anchor_and_peptide'] < np.pi/3) * (1 - df_measurements['angle_between_membrane_anchor_and_peptide'] / 3 * np.pi)**6 * 1000
         if depth_constraint == True:
-            df_measurements['pocket_relative_depth'] = df_measurements['receptor_Rminor'] - df_measurements['peptide_tip_receptor_distance']
-            df_measurements['constrained_interface_energy_score'] += df_measurements['pocket_relative_depth']**3 / 10
+            df_measurements['pocket_relative_depth'] = (df_measurements['receptor_Rminor'] - df_measurements['peptide_tip_receptor_distance'])/df_measurements['receptor_Rminor']
+            df_measurements['constrained_interface_energy_score'] += df_measurements['pocket_relative_depth']**3 * 100
         #Set minimal score to be zero
         df_measurements['constrained_interface_energy_score'] = df_measurements['constrained_interface_energy_score'] * (df_measurements['constrained_interface_energy_score'] > 0)
 
@@ -90,8 +90,8 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
             df_measurements['constrained_interface_energy_score_competitor'] -= (df_measurements['angle_between_membrane_anchor_and_competitor_peptide'] < np.pi/3) * (1 - df_measurements['angle_between_membrane_anchor_and_competitor_peptide'] / 3 * np.pi)**6 * 1000
         if depth_constraint == True:
             df_measurements['peptide_tip_receptor_distance_competitor'] = df_measurements['peptide_tip_receptor_distance'] + df_measurements['peptide_tip_receptor_distance_difference']
-            df_measurements['pocket_relative_depth_competitor'] = df_measurements['receptor_Rminor'] - df_measurements['peptide_tip_receptor_distance_competitor']
-            df_measurements['constrained_interface_energy_score_competitor'] += df_measurements['pocket_relative_depth_competitor']**3 / 10
+            df_measurements['pocket_relative_depth_competitor'] = (df_measurements['receptor_Rminor'] - df_measurements['peptide_tip_receptor_distance_competitor'])/df_measurements['receptor_Rminor']
+            df_measurements['constrained_interface_energy_score_competitor'] += df_measurements['pocket_relative_depth_competitor']**3 * 100
         #Set minimal score to be zero
         df_measurements['constrained_interface_energy_score_competitor'] = df_measurements['constrained_interface_energy_score_competitor'] * (df_measurements['constrained_interface_energy_score_competitor'] > 0)
 
