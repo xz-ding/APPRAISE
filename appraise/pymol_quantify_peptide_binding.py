@@ -282,6 +282,8 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
             # find the peptide center or weighted peptide center
             ar_coordinates = np.array(cmd.get_coords('{} and chain {}'.format(model_name, peptide_chain)))
             peptide_center = np.mean(ar_coordinates, axis=0)
+            peptide_n_receptor_ar_coordinates = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, peptide_chain, receptor_chain)))
+            peptide_n_receptor_center = np.mean(peptide_n_receptor_ar_coordinates, axis=0)
             ar_mod_coordinates = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global))))
             peptide_mod_center = np.mean(ar_mod_coordinates, axis=0)
 
@@ -322,6 +324,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
 
             # measure distances
             peptide_receptor_distance = LA.norm(receptor_center - peptide_center)
+            chang_et_al_distance = LA.norm(receptor_center - peptide_n_receptor_center)
             weighted_peptide_receptor_distance = LA.norm(weighted_receptor_center - weighted_peptide_center)
             peptide_tip_receptor_distance = np.amin(LA.norm(ar_coordinates-receptor_center, axis=1))
             end_to_end_distance = LA.norm(peptide_N_end_residue_center - peptide_C_end_residue_center)
@@ -364,6 +367,8 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
                 # find the peptide center or weighted peptide center in the competitor
                 ar_coordinates_competitor = np.array(cmd.get_coords('{} and chain {}'.format(model_name, list_competitor_chains[0])))
                 peptide_center_competitor = np.mean(ar_coordinates_competitor, axis=0)
+                peptide_n_receptor_ar_coordinates_competitor = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, list_competitor_chains[0], receptor_chain)))
+                peptide_n_receptor_center_competitor = np.mean(peptide_n_receptor_ar_coordinates_competitor, axis=0)
                 ar_mod_coordinates_competitor = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor))))
                 peptide_mod_center_competitor = np.mean(ar_mod_coordinates_competitor, axis=0)
                 ar_contacting_coordinates_competitor = np.array(cmd.get_coords('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain)))
@@ -399,6 +404,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
 
                 # measure distances
                 peptide_receptor_distance_competitor = LA.norm(receptor_center - peptide_center_competitor)
+                chang_et_al_distance_competitor = LA.norm(receptor_center - peptide_n_receptor_center_competitor)
                 weighted_peptide_receptor_distance_competitor = LA.norm(weighted_receptor_center - weighted_peptide_center_competitor)
                 peptide_tip_receptor_distance_competitor = np.amin(LA.norm(ar_coordinates_competitor-receptor_center, axis=1))
                 end_to_end_distance_competitor = LA.norm(competitor_peptide_N_end_residue_center - competitor_peptide_C_end_residue_center)
@@ -459,7 +465,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
 
             list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
                     list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
-                    str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, \
+                    str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, chang_et_al_distance, chang_et_al_distance_competitor,\
                     weighted_peptide_receptor_distance, peptide_tip_receptor_distance, pLDDT_threshold_globaled_peptide_receptor_distance, \
                     peptide_receptor_distance_difference, weighted_peptide_receptor_distance_difference, peptide_tip_receptor_distance_difference, pLDDT_threshold_globaled_peptide_receptor_distance_difference,\
                     total_contact_atom_in_interface_thresholded, total_contact_atom_in_interface_ins_only,\
@@ -562,7 +568,7 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     # Create a new row
     list_to_append = ["model_name", "receptor_name", "peptide_chain", "peptide_name", \
             'competitors', "peptide_seq", "peptide_length", "receptor_Rg", "anchor_site",\
-            "pep_mod_start_resi", "pep_mod_end_resi", "peptide_receptor_distance", \
+            "pep_mod_start_resi", "pep_mod_end_resi", "peptide_receptor_distance", "chang_et_al_distance", "chang_et_al_distance_competitor",\
             "pLDDT_weighted_peptide_receptor_distance", "peptide_tip_receptor_distance", "pLDDT_threshold_globaled_peptide_receptor_distance", \
             "peptide_receptor_distance_difference", "weighted_peptide_receptor_distance_difference", "peptide_tip_receptor_distance_difference", "pLDDT_threshold_globaled_peptide_receptor_distance_difference",\
             "total_contact_atom_in_interface_thresholded", "total_contact_atom_in_interface_ins_only", \
