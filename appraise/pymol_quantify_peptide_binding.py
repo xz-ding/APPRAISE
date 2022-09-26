@@ -354,7 +354,11 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
 
 
             if pairwise_mode:
-                #FInd out the modification start sites of the peptide
+                # Clean up and load the same model to avoid some internal pymol bug
+                cmd.do('delete all')
+                cmd.load(pdb_path)
+
+                #Find out the modification start sites of the peptide
                 competitor_peptide_name = list_peptide_name[1-j]
 
                 if competitor_peptide_name == 'AAV9':
@@ -466,7 +470,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
             list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
                     list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
                     str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, chang_et_al_distance, chang_et_al_distance_competitor,\
-                    weighted_peptide_receptor_distance, peptide_tip_receptor_distance, pLDDT_threshold_globaled_peptide_receptor_distance, \
+                    weighted_peptide_receptor_distance, peptide_tip_receptor_distance, peptide_tip_receptor_distance_competitor, pLDDT_threshold_globaled_peptide_receptor_distance, \
                     peptide_receptor_distance_difference, weighted_peptide_receptor_distance_difference, peptide_tip_receptor_distance_difference, pLDDT_threshold_globaled_peptide_receptor_distance_difference,\
                     total_contact_atom_in_interface_thresholded, total_contact_atom_in_interface_ins_only,\
                     total_contact_atom_in_interface_thresholded_difference, total_contact_atom_in_interface_ins_only_difference, \
@@ -569,7 +573,7 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     list_to_append = ["model_name", "receptor_name", "peptide_chain", "peptide_name", \
             'competitors', "peptide_seq", "peptide_length", "receptor_Rg", "anchor_site",\
             "pep_mod_start_resi", "pep_mod_end_resi", "peptide_receptor_distance", "chang_et_al_distance", "chang_et_al_distance_competitor",\
-            "pLDDT_weighted_peptide_receptor_distance", "peptide_tip_receptor_distance", "pLDDT_threshold_globaled_peptide_receptor_distance", \
+            "pLDDT_weighted_peptide_receptor_distance", "peptide_tip_receptor_distance", "peptide_tip_receptor_distance_competitor", "pLDDT_threshold_globaled_peptide_receptor_distance", \
             "peptide_receptor_distance_difference", "weighted_peptide_receptor_distance_difference", "peptide_tip_receptor_distance_difference", "pLDDT_threshold_globaled_peptide_receptor_distance_difference",\
             "total_contact_atom_in_interface_thresholded", "total_contact_atom_in_interface_ins_only", \
             "total_contact_atom_in_interface_thresholded_difference", "total_contact_atom_in_interface_ins_only_difference", \
