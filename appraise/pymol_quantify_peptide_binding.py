@@ -291,12 +291,13 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
             if ar_contacting_coordinates.size > 1:
                 contacting_center = np.mean(ar_contacting_coordinates, axis=0)
                 pLDDT_weighted_linear_contacting_center = get_pLDDT_weighted_coordinates('({} and chain {}) within 5 of chain {}'.format(model_name, peptide_chain, receptor_chain))
-            peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global)))), axis=0)
-            peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(pep_mod_end_resi_global)))), axis=0)
+
+            peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(1)))), axis=0)
+            peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(peptide_length)))), axis=0)
 
             weighted_peptide_center = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global)))), axis=0)
 
-            pLDDT_weighted_linear_center = get_pLDDT_weighted_linear_center('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(pep_mod_end_resi_global)))
+            pLDDT_weighted_linear_center = get_pLDDT_weighted_linear_center('{} and chain {}'.format(model_name, peptide_chain))
 
 
             # Calculate the average pLDDT score
@@ -358,6 +359,9 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
                 cmd.do('delete all')
                 cmd.load(pdb_path)
 
+                # Measure competitor peptide liength
+                competitor_peptide_length = len(cmd.get_model('{} and chain {}'.format(model_name, list_competitor_chains[0])).get_residues())
+
                 #Find out the modification start sites of the peptide
                 competitor_peptide_name = list_peptide_name[1-j]
 
@@ -381,10 +385,10 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
                     pLDDT_weighted_linear_contacting_center_competitor = get_pLDDT_weighted_coordinates('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain))
 
                 weighted_peptide_center_competitor = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor)))), axis=0)
-                competitor_peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor)))), axis=0)
-                competitor_peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(pep_mod_end_resi_global_competitor)))), axis=0)
+                competitor_peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(1)))), axis=0)
+                competitor_peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(competitor_peptide_length)))), axis=0)
 
-                pLDDT_weighted_linear_center_competitor = get_pLDDT_weighted_linear_center('{} and chain {} and resi {}-{}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor)))
+                pLDDT_weighted_linear_center_competitor = get_pLDDT_weighted_linear_center('{} and chain {}'.format(model_name, list_competitor_chains[0]))
 
 
                 interface_pLDDT_competitor = average_b('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain))
