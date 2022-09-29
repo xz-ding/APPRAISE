@@ -93,20 +93,29 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
         for peptide_name in list_peptide:
             df_peptide = df_average[df_average['peptide_name'] == peptide_name]
 
-            #Count number of winning, losing or tie matches
+            #Count number of winning, losing or tie matches with threshold
             n_contact_win = np.sum(df_peptide[metric_name+'_tstat'] > tie_threshold)
             n_contact_tie = np.sum(df_peptide[metric_name+'_tstat']**2 <= tie_threshold**2)
             n_contact_lose = np.sum(df_peptide[metric_name+'_tstat'] < -tie_threshold)
 
 
+            #Count number of winning, losing or tie matches without threshold for breaking the ties
+            n_contact_win_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] > 0)
+            n_contact_tie_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] == 0)
+            n_contact_lose_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] < 0)
+
+
             #calculate points
             match_points =  points[0] * n_contact_win + points[1] * n_contact_tie + points[2] * n_contact_lose
+            match_points_tie_breaker = points[0] * n_contact_win_tie_breaker + points[1] * n_contact_tie_tie_breaker + points[2] * n_contact_lose_tie_breaker
 
             #record the points
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points'] = match_points
+            df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points_tie_breaker'] = match_points_tie_breaker
 
-        list_peptide_order = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
-        list_match_points = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', metric_name], ascending=False).reset_index()['match_points'].to_list()
+        list_peptide_order = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
+        list_match_points = [df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points'].to_list(), \
+                            df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points_tie_breaker'].to_list()]
 
         return list_peptide_order, tie_threshold, list_match_points
     else:

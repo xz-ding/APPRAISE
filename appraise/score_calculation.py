@@ -11,7 +11,7 @@ def calculate_B_energetic(N_contact, N_clash=0, penalize_clash=True):
     """
     calcualte B_energetic
     """
-    return (N_contact - 1000 * N_clash * penalize_clash) * (N_contact - 1000 * N_clash * penalize_clash> 0)
+    return (N_contact - 1000 * N_clash * penalize_clash) * (N_contact - 1000 * N_clash * penalize_clash > 0)
 
 def calculate_B_angle(theta):
     """
@@ -98,21 +98,25 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
         #calculate constrained interface energy score for the main peptide
         df_measurements['constrained_interface_energy_score'] = df_measurements['interface_energy_score']
         if angle_constraint == True:
-            df_measurements['constrained_interface_energy_score'] += calculate_B_angle(df_measurements['angle_between_membrane_anchor_and_peptide'])
+            df_measurements['B_angle'] = calculate_B_angle(df_measurements['angle_between_membrane_anchor_and_peptide'])
+            df_measurements['constrained_interface_energy_score'] += df_measurements['B_angle']
         if depth_constraint == True:
             df_measurements['pocket_relative_depth'] = calculate_relative_depth(df_measurements['peptide_tip_receptor_distance'], df_measurements['receptor_Rminor'])
-            df_measurements['constrained_interface_energy_score'] += calculate_B_depth(df_measurements['pocket_relative_depth'])
+            df_measurements['B_depth'] = calculate_B_depth(df_measurements['pocket_relative_depth'])
+            df_measurements['constrained_interface_energy_score'] += df_measurements['B_depth']
         #Set minimal score to be zero
         df_measurements['constrained_interface_energy_score'] = df_measurements['constrained_interface_energy_score'] * (df_measurements['constrained_interface_energy_score'] > 0)
 
         #calculate constrained interface energy score for the competitor peptide
         df_measurements['constrained_interface_energy_score_competitor'] = df_measurements['interface_energy_score_competitor']
         if angle_constraint == True:
-            df_measurements['constrained_interface_energy_score_competitor'] += calculate_B_angle(df_measurements['angle_between_membrane_anchor_and_competitor_peptide'])
+            df_measurements['B_angle_competitor'] = calculate_B_angle(df_measurements['angle_between_membrane_anchor_and_competitor_peptide'])
+            df_measurements['constrained_interface_energy_score_competitor'] += df_measurements['B_angle_competitor']
         if depth_constraint == True:
             df_measurements['peptide_tip_receptor_distance_competitor'] = df_measurements['peptide_tip_receptor_distance'] + df_measurements['peptide_tip_receptor_distance_difference']
             df_measurements['pocket_relative_depth_competitor'] = calculate_relative_depth(df_measurements['peptide_tip_receptor_distance_competitor'], df_measurements['receptor_Rminor'])
-            df_measurements['constrained_interface_energy_score_competitor'] += calculate_B_depth(df_measurements['pocket_relative_depth_competitor'])
+            df_measurements['B_depth_competitor'] = calculate_B_depth(df_measurements['pocket_relative_depth_competitor'])
+            df_measurements['constrained_interface_energy_score_competitor'] += df_measurements['B_depth_competitor']
         #Set minimal score to be zero
         df_measurements['constrained_interface_energy_score_competitor'] = df_measurements['constrained_interface_energy_score_competitor'] * (df_measurements['constrained_interface_energy_score_competitor'] > 0)
 
