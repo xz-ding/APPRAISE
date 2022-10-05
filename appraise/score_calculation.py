@@ -7,34 +7,91 @@ import pandas as pd
 import numpy as np
 
 
-def calculate_B_energetic(N_contact, N_clash=0, penalize_clash=True):
+def calculate_B_energetic(N_contact, N_clash=0, clash_penalty_weight=1000):
     """
-    calcualte B_energetic
-    """
-    return (N_contact - 1000 * N_clash * penalize_clash) * (N_contact - 1000 * N_clash * penalize_clash > 0)
+    calcualte B_energetic score.
 
-def calculate_B_angle(theta):
+    N_contact: (float) number of contacting atoms.
+
+    N_clash: (float) number of clashing atoms.
+
+    clash_penalty_weight: (float) the relative weight of the penalty against clashing
+    atoms vs the reward for contacting atoms.
+
     """
-    calcualte B_angle
+    return (N_contact - clash_penalty_weight * N_clash) * (N_contact - clash_penalty_weight * N_clash > 0)
+
+def calculate_B_angle(theta, critical_angle = np.pi/2, angle_exponent=10, angle_penalty_weight=1000):
     """
-    return -1 * (theta < np.pi/2) * (1 - theta / (np.pi/2))**10 * 1000
+    calcualte B_angle score.
+
+    critical_angle: (float) the angle below which penalty starts to apply.
+
+    angle_exponent: (float) the exponent (steepness) of the B_angle function.
+
+    angle_penalty_weight: (float) the relative weight of the penalty against the
+    impossible angles.
+
+    """
+    return -1 * (theta < critical_angle) * (1 - theta / critical_angle)**angle_exponent * angle_penalty_weight
 
 def calculate_relative_depth(distance, R_minor):
+    """
+    Calcualte the relative depth used for calculating B_depth score.
+
+    distance: (float) the distance between the atom on the peptide that is the
+    closest to the receptor and the center of mass of the receptor.
+
+    R_minor: (float) the minor radius of the ellipsoid hull of the recptor.
+
+    """
     return (R_minor-distance)/R_minor
 
-def calculate_B_depth(d):
+def calculate_B_depth(d, depth_exponent=3, depth_weight=100):
     """
-    calcualte B_depth
+    Calcualte B_depth score.
+
+    depth_exponent: (float) the exponent  (steepness) of the B_depth function.
+
+    angle_penalty_weight: (float) the relative weight of the depth score.
+
     """
-    return d**3 * 100
+    return d**depth_exponent * depth_weight
 
 
 
 
-def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_constraint=True, \
-    direction_constraint=True, depth_constraint=True):
+def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
+    depth_constraint=True, clash_penalty_weight=1000, critical_angle = np.pi/2,
+    angle_exponent=10, angle_penalty_weight=1000, depth_exponent=3,
+    depth_weight=100):
     """
-    Function for getting interactive input in the notebook.
+    Calculate the APPRAISE scores based on a dataframe of measurements and
+    returns a new dataframe with new columns containing the scores.
+
+    df_measurements: (Pandas dataframe) the input dataframe containing the
+    necessary measurements.
+
+    version: (float) the version of APPRAISE to be used for calculation.
+
+    angle_constraint: (boolean) if True and APPRAISE version >= 1.1, then
+    B_angle will be considered.
+
+    depth_constraint: (boolean) if True and APPRAISE version >=1.2, then
+    B_depths will be considered.
+
+    clash_penalty_weight: (float) the relative weight of the penalty against
+    clashing atoms vs the reward for contacting atoms.
+
+    angle_exponent: (float) the exponent (steepness) of the B_angle function.
+
+    angle_penalty_weight: (float) the relative weight of the penalty against the
+    impossible angles.
+
+    depth_exponent: (float) the exponent  (steepness) of the B_depth function.
+
+    angle_penalty_weight: (float) the relative weight of the depth score.
+
     """
 
     # For backward compatibility with measuredments from previous versions
@@ -46,8 +103,8 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
     if version == 1:
 
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], penalize_clash)
-        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], penalize_clash)
+        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], clash_penalty_weight)
+        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], clash_penalty_weight)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
         #Summarize the results
@@ -59,8 +116,8 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
         #Development note: v1.1 ranks 9P36 to #2, Ly6a ROC AUC=0.92, but it doesn't give much signal in TTD rankings.
 
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], penalize_clash)
-        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], penalize_clash)
+        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], clash_penalty_weight)
+        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], clash_penalty_weight)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
         ## Calculate constrained interface energy score (APPRAISE-1.1)
@@ -90,8 +147,8 @@ def calculate_scores(df_measurements, version=1.2, penalize_clash=True, angle_co
 
         # Works pretty well across receptors -- except PHP.C1 ranking #2
         ## Calculate interface energy score (APPRAISE-1.0)
-        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], penalize_clash)
-        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], penalize_clash)
+        df_measurements['interface_energy_score'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface'], df_measurements['clash_number'], clash_penalty_weight)
+        df_measurements['interface_energy_score_competitor'] = calculate_B_energetic(df_measurements['total_contact_atom_in_interface_competitor'], df_measurements['clash_number_competitor'], clash_penalty_weight)
         df_measurements['interface_energy_score_difference'] = df_measurements['interface_energy_score'] - df_measurements['interface_energy_score_competitor']
 
         ## Calculate constrained interface energy score (APPRAISE-1.1 and 1.2)
