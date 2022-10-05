@@ -16,14 +16,6 @@ import numpy.linalg as LA
 from pymol import cmd
 from pymol import stored
 
-use_relaxed_global = False
-mod_start_resi_global = 0
-mod_end_resi_global = 0
-pLDDT_threshold_global = 0
-receptor_chain_global = 'last'
-anchor_site_global = 'C-term'
-pdb_path = ' '
-database_path = ' '
 
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
     '''
@@ -129,7 +121,7 @@ def generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global):
     return list_pdb_path
 
 #to do next
-def decipher_pdb_file_name(pdb_path):
+def parse_pdb_file_name(pdb_path):
     """
     Parse out the peptide name and receptor name from pdb file names.
     """
@@ -146,7 +138,8 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
 
-    model_name(string): name of the model
+    model_name(string): name of the model.
+
     receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
     """
@@ -169,11 +162,19 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
     A script to quantify the number of contact atoms beween a peptide and the receptor.
 
     peptide_chain (string): chain ID of the peptide.
+
     receptor_chain (string): chain ID of the receptor.
-    pep_mod_start_resi (int): the start residue index of the range of peptide to be considered. If 0, the whole peptide will be considered.
-    pep_mod_end_resi (int): the end residue index of the range of peptide to be considered. If 0, the whole peptide will be considered.
+
+    pep_mod_start_resi (int): the start residue index of the range of peptide to
+     be considered. If 0, the whole peptide will be considered.
+
+    pep_mod_end_resi (int): the end residue index of the range of peptide to be
+    considered. If 0, the whole peptide will be considered.
+
     b_threshold (float): the pLDDT threshold for an residue to be considered.
-    b_weighted (boolean): if True, the a pLDDT-weighted number of contact atoms will be counted.
+
+    b_weighted (boolean): if True, the a pLDDT-weighted number of contact atoms
+    will be counted.
 
     """
 
@@ -199,14 +200,19 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
         return total_contact_atom_in_interface_ins_only
 
-def quantify_peptide_binding_main(pairwise_mode=True, \
+def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     receptor_chain=receptor_chain_global):
     """
-    The main function to measure different metrics for quantifying peptid-receptor binding
-    pairwise_mode(boolean): if true, only one competitor will be analyzed, and
-    the difference between the two peptides will be caulculated as well.
-    receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
+    The main function to measure different metrics for quantifying
+    peptide-receptor binding within a single pdb file.
+
+    pairwise_mode: (boolean) if true, the first and last peptide will be treated
+     as competitors and analyzed in pairs; the difference between the two peptides
+     will be caulculated as well.
+
+    receptor_chain: (string) can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
+
     """
     #Clean up and load the new pdb file
     cmd.do('delete all')
@@ -224,7 +230,7 @@ def quantify_peptide_binding_main(pairwise_mode=True, \
             cmd.align('{} and chain {}'.format(object_list[i], receptor_chain),  '{} and chain {}'.format(object_list[0], receptor_chain))
 
         # get metainfo from the pdb file name
-        receptor_name, list_peptide_name = decipher_pdb_file_name(pdb_path)
+        receptor_name, list_peptide_name = parse_pdb_file_name(pdb_path)
 
 
 
@@ -519,21 +525,30 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         # Example 1: chain A = peptide 1, chain B = peptide 2, chain C = receptor
         # Example 2: chain B = peptide 2, chain C = receptor
 
-    database_path: (string) location of the .csv file to store the measurements
+    database_path: (string) location of the .csv file to store the measurements.
 
-    use_relaxed: (boolean) whether to use Amber-relaxed models for the quantification
+    use_relaxed: (boolean) whether to use Amber-relaxed models for the
+    quantification.
 
-    time_stamp: (boolean) whether to add timestamp to the output file name (to avoid complications between multiple measurements)
+    time_stamp: (boolean) whether to add timestamp to the output file name
+    (to avoid complications between multiple measurements).
 
-    receptor_chain(string): chain ID of the receptor. Can be 'last' or 'A', 'B', 'C' etc.. If 'last', then the last chain will be asigned as the receptor chain.
+    receptor_chain: (string) chain ID of the receptor. Can be 'last' or 'A', 'B'
+    , 'C' etc.. If 'last', then the last chain will be asigned as the receptor
+    chain.
 
-    anchor_site: (string or integer) anchor site used for calculating binding angle theta. Can be 'N-term', 'N', 'C-term', 'C', or an integer. If it's an integer, the reisdue with that index will be assigned as the anchor site.
+    anchor_site: (string or integer) anchor site used for calculating binding
+    angle theta. Can be 'N-term', 'N', 'C-term', 'C', or an integer. If it's an
+    integer, the reisdue with that index will be assigned as the anchor site.
 
-    mod_start_resi: (int) Define the start of the modified residues (insert or substitution) within the peptide (for new features being developped)
+    mod_start_resi: (int) Define the start of the modified residues (insert or
+    substitution) within the peptide (for new features being developped).
 
-    mod_end_resi: (int) Define the end of the modified residues (insert or substitution) within the peptide (for new features being developped)
+    mod_end_resi: (int) Define the end of the modified residues (insert or
+    substitution) within the peptide (for new features being developped).
 
-    pLDDT_threshold_global: (int) pLDDT threshold for the thresholed measurements (for new features being developped)
+    pLDDT_threshold_global: (int) pLDDT threshold for the thresholed
+    measurements (for new features being developped).
 
     """
 
@@ -610,20 +625,32 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     for loaded_pdb_path in list_pdb_path:
         pdb_path = loaded_pdb_path
         #cmd.load(pdb_path)
-        quantify_peptide_binding_main()
+        quantify_peptide_binding_in_pdb()
         #cmd.do('delete all')
 
     print("> Finished! Results are saved in {}".format(database_path))
 
     return
 
+# Allow the main functions to be run in PyMol syntax
+cmd.extend("quantify_results_folder", quantify_results_folder)
+cmd.extend('count_clash', count_clash)
+
+
+
+# Analyze a folder using the default setting (activated when running the script from the command line)
+use_relaxed_global = False
+mod_start_resi_global = 0
+mod_end_resi_global = 0
+pLDDT_threshold_global = 0
+receptor_chain_global = 'last'
+anchor_site_global = 'C-term'
+pdb_path = ' '
+database_path = ' '
+
+
 # Read input from command line
 if len(sys.argv) > 1:
     print("> Processing folder {} using default settings".format(sys.argv[-1]))
     AF2_results_path = sys.argv[-1]
     quantify_results_folder(AF2_results_path)
-
-
-
-cmd.extend("quantify_results_folder", quantify_results_folder)
-cmd.extend('count_clash', count_clash)
