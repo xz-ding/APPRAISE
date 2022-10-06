@@ -17,6 +17,17 @@ from pymol import cmd
 from pymol import stored
 
 
+# Analyze a folder using the default setting (activated when running the script from the command line)
+use_relaxed_global = False
+mod_start_resi_global = 0
+mod_end_resi_global = 0
+pLDDT_threshold_global = 0
+receptor_chain_global = 'last'
+anchor_site_global = 'C-term'
+pdb_path = ' '
+database_path = ' '
+
+
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
     '''
     A function to count the number of clashing atoms.
@@ -638,15 +649,6 @@ cmd.extend('count_clash', count_clash)
 
 
 
-# Analyze a folder using the default setting (activated when running the script from the command line)
-use_relaxed_global = False
-mod_start_resi_global = 0
-mod_end_resi_global = 0
-pLDDT_threshold_global = 0
-receptor_chain_global = 'last'
-anchor_site_global = 'C-term'
-pdb_path = ' '
-database_path = ' '
 
 
 # Read input from command line
