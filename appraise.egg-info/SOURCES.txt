@@ -1,6 +1,5 @@
 README.md
 setup.py
-appraise/HullRadV8.1.py
 appraise/__init__.py
 appraise/input_fasta_prep.py
 appraise/pymol_quantify_peptide_binding.py
