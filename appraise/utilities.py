@@ -129,7 +129,77 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
     xlabel='Competitor peptide', ylabel='Peptide of interest (POI)',\
     xticklabels='auto', yticklabels='auto'):
+    """
+    A function to rank and generate result heatpmaps for APPRAISE competitions.
 
+    df_average: (pandas dataframe) a dataframe containing the mean scores.
+    The data frame has to contain columns 'peptide_name', 'competitor', as well
+    as the column(s) storing the scores needed for ranking and plotting. The
+    score columns are specified by feature_of_interest or specified by
+    feature_to_plot_with and feature_to_rank_with separately.
+
+
+    feature_of_interest: (string) The feature / score that is going to be used
+    to rank the candidate peptides and plot the heatmap in case
+    feature_to_plot_with or feature_to_rank_with is "auto".
+
+    receptor_of_interest: (string) The name of the receptor. Currently this is
+    only used for naming the output figure.
+
+    feature_to_plot_with: (string) The feature / score that is going to be used
+    to plot the candidate peptides. If 'auto', feature_of_interest will be used.
+
+    feature_to_rank_with: (string) The feature / score that is going to be used
+    to rank the candidate peptides. If 'auto', feature_of_interest will be used.
+
+    fig_size: (float or 'auto') figure size of square matrix. If 'auto', it will
+    be determined based on the number of peptides.
+
+    tie_threshold: (float or 'auto') the numerical threshold to call a tie for a
+    competition. If 'auto', the threshold will be determined using a p value.
+    If using the 'auto' mode, make sure the p_value_threshold and
+    number_of_repeats are accurate.
+
+    p_value_threshold: (float) The p value threshold (two-sided, single-sample
+    Student's t-test) used to determine whether a competition is a tie.
+
+    number_of_repeats: (float) Number of replicate models used to calculate the
+    mean scores. This number will be used in the Student's t-test for tie
+    threshold determination.
+
+    vmin: (float or 'auto') lower limit for the scale bar to pass to seaborn.
+
+    vmax: (float or 'auto') upper limit for the scale bar to pass to seaborn.
+
+    title: (float or 'auto') title of the plot to pass to seaborn.
+
+    palette = "vlag_r": (string) color palette of the scale bar to pass to
+    seaborn.
+
+    save_figure: (boolean) if True, the resulting heatmap will be saved as file.
+
+    rank_by_tournament: (boolean) if True, the competition results will be
+    ranked as a point-based round-robin tournament. If False, the mean value
+    on each row will be used for ranking.
+
+    print_label: (boolean) If True, the peptide names will be followed by a
+    bracketed labels. The labels need to be specified by a label_dictionary.
+
+    label_dictionary: (dictionary) A dictionary that speicifies the labels for
+    each peptide.
+
+    xlabel: (string) the label of the x axis to pass to seaborn.
+
+    ylabel: (string) the label of the y axis to pass to seaborn.
+
+    xticklabels: (string) the label of the x axis ticks to pass to seaborn. if
+    'auto', the peptide names (optionally with bracketed labels if print_label
+    is True) will be used as tick labels.
+
+    yticklabels: (string) the label of the y axis ticks to pass to seaborn. if
+    'auto', the peptide names will be used as tick labels.
+
+    """
     sns.set_context("poster")
 
     #Get the feature to be used to rank and plot
