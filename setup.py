@@ -14,7 +14,7 @@ setuptools.setup(
     version='1.2',
     author='Xiaozhe Ding',
     author_email='xding@caltech.edu',
-    description='Scripts needed for for APPARISE.',
+    description='Scripts and functions needed for for APPARISE.',
     long_description=long_description,
     long_description_content_type='ext/markdown',
     packages=setuptools.find_packages(),
@@ -22,4 +22,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         'Operating System :: MacOS :: MacOS X',
     ),
-)
+    install_requires=[
+          'scipy>=0.18.1',
+          'numpy>=1.18.2',
+          'pandas>=1.1.5',
+          'matplotlib>=3.2.1',
+          'seaborn>=0.11.2'
+    ])

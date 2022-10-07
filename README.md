@@ -14,7 +14,9 @@ APPRAISE 1.2 was tested with the following environment:
 
  - PyMOL 2.3.3 (Schrodinger LLC.)
 
- - Python packages: 
+ - Python packages:
+
+    - scipy 0.18.1
 
     - numpy 1.18.2
 
