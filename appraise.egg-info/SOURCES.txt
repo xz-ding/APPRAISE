@@ -8,4 +8,5 @@ appraise/utilities.py
 appraise.egg-info/PKG-INFO
 appraise.egg-info/SOURCES.txt
 appraise.egg-info/dependency_links.txt
+appraise.egg-info/requires.txt
 appraise.egg-info/top_level.txt

@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: appraise
 Version: 1.2
-Summary: Scripts needed for for APPARISE.
+Summary: Scripts and functions needed for for APPARISE.
 Home-page: UNKNOWN
 Author: Xiaozhe Ding
 Author-email: xding@caltech.edu
@@ -22,7 +22,9 @@ Description: # APPRAISE
         
          - PyMOL 2.3.3 (Schrodinger LLC.)
         
-         - Python packages: 
+         - Python packages:
+        
+            - scipy 0.18.1
         
             - numpy 1.18.2
         
