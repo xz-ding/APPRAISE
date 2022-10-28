@@ -23,7 +23,7 @@ setuptools.setup(
         'Operating System :: MacOS :: MacOS X',
     ),
     install_requires=[
-          'scipy>=0.18.1',
+          'scipy>=1.4.1',
           'numpy>=1.18.2',
           'pandas>=1.1.5',
           'matplotlib>=3.2.1',

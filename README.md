@@ -16,7 +16,7 @@ APPRAISE 1.2 was tested with the following environment:
 
  - Python packages:
 
-    - scipy 0.18.1
+    - scipy 1.4.1
 
     - numpy 1.18.2
 

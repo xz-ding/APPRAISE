@@ -24,7 +24,7 @@ Description: # APPRAISE
         
          - Python packages:
         
-            - scipy 0.18.1
+            - scipy 1.4.1
         
             - numpy 1.18.2
         
