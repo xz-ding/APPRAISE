@@ -657,14 +657,18 @@ cmd.extend('count_clash', count_clash)
 
 
 # Read input from command line
-if len(sys.argv) > 3:
-    print("> Processing folder {} using default settings".format(sys.argv[-1]))
-    # Read input path
-    AF2_results_path = sys.argv[3]
+for i, arg in enumerate(sys.argv):
+    if 'pymol_quantify_peptide_binding.py' in arg:
+        starting_index = i
 
-    # Read output path
-    if len(sys.argv) > 4:
-        output_path = sys.argv[4]
-    else:
-        output_path = 'auto'
-    quantify_results_folder(AF2_results_path, output_path = output_path)
+        if len(sys.argv) > starting_index + 1:
+            print("> Processing folder {} using default settings".format(sys.argv[-1]))
+            # Read input path
+            AF2_results_path = sys.argv[starting_index + 1]
+
+            # Read output path
+            if len(sys.argv) > starting_index + 2:
+                output_path = sys.argv[starting_index + 2]
+            else:
+                output_path = 'auto'
+            quantify_results_folder(AF2_results_path, output_path = output_path)
