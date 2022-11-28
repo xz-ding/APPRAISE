@@ -16,6 +16,10 @@ import numpy.linalg as LA
 from pymol import cmd
 from pymol import stored
 
+from itertools import groupby
+from operator import itemgetter
+
+
 
 # Analyze a folder using the default setting (activated when running the script from the command line)
 use_relaxed_global = False
@@ -26,6 +30,11 @@ receptor_chain_global = 'last'
 anchor_site_global = 'C-term'
 pdb_path = ' '
 database_path = ' '
+
+
+
+
+
 
 
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
@@ -145,7 +154,8 @@ def parse_pdb_file_name(pdb_path):
     return receptor_name, list_peptide_name
 
 
-def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
+def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
+    glycine_linkers='auto'):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
 
@@ -155,16 +165,96 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
     the last chain in the model will be automatically assigned to be the receptor.
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
-    if receptor_chain=='last':
-        chain_list = cmd.get_chains(model_name)
+    chain_list = cmd.get_chains(model_name)
+    if glycine_linkers == True or (glycine_linkers == 'auto' and len(chain_list) == 1):
+        split_by_glycine_linkers(chain_list)
+
+    if receptor_chain == 'last':
         receptor_chain = chain_list[-1]
         list_peptide_chain = chain_list[0:-1]
     else:
         list_peptide_chain = []
-        ascII_now = 65
-        while ascII_now < ord(receptor_chain):
-            list_peptide_chain += chr(ascII_now)
+        for chain in chain_list:
+            if chain != receptor_chain:
+                list_peptide_chain += [chain]
+
     return receptor_chain, list_peptide_chain
+
+
+def find_residue_indices(selection_string='sele'):
+    """
+    A utility function to find out the residue IDs of a selection.
+    """
+    stored.residues = set()
+    cmd.iterate(selector.process(selection_string), 'stored.residues.add(resv)')
+
+    return list(sorted(stored.residues))
+
+def find_glycine_linkers(selection_string='all', min_linker_length=10):
+    """
+    Return a list of start and end indices of glycine linkers that are longer
+    than the min_linker_length.
+    """
+    selection_string = 'pepseq {}'.format('G' * min_linker_length)
+    glycine_linker_residue_indices = find_residue_indices(selection_string)
+
+    list_glycine_linker_ranges = []
+    for k, g in groupby(enumerate(glycine_linker_residue_indices), lambda (i, x): i-x):
+        individual_glycine_linker_indices = map(itemgetter(1), g)
+        list_glycine_linker_ranges += [[individual_glycine_linker_indices[0], individual_glycine_linker_indices[-1]]]
+    return list_glycine_linker_ranges
+
+
+def split_by_glycine_linkers(list_old_chain_ids, min_linker_length=10):
+    """
+    Split all chains that are linked by glycines.
+    """
+    list_new_chain_indices = []
+    for old_chain_id in list_old_chain_ids:
+        list_glycine_linker_ranges = find_glycine_linkers(old_chain_id, \
+            min_linker_length=min_linker_length)
+
+        # Identify the ranges for the first sub chain
+        if list_glycine_linker_ranges[0][0] != 1:
+            list_new_chain_indices += [[old_chain_id, 1, list_glycine_linker_ranges[0][0] - 1]]
+        #Identify the ranges for the other sub chains
+        for i, glycine_linkers in enumerate(list_glycine_linker_ranges):
+            cmd.do('remove chain {} and resi {}-{}'.format(old_chain_id, \
+                glycine_linkers[0], glycine_linkers[1]))
+            if i != len(list_glycine_linker_ranges) - 1:
+                list_new_chain_indices += [[old_chain_id, \
+                    list_glycine_linker_ranges[i][1] + 1, \
+                    list_glycine_linker_ranges[i + 1][0] - 1]]
+            else:
+                list_new_chain_indices += [[old_chain_id, \
+                    list_glycine_linker_ranges[i][1] + 1, \
+                    10000]]
+
+    # get a list of new chain IDs
+    list_new_chain_ids = []
+    for i in range(len(list_new_chain_indices)):
+        candidate_char = 'A'
+        while (candidate_char in list_old_chain_ids) or (candidate_char in list_new_chain_ids):
+             candidate_char = chr(ord(candidate_char) + 1)
+        list_new_chain_ids += [candidate_char]
+
+    # alter the IDs of new chains
+    for i, new_chain_indces in enumerate(list_new_chain_indices):
+        new_chain_id = list_new_chain_ids[i]
+        old_chain_id = new_chain_indces[0]
+        start_index = new_chain_indces[1]
+        end_index = new_chain_indces[2]
+        cmd.do('alter chain {} and resi {}-{}, chain=\"{}\"'.format(old_chain_id, \
+            start_index, end_index, new_chain_id))
+        cmd.do('alter chain {} and resi {}-{}, resi=str(int(resi) - {})'.format(new_chain_id, \
+            start_index, end_index, (start_index - 1)))
+
+    #delete the empty old chains
+    for old_chain_id in list_old_chain_ids:
+        cmd.do('remove chain {}'.format(old_chain_id))
+
+    return
+
 
 
 def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
@@ -210,6 +300,9 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
 
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
         return total_contact_atom_in_interface_ins_only
+
+
+
 
 def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     receptor_chain=receptor_chain_global):
