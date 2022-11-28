@@ -302,7 +302,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             peptide_n_receptor_ar_coordinates = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, peptide_chain, receptor_chain)))
             peptide_n_receptor_center = np.mean(peptide_n_receptor_ar_coordinates, axis=0)
             ar_mod_coordinates = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global))))
-            peptide_mod_center = np.mean(ar_mod_coordinates, axis=0)
+            #peptide_mod_center = np.mean(ar_mod_coordinates, axis=0)
 
             ar_contacting_coordinates = np.array(cmd.get_coords('({} and chain {}) within 5 of chain {}'.format(model_name, peptide_chain, receptor_chain)))
             if ar_contacting_coordinates.size > 1:
@@ -395,7 +395,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
                 peptide_n_receptor_ar_coordinates_competitor = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, list_competitor_chains[0], receptor_chain)))
                 peptide_n_receptor_center_competitor = np.mean(peptide_n_receptor_ar_coordinates_competitor, axis=0)
                 ar_mod_coordinates_competitor = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor))))
-                peptide_mod_center_competitor = np.mean(ar_mod_coordinates_competitor, axis=0)
+                #peptide_mod_center_competitor = np.mean(ar_mod_coordinates_competitor, axis=0)
                 ar_contacting_coordinates_competitor = np.array(cmd.get_coords('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain)))
                 if ar_contacting_coordinates_competitor.size > 1 :
                     contacting_center_competitor = np.mean(ar_contacting_coordinates_competitor, axis=0)
