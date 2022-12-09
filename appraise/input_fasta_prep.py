@@ -26,13 +26,20 @@ def save_fasta(jobname, sequence, folder_path='./input_fasta/'):
 
 def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names, \
     list_peptide1_seqs, mode='pairwise', square_matrix=True, \
-    list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4, folder_path='./input_fasta/'):
+    list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4, \
+    folder_path='./input_fasta/', use_glycine_linker=False, \
+    glycine_linker_length=25):
     """
     Create and save input fastas for AlphaFold2.
     """
 
     list_query_sequence = []
     list_jobname = []
+
+    if use_glycine_linker == False:
+        split_linker = ':'
+    else:
+        split_linker = 'G' * glycine_linker_length
 
     if mode == 'pairwise':
         if square_matrix:
@@ -41,21 +48,21 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names, \
 
         for j, peptide1_name in enumerate(list_peptide1_names):
             if len(list_peptide2_names) == 0:
-                query_sequence =  list_peptide1_seqs[j] + ":" + receptor_seq
+                query_sequence =  list_peptide1_seqs[j] + split_linker + receptor_seq
                 jobname = receptor_name + "_and_" + peptide1_name
                 list_query_sequence += [query_sequence]
                 list_jobname += [jobname]
                 save_fasta(jobname, query_sequence, folder_path)
             else:
                 for k, peptide2_name in enumerate(list_peptide2_names):
-                    query_sequence =  list_peptide1_seqs[j] + ":" + list_peptide2_seqs[k] + ":"+ receptor_seq
+                    query_sequence =  list_peptide1_seqs[j] + split_linker + list_peptide2_seqs[k] + split_linker+ receptor_seq
                     jobname = receptor_name + "_and_" + peptide1_name + "_vs_" + peptide2_name
                     list_query_sequence += [query_sequence]
                     list_jobname += [jobname]
                     save_fasta(jobname, query_sequence, folder_path)
     elif mode == 'single':
         for j, peptide1_name in enumerate(list_peptide1_names):
-            query_sequence =  list_peptide1_seqs[j] + ":" + receptor_seq
+            query_sequence =  list_peptide1_seqs[j] + split_linker + receptor_seq
             jobname = receptor_name + "_and_" + peptide1_name
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
@@ -74,7 +81,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names, \
             jobname = receptor_name + "_and_"
             for j in range(len(df_pool)):
                 jobname += df_pool.loc[j]['peptide_name'] + "_vs_"
-                query_sequence += df_pool.loc[j]['peptide_seq'] + ":"
+                query_sequence += df_pool.loc[j]['peptide_seq'] + split_linker
             jobname = jobname[0:-4]
             query_sequence += receptor_seq
             list_query_sequence += [query_sequence]
@@ -90,7 +97,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names, \
             jobname = receptor_name + "_and_"
             for j in range(len(df_pool)):
                 jobname += df_pool.loc[j]['peptide_name'] + "_vs_"
-                query_sequence += df_pool.loc[j]['peptide_seq'] + ":"
+                query_sequence += df_pool.loc[j]['peptide_seq'] + split_linker
             jobname = jobname[0:-4]
             query_sequence += receptor_seq
             list_query_sequence += [query_sequence]
