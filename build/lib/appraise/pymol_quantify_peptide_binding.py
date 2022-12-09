@@ -16,6 +16,10 @@ import numpy.linalg as LA
 from pymol import cmd
 from pymol import stored
 
+from itertools import groupby
+from operator import itemgetter
+
+
 
 # Analyze a folder using the default setting (activated when running the script from the command line)
 use_relaxed_global = False
@@ -26,6 +30,11 @@ receptor_chain_global = 'last'
 anchor_site_global = 'C-term'
 pdb_path = ' '
 database_path = ' '
+
+
+
+
+
 
 
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
@@ -145,7 +154,8 @@ def parse_pdb_file_name(pdb_path):
     return receptor_name, list_peptide_name
 
 
-def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
+def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
+    glycine_linkers='auto'):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
 
@@ -155,16 +165,96 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global):
     the last chain in the model will be automatically assigned to be the receptor.
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
-    if receptor_chain=='last':
-        chain_list = cmd.get_chains(model_name)
+    chain_list = cmd.get_chains(model_name)
+    if glycine_linkers == True or (glycine_linkers == 'auto' and len(chain_list) == 1):
+        split_by_glycine_linkers(chain_list)
+
+    if receptor_chain == 'last':
         receptor_chain = chain_list[-1]
         list_peptide_chain = chain_list[0:-1]
     else:
         list_peptide_chain = []
-        ascII_now = 65
-        while ascII_now < ord(receptor_chain):
-            list_peptide_chain += chr(ascII_now)
+        for chain in chain_list:
+            if chain != receptor_chain:
+                list_peptide_chain += [chain]
+
     return receptor_chain, list_peptide_chain
+
+
+def find_residue_indices(selection_string='sele'):
+    """
+    A utility function to find out the residue IDs of a selection.
+    """
+    stored.residues = set()
+    cmd.iterate(selector.process(selection_string), 'stored.residues.add(resv)')
+
+    return list(sorted(stored.residues))
+
+def find_glycine_linkers(selection_string='all', min_linker_length=10):
+    """
+    Return a list of start and end indices of glycine linkers that are longer
+    than the min_linker_length.
+    """
+    selection_string = 'pepseq {}'.format('G' * min_linker_length)
+    glycine_linker_residue_indices = find_residue_indices(selection_string)
+
+    list_glycine_linker_ranges = []
+    for k, g in groupby(enumerate(glycine_linker_residue_indices), lambda (i, x): i-x):
+        individual_glycine_linker_indices = map(itemgetter(1), g)
+        list_glycine_linker_ranges += [[individual_glycine_linker_indices[0], individual_glycine_linker_indices[-1]]]
+    return list_glycine_linker_ranges
+
+
+def split_by_glycine_linkers(list_old_chain_ids, min_linker_length=10):
+    """
+    Split all chains that are linked by glycines.
+    """
+    list_new_chain_indices = []
+    for old_chain_id in list_old_chain_ids:
+        list_glycine_linker_ranges = find_glycine_linkers(old_chain_id, \
+            min_linker_length=min_linker_length)
+
+        # Identify the ranges for the first sub chain
+        if list_glycine_linker_ranges[0][0] != 1:
+            list_new_chain_indices += [[old_chain_id, 1, list_glycine_linker_ranges[0][0] - 1]]
+        #Identify the ranges for the other sub chains
+        for i, glycine_linkers in enumerate(list_glycine_linker_ranges):
+            cmd.do('remove chain {} and resi {}-{}'.format(old_chain_id, \
+                glycine_linkers[0], glycine_linkers[1]))
+            if i != len(list_glycine_linker_ranges) - 1:
+                list_new_chain_indices += [[old_chain_id, \
+                    list_glycine_linker_ranges[i][1] + 1, \
+                    list_glycine_linker_ranges[i + 1][0] - 1]]
+            else:
+                list_new_chain_indices += [[old_chain_id, \
+                    list_glycine_linker_ranges[i][1] + 1, \
+                    10000]]
+
+    # get a list of new chain IDs
+    list_new_chain_ids = []
+    for i in range(len(list_new_chain_indices)):
+        candidate_char = 'A'
+        while (candidate_char in list_old_chain_ids) or (candidate_char in list_new_chain_ids):
+             candidate_char = chr(ord(candidate_char) + 1)
+        list_new_chain_ids += [candidate_char]
+
+    # alter the IDs of new chains
+    for i, new_chain_indces in enumerate(list_new_chain_indices):
+        new_chain_id = list_new_chain_ids[i]
+        old_chain_id = new_chain_indces[0]
+        start_index = new_chain_indces[1]
+        end_index = new_chain_indces[2]
+        cmd.do('alter chain {} and resi {}-{}, chain=\"{}\"'.format(old_chain_id, \
+            start_index, end_index, new_chain_id))
+        cmd.do('alter chain {} and resi {}-{}, resi=str(int(resi) - {})'.format(new_chain_id, \
+            start_index, end_index, (start_index - 1)))
+
+    #delete the empty old chains
+    for old_chain_id in list_old_chain_ids:
+        cmd.do('remove chain {}'.format(old_chain_id))
+
+    return
+
 
 
 def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
@@ -210,6 +300,9 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
 
         total_contact_atom_in_interface_ins_only = contact_atom_in_peptide_ins_only + contact_atom_in_receptor_ins_only
         return total_contact_atom_in_interface_ins_only
+
+
+
 
 def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     receptor_chain=receptor_chain_global):
@@ -302,7 +395,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             peptide_n_receptor_ar_coordinates = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, peptide_chain, receptor_chain)))
             peptide_n_receptor_center = np.mean(peptide_n_receptor_ar_coordinates, axis=0)
             ar_mod_coordinates = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global))))
-            peptide_mod_center = np.mean(ar_mod_coordinates, axis=0)
+            #peptide_mod_center = np.mean(ar_mod_coordinates, axis=0)
 
             ar_contacting_coordinates = np.array(cmd.get_coords('({} and chain {}) within 5 of chain {}'.format(model_name, peptide_chain, receptor_chain)))
             if ar_contacting_coordinates.size > 1:
@@ -395,7 +488,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
                 peptide_n_receptor_ar_coordinates_competitor = np.array(cmd.get_coords('{} and (chain {} or chain {})'.format(model_name, list_competitor_chains[0], receptor_chain)))
                 peptide_n_receptor_center_competitor = np.mean(peptide_n_receptor_ar_coordinates_competitor, axis=0)
                 ar_mod_coordinates_competitor = np.array(cmd.get_coords('{} and chain {} and resi {}-{}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor))))
-                peptide_mod_center_competitor = np.mean(ar_mod_coordinates_competitor, axis=0)
+                #peptide_mod_center_competitor = np.mean(ar_mod_coordinates_competitor, axis=0)
                 ar_contacting_coordinates_competitor = np.array(cmd.get_coords('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain)))
                 if ar_contacting_coordinates_competitor.size > 1 :
                     contacting_center_competitor = np.mean(ar_contacting_coordinates_competitor, axis=0)
@@ -526,7 +619,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 
 def quantify_results_folder(AF2_results_path='./*result*/', \
     receptor_chain='last', anchor_site='C-term', use_relaxed=False, time_stamp=True,
-    mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0):
+    mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, output_path='auto'):
     """
     AF2_results_path: path to the folder(s) that contain the AF2 modeling results
         # Format requirement of the pdb file (pdb files generated by the pipeline should already meet the requirements):
@@ -535,8 +628,6 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         # The last chain should be the receptor, with all the chains ahead being peptide(s)
         # Example 1: chain A = peptide 1, chain B = peptide 2, chain C = receptor
         # Example 2: chain B = peptide 2, chain C = receptor
-
-    database_path: (string) location of the .csv file to store the measurements.
 
     use_relaxed: (boolean) whether to use Amber-relaxed models for the
     quantification.
@@ -560,6 +651,9 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
 
     pLDDT_threshold_global: (int) pLDDT threshold for the thresholed
     measurements (for new features being developped).
+
+    output_path: (str) the folder that will store the database file. If auto,
+    it will be the same folder that stores the AF2_results folder.
 
     """
 
@@ -587,13 +681,17 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     if AF2_results_path[0] != '/' and AF2_results_path[0] != '~' and AF2_results_path[0] != '.':
         AF2_results_path = './' + AF2_results_path
 
+    #generate output path
+    if output_path == 'auto':
+        output_path = '/'.join(AF2_results_path.split('/')[0:-2])
+
     #generate time-stampped output file name
     if time_stamp:
         now = datetime.now()
         dt_string = now.strftime("%m%d%H%M")
-        database_path = '/'.join(AF2_results_path.split('/')[0:-2])+'/database_APPRAISE_measurements_{}.csv'.format(dt_string)
+        database_path = output_path + '/database_APPRAISE_measurements_{}.csv'.format(dt_string)
     else:
-        database_path = '/'.join(AF2_results_path.split('/')[0:-2])+'/database_APPRAISE_measurements.csv'
+        database_path = output_path + '/database_APPRAISE_measurements.csv'
 
 
     # list out all pdb files in the folder
@@ -652,7 +750,18 @@ cmd.extend('count_clash', count_clash)
 
 
 # Read input from command line
-if len(sys.argv) > 1:
-    print("> Processing folder {} using default settings".format(sys.argv[-1]))
-    AF2_results_path = sys.argv[-1]
-    quantify_results_folder(AF2_results_path)
+for i, arg in enumerate(sys.argv):
+    if 'pymol_quantify_peptide_binding.py' in arg:
+        starting_index = i
+
+        if len(sys.argv) > starting_index + 1:
+            print("> Processing folder {} using default settings".format(sys.argv[-1]))
+            # Read input path
+            AF2_results_path = sys.argv[starting_index + 1]
+
+            # Read output path
+            if len(sys.argv) > starting_index + 2:
+                output_path = sys.argv[starting_index + 2]
+            else:
+                output_path = 'auto'
+            quantify_results_folder(AF2_results_path, output_path = output_path)
