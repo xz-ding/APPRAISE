@@ -339,7 +339,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 
 
 
-    print('> Processing model {}'.format(model_name))
+    print('\n\n > Processing model {}'.format(model_name))
 
     # find out the receptor chain ID and generate a list of chain IDs for peptides
 
@@ -347,11 +347,10 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     # get metainfo from the pdb file name
     receptor_name, list_peptide_name = parse_pdb_file_name(pdb_path)
 
-    ### debugging ###
-    print(i)
-    print(receptor_chain)
-    print(list_peptide_chain)
-    ### debugging ###
+    # ### debugging ###
+    # print(receptor_chain)
+    # print(list_peptide_chain)
+    # ### debugging ###
 
     # find the receptor center and membrane_anchor (last 30 atoms)
     receptor_coordinates = np.array(cmd.get_coords('{} and chain {}'.format(model_name, receptor_chain )))
@@ -408,12 +407,12 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 
         # find the peptide center or weighted peptide center
 
-        ### debugging ###
-        print(model_name)
-        print(peptide_chain)
-        print(peptide_length)
-        print(list_competitor_chains)
-        ### debugging ###
+        # ### debugging ###
+        # print(model_name)
+        # print(peptide_chain)
+        # print(peptide_length)
+        # print(list_competitor_chains)
+        # ### debugging ###
 
 
         ar_coordinates = np.array(cmd.get_coords('{} and chain {}'.format(model_name, peptide_chain)))
