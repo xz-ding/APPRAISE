@@ -36,7 +36,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                        list_peptide1_seqs, mode='pairwise', square_matrix=True,
                        list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4,
                        folder_path='./input_fasta/', use_glycine_linker=False,
-                       glycine_linker_length=25):
+                       glycine_linker_length=25, random_seed=42):
     """
     Create and save input fastas for structural modeling in ColabFold (with
     either AlphaFold-multimer or ESMfold). More specifically, the function generates fasta files for the specified receptor and peptides according to the specified mode and saves them in the specified folder_path. The mode argument can be 'pairwise', in which case fasta files will be generated
@@ -93,6 +93,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
     elif mode == 'pooled':
         df_peptides_to_model = pd.DataFrame({'peptide_name': list_peptide1_names, 'peptide_seq': list_peptide1_seqs})
         for i in range(int(len(df_peptides_to_model) / pool_size)):
+            np.random.RandomState(seed=random_seed)
             # Randomly choose a pool and remove it from the original library
             df_pool = df_peptides_to_model.sample(pool_size)
             df_peptides_to_model = df_peptides_to_model.drop(df_pool.index)
