@@ -6,6 +6,7 @@ Email: xding@caltech.edu, dingxiaozhe@gmail.com
 
 import os
 import pandas as pd
+import numpy as np
 
 
 def save_fasta(jobname, sequence, folder_path='./input_fasta/'):
@@ -92,18 +93,44 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
 
     elif mode == 'pooled':
         df_peptides_to_model = pd.DataFrame({'peptide_name': list_peptide1_names, 'peptide_seq': list_peptide1_seqs})
+        #set random state
+        np.random.seed(seed=random_seed)
+
         for i in range(int(len(df_peptides_to_model) / pool_size)):
-            np.random.RandomState(seed=random_seed)
             # Randomly choose a pool and remove it from the original library
             df_pool = df_peptides_to_model.sample(pool_size)
             df_peptides_to_model = df_peptides_to_model.drop(df_pool.index)
+            df_pool = df_pool.reset_index()
 
-            # Generate the complex fasta files
-            query_sequence = receptor_seq
-            for j, row in df_pool.iterrows():
-                query_sequence = row['peptide_seq'] + split_linker + query_sequence
+            # Generate query sequence and standard names with the pool
+            query_sequence = ''
+            jobname = receptor_name + "_and_"
+            for j in range(len(df_pool)):
+                jobname += df_pool.loc[j]['peptide_name'] + "_vs_"
+                query_sequence += df_pool.loc[j]['peptide_seq'] + split_linker
+            jobname = jobname[0:-4]
+            query_sequence += receptor_seq
 
-            jobname = receptor_name + '_and_pooled_{}'.format(i)
+            #record the generated results
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
+        # Deal with the remaining leftover sequences
+        if len(df_peptides_to_model) > 0:
+            # Use the rest variants that were not enough to form a standard-sized pool to form a pool
+            df_pool = df_peptides_to_model.reset_index()
+
+            # Generate query sequence and standard names with the pool
+            query_sequence = ''
+            jobname = receptor_name + "_and_"
+            for j in range(len(df_pool)):
+                jobname += df_pool.loc[j]['peptide_name'] + "_vs_"
+                query_sequence += df_pool.loc[j]['peptide_seq'] + split_linker
+            jobname = jobname[0:-4]
+            query_sequence += receptor_seq
+
+            #record the generated results
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
             save_fasta(jobname, query_sequence, folder_path)
