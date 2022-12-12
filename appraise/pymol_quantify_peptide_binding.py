@@ -427,8 +427,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             contacting_center = np.mean(ar_contacting_coordinates, axis=0)
             pLDDT_weighted_linear_contacting_center = get_pLDDT_weighted_coordinates('({} and chain {}) within 5 of chain {}'.format(model_name, peptide_chain, receptor_chain))
 
-        peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(1)))), axis=0)
-        peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(peptide_length)))), axis=0)
+        #peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(1)))), axis=0)
+        #peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, peptide_chain, str(peptide_length)))), axis=0)
 
         weighted_peptide_center = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, peptide_chain, str(pep_mod_start_resi_global), str(pep_mod_end_resi_global)))), axis=0)
 
@@ -463,10 +463,10 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         chang_et_al_distance = LA.norm(receptor_center - peptide_n_receptor_center)
         weighted_peptide_receptor_distance = LA.norm(weighted_receptor_center - weighted_peptide_center)
         peptide_tip_receptor_distance = np.amin(LA.norm(ar_coordinates-receptor_center, axis=1))
-        end_to_end_distance = LA.norm(peptide_N_end_residue_center - peptide_C_end_residue_center)
+        #end_to_end_distance = LA.norm(peptide_N_end_residue_center - peptide_C_end_residue_center)
 
         # Get peptide direction
-        peptide_direction = LA.norm(receptor_center - peptide_C_end_residue_center) - LA.norm(receptor_center - peptide_N_end_residue_center)
+        #peptide_direction = LA.norm(receptor_center - peptide_C_end_residue_center) - LA.norm(receptor_center - peptide_N_end_residue_center)
 
         # get peptide sequence
         peptide_seq = cmd.get_fastastr('{} and chain {}'.format(model_name, peptide_chain ), -1, 1).split('\n')[1]
@@ -480,7 +480,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         #calculate angle-factored contact atom number using a logistic function
         binding_angle_factor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_peptide)))
         total_contact_atom_in_interface_angle_factored = binding_angle_factor * total_contact_atom_in_interface
-        folded_factor = 1 / (1 + np.exp((end_to_end_distance - 20)/2))
+        #folded_factor = 1 / (1 + np.exp((end_to_end_distance - 20)/2))
         distance_to_membrane_factor = 1 / (1 + np.exp((3 - contact_point_distance_to_membrane)))
 
         # measure clashes
@@ -522,8 +522,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
                 pLDDT_weighted_linear_contacting_center_competitor = get_pLDDT_weighted_coordinates('({} and chain {}) within 5 of chain {}'.format(model_name, list_competitor_chains[0], receptor_chain))
 
             weighted_peptide_center_competitor = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, list_competitor_chains[0], str(pep_mod_start_resi_global_competitor), str(pep_mod_end_resi_global_competitor)))), axis=0)
-            competitor_peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(1)))), axis=0)
-            competitor_peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(competitor_peptide_length)))), axis=0)
+            # competitor_peptide_N_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(1)))), axis=0)
+            # competitor_peptide_C_end_residue_center = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, list_competitor_chains[0], str(competitor_peptide_length)))), axis=0)
 
             pLDDT_weighted_linear_center_competitor = get_pLDDT_weighted_linear_center('{} and chain {}'.format(model_name, list_competitor_chains[0]))
 
@@ -552,10 +552,10 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             chang_et_al_distance_competitor = LA.norm(receptor_center - peptide_n_receptor_center_competitor)
             weighted_peptide_receptor_distance_competitor = LA.norm(weighted_receptor_center - weighted_peptide_center_competitor)
             peptide_tip_receptor_distance_competitor = np.amin(LA.norm(ar_coordinates_competitor-receptor_center, axis=1))
-            end_to_end_distance_competitor = LA.norm(competitor_peptide_N_end_residue_center - competitor_peptide_C_end_residue_center)
+            #end_to_end_distance_competitor = LA.norm(competitor_peptide_N_end_residue_center - competitor_peptide_C_end_residue_center)
 
             # Get peptide direction
-            peptide_direction_competitor = LA.norm(receptor_center - competitor_peptide_C_end_residue_center) - LA.norm(receptor_center - competitor_peptide_N_end_residue_center)
+            #peptide_direction_competitor = LA.norm(receptor_center - competitor_peptide_C_end_residue_center) - LA.norm(receptor_center - competitor_peptide_N_end_residue_center)
 
 
             # count contacting atoms in the competitors
@@ -567,7 +567,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             #calculate angle-factored contact atom number using a logistic function
             binding_angle_factor_competitor = 1 / (1 + np.exp(np.pi - 6 * np.absolute(angle_between_membrane_anchor_and_competitor_peptide)))
             total_contact_atom_in_interface_competitor_angle_factored = binding_angle_factor_competitor * total_contact_atom_in_interface_competitor
-            folded_factor_competitor = 1 / (1 + np.exp((end_to_end_distance_competitor - 20)/2))
+            #folded_factor_competitor = 1 / (1 + np.exp((end_to_end_distance_competitor - 20)/2))
             distance_to_membrane_factor_competitor = 1 / (1 + np.exp((3 - contact_point_distance_to_membrane_competitor)))
 
             # measure clashes
@@ -624,14 +624,14 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
                 insert_contact_distance, insert_contact_distance_competitor,\
                 weighted_peptide_contact_distance, weighted_peptide_contact_distance_competitor,\
                 pLDDT_weighted_linear_center_contact_distance, pLDDT_weighted_linear_center_contact_distance_competitor,\
-                folded_factor, folded_factor_competitor,\
+                #folded_factor, folded_factor_competitor,\
                 total_contact_atom_in_interface_difference, total_contact_atom_in_interface_angle_factored, \
                 total_contact_atom_in_interface_difference_angle_factored, \
-                angle_between_membrane_anchor_and_peptide, end_to_end_distance, \
+                angle_between_membrane_anchor_and_peptide, \
                 average_pLDDT, pLDDT_threshold_global, n_atom_above_threshold,\
                 interface_pLDDT, interface_pLDDT_competitor,\
-                vdw_strain, clash_number, vdw_strain_competitor, clash_number_competitor,\
-                peptide_direction, peptide_direction_competitor]
+                vdw_strain, clash_number, vdw_strain_competitor, clash_number_competitor]
+                # peptide_direction, peptide_direction_competitor] #end_to_end_distance, \
         print("> New measurements added for {} (peptide: {})".format(model_name, peptide_name))
 
         # Open file in append mode
@@ -746,14 +746,14 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             "insert_contact_distance", "insert_contact_distance_competitor",\
             "weighted_peptide_contact_distance", "weighted_peptide_contact_distance_competitor",\
             "pLDDT_weighted_linear_center_contact_distance", "pLDDT_weighted_linear_center_contact_distance_competitor",\
-            "folded_factor", "folded_factor_competitor",\
+            #"folded_factor", "folded_factor_competitor",\
             "total_contact_atom_in_interface_difference", "total_contact_atom_in_interface_angle_factored", \
             "total_contact_atom_in_interface_difference_angle_factored", \
-            "angle_between_membrane_anchor_and_peptide", "end_to_end_distance", \
+            "angle_between_membrane_anchor_and_peptide",
             "average_pLDDT", "pLDDT_threshold_global", "n_atom_above_threshold", \
             "interface_pLDDT", "interface_pLDDT_competitor",\
-            "vdw_strain", "clash_number", "vdw_strain_competitor", "clash_number_competitor",\
-            "peptide_direction", "peptide_direction_competitor"]
+            "vdw_strain", "clash_number", "vdw_strain_competitor", "clash_number_competitor"]
+            #"peptide_direction", "peptide_direction_competitor"] #"end_to_end_distance", \
 
 
     with open(database_path, 'a') as write_obj:
