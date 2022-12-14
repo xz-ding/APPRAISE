@@ -6,7 +6,9 @@ Email: xding@caltech.edu, dingxiaozhe@gmail.com
 
 import platform
 import sys
+import argparse
 import glob
+import os
 
 import csv
 from datetime import datetime
@@ -18,6 +20,7 @@ from pymol import stored
 
 from itertools import groupby
 from operator import itemgetter
+
 
 
 
@@ -74,9 +77,6 @@ def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_th
         return vdw_strain
     else:
         return 0
-
-
-
 
 
 def average_b(selection):
@@ -756,11 +756,14 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             #"peptide_direction", "peptide_direction_competitor"] #"end_to_end_distance", \
 
 
-    with open(database_path, 'a') as write_obj:
-        # Create a writer object from csv module
-        csv_writer = csv.writer(write_obj)
-        # Add contents of list as last row in the csv file
-        csv_writer.writerow(list_to_append)
+    # Check if the file exists
+    if not os.path.exists(database_path):
+        # The file does not exist, so we can write to it
+        with open(database_path, 'a') as write_obj:
+            # Create a writer object from csv module
+            csv_writer = csv.writer(write_obj)
+            # Add contents of list as last row in the csv file
+            csv_writer.writerow(list_to_append)
 
     # measure the pdb files one by one
     for loaded_pdb_path in list_pdb_path:
@@ -773,27 +776,74 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
 
     return
 
+
+
+
+
+def main():
+    # Identify the location of the additional arguments
+    for i, arg in enumerate(sys.argv):
+        if '.py' in arg:
+            starting_index = i
+
+    # Read the additional argments as input folders
+    if len(sys.argv) > starting_index + 1:
+        folder_path_list = sys.argv[starting_index + 1:]
+    for folder_path in folder_path_list:
+        print("> Processing folder {} using default settings.".format(folder_path))
+        quantify_results_folder(folder_path)
+
+    # Report success
+    if len(folder_path_list) > 1:
+        print("> Finished processing all folders in {}.".format(folder_path_list))
+    print("Note: These PDBs were analyzed using default settings. If you wish \
+    to use non-standard settings, please run the script in PyMOL GUI and call \
+    function quantify_results_folder() with appropriate arguments.")
+            # # Read output path
+            # if len(sys.argv) > starting_index + 2:
+            #     output_path = sys.argv[starting_index + 2]
+            # else:
+            #     output_path = 'auto'
+
+            # # Read output path
+            # if len(sys.argv) > starting_index + 2:
+            #     output_path = sys.argv[starting_index + 2]
+            # else:
+            #     output_path = 'auto'
+
+
+
+
+# def main():
+#     # Create an ArgumentParser object
+#     parser = argparse.ArgumentParser()
+#
+#     # Add arguments to the parser
+#     parser.add_argument('-i', '--input', type=str, help='input directory(ies) to be processed')
+#     parser.add_log_argument('-o', '--output', type=str, help='output file', required=False)
+#
+#     # Parse the arguments
+#     args = parser.parse_args()
+#
+#     # Expand the wildcard and get a list of all matching directories
+#     directories = glob.glob(args.input)
+#
+#     # Print the list of files
+#     print(f'> directories to be processed: {directories}')
+#     if args.output:
+#         print(f'> output: {args.output}')
+#
+#     # Call the quantification function
+#     for directory in directories:
+#         quantify_results_folder(directory, output_path = args.output)
+#
+#
+
+if __name__ == 'pymol':
+    main()
+
+print(__name__)
+
 # Allow the main functions to be run in PyMol syntax
 cmd.extend("quantify_results_folder", quantify_results_folder)
 cmd.extend('count_clash', count_clash)
-
-
-
-
-
-# Read input from command line
-for i, arg in enumerate(sys.argv):
-    if 'pymol_quantify_peptide_binding.py' in arg:
-        starting_index = i
-
-        if len(sys.argv) > starting_index + 1:
-            print("> Processing folder {} using default settings".format(sys.argv[-1]))
-            # Read input path
-            AF2_results_path = sys.argv[starting_index + 1]
-
-            # Read output path
-            if len(sys.argv) > starting_index + 2:
-                output_path = sys.argv[starting_index + 2]
-            else:
-                output_path = 'auto'
-            quantify_results_folder(AF2_results_path, output_path = output_path)
