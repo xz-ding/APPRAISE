@@ -196,7 +196,7 @@ def find_residue_indices(selection_string='sele'):
 
     return list(sorted(stored.residues))
 
-def find_glycine_linkers(selection_string='all', min_linker_length=10):
+def find_glycine_linkers(selection_string='all', min_linker_length=25):
     """
     Return a list of start and end indices of glycine linkers that are longer
     than the min_linker_length.
