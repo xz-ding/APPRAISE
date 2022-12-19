@@ -83,6 +83,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                     list_query_sequence += [query_sequence]
                     list_jobname += [jobname]
                     save_fasta(jobname, query_sequence, folder_path)
+                    
     elif mode == 'single':
         for j, peptide1_name in enumerate(list_peptide1_names):
             query_sequence = list_peptide1_seqs[j] + split_linker + receptor_seq
