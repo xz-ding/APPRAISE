@@ -37,7 +37,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                        list_peptide1_seqs, mode='pairwise', square_matrix=True,
                        list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4,
                        folder_path='./input_fasta/', use_glycine_linker=False,
-                       glycine_linker_length=25, random_seed=42):
+                       glycine_linker_length=30, random_seed=42):
     """
     Create and save input fastas for structural modeling in ColabFold (with
     either AlphaFold-multimer or ESMfold). More specifically, the function generates fasta files for the specified receptor and peptides according to the specified mode and saves them in the specified folder_path. The mode argument can be 'pairwise', in which case fasta files will be generated
@@ -54,7 +54,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
         pool_size (int, optional): The number of peptides to include in each fasta file when the mode argument is set to 'pooled'. Defaults to 4.
         folder_path (str, optional): The path to the folder where the fasta files will be saved. Defaults to './input_fasta/'.
         use_glycine_linker (bool, optional): If True, the peptides and receptor will be linked with a glycine linker of a specified length. If False, the peptides and receptor will be linked with a colon (:) character. Defaults to False.
-        glycine_linker_length (int, optional): The length of the glycine linker to be used when the use_glycine_linker argument is set to True. Defaults to 25.
+        glycine_linker_length (int, optional): The length of the glycine linker to be used when the use_glycine_linker argument is set to True. Defaults to 30.
     """
     list_query_sequence = []
     list_jobname = []
