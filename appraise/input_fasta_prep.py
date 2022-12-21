@@ -37,7 +37,8 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                        list_peptide1_seqs, mode='pairwise', square_matrix=True,
                        list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4,
                        folder_path='./input_fasta/', use_glycine_linker=False,
-                       glycine_linker_length=30, random_seed=42):
+                       glycine_linker_length=30, random_seed=42,
+                       prepare_receptor_model=True):
     """
     Create and save input fastas for structural modeling in ColabFold (with
     either AlphaFold-multimer or ESMfold). More specifically, the function generates fasta files for the specified receptor and peptides according to the specified mode and saves them in the specified folder_path. The mode argument can be 'pairwise', in which case fasta files will be generated
@@ -55,6 +56,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
         folder_path (str, optional): The path to the folder where the fasta files will be saved. Defaults to './input_fasta/'.
         use_glycine_linker (bool, optional): If True, the peptides and receptor will be linked with a glycine linker of a specified length. If False, the peptides and receptor will be linked with a colon (:) character. Defaults to False.
         glycine_linker_length (int, optional): The length of the glycine linker to be used when the use_glycine_linker argument is set to True. Defaults to 30.
+        prepare_receptor_model (bool, optional): If True, an additional fasta file with receptor sequence only will be prepared. Defaults to True.
     """
     list_query_sequence = []
     list_jobname = []
@@ -83,11 +85,27 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                     list_query_sequence += [query_sequence]
                     list_jobname += [jobname]
                     save_fasta(jobname, query_sequence, folder_path)
-                    
+
+        # Prepare a fasta for receptor-only model if requested
+        if prepare_receptor_model:
+            query_sequence = receptor_seq
+            jobname = receptor_name + "_receptor_model"
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
     elif mode == 'single':
         for j, peptide1_name in enumerate(list_peptide1_names):
             query_sequence = list_peptide1_seqs[j] + split_linker + receptor_seq
             jobname = receptor_name + "_and_" + peptide1_name
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
+        # Prepare a fasta for receptor-only model if requested
+        if prepare_receptor_model:
+            query_sequence = receptor_seq
+            jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
             save_fasta(jobname, query_sequence, folder_path)
@@ -132,6 +150,31 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             query_sequence += receptor_seq
 
             #record the generated results
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
+        # Prepare a fasta for receptor-only model if requested
+        if prepare_receptor_model:
+            query_sequence = receptor_seq
+            jobname = receptor_name + "_receptor_model"
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
+    elif mode == 'single_chains':
+        # Prepare single chain fastas for the petides and receptors
+        for j, peptide1_name in enumerate(list_peptide1_names):
+            query_sequence = list_peptide1_seqs[j]
+            jobname = receptor_name + "_targeting_peptide_" + peptide1_name
+            list_query_sequence += [query_sequence]
+            list_jobname += [jobname]
+            save_fasta(jobname, query_sequence, folder_path)
+
+        # Prepare a fasta for receptor-only model if requested
+        if prepare_receptor_model:
+            query_sequence = receptor_seq
+            jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
             save_fasta(jobname, query_sequence, folder_path)
