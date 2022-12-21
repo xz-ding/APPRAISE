@@ -121,6 +121,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points'] = match_points
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points_tie_breaker'] = match_points_tie_breaker
 
+
         list_peptide_order = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
         list_match_points = [df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points'].to_list(), \
                             df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points_tie_breaker'].to_list()]

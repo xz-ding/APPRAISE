@@ -5,7 +5,7 @@ Email: xding@caltech.edu, dingxiaozhe@gmail.com
 """
 import pandas as pd
 import numpy as np
-
+from appraise.utilities import *
 
 def calculate_B_energetic(N_contact, N_clash=0, clash_penalty_weight=1000):
     """
@@ -186,3 +186,25 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
         df_measurements['Delta_B'] = df_measurements['constrained_interface_energy_score_difference']
 
     return df_measurements.copy()
+
+def get_winning_percentage(df_average, feature_of_interest='Delta_B', \
+    receptor_of_interest='receptor', feature_to_rank_with='auto', \
+    tie_threshold='auto', p_value_threshold=0.05, number_of_repeats=10):
+
+    # Determine the feature to rank with
+    if feature_to_rank_with == 'auto':
+        feature_to_rank_with = feature_of_interest
+
+    #Get a ranked square matrix
+    list_peptide_order, tie_threshold, list_match_points = rank_tournament_results(df_average, feature_to_rank_with, by_match_points=True, tie_threshold=tie_threshold, p_value_threshold=p_value_threshold, number_of_repeats=number_of_repeats)
+    # df_average = sort_df_by_peptides_and_cleanup(df_average, list_peptide_order)
+
+    # # Add the match points to the dataframe
+    # df_average['match_points'] = 0
+    # for i, peptide in enumerate(list_peptide_order):
+    #     df_average.loc[df_average['peptide_name'] == peptide]['match_points'] = list_match_points[0][i]
+
+    # Calculate winning percentage
+    df_average['winning_percentage'] = df_average['match_points'] / len(list_peptide_order) / 2 + 0.5
+
+    return df_average
