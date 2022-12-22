@@ -162,7 +162,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             list_jobname += [jobname]
             save_fasta(jobname, query_sequence, folder_path)
 
-    elif mode == 'single_chains':
+    elif mode == 'single_chains' or mode == 'single_chain':
         # Prepare single chain fastas for the petides and receptors
         for j, peptide1_name in enumerate(list_peptide1_names):
             query_sequence = list_peptide1_seqs[j]
