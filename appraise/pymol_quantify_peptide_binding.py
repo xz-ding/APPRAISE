@@ -343,7 +343,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     print(list_peptide_chain)
     # if it is a single-chain model (without glycien linkers), skip.
     if len(list_peptide_chain) == 0:
-        print('Only one chain present in the model. Skipped.')
+        print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
         return
 
     # find out the receptor chain ID and generate a list of chain IDs for peptides
