@@ -14,17 +14,24 @@ def interactive_input(var_name='', default_value=''):
     """
     Function for getting interactive input in the notebook.
     """
-    print('Default {} is [{}], need to change? Provide new value or hit Enter to use default'.format(var_name, default_value))
+    if isinstance(default_value, str):
+        print('$ Variable <{}> defaults to <\'{}\'>. Change it? Type new value or hit Enter to skip.'.format(var_name, default_value))
+    else:
+        print('$ Variable <{}> defaults to <{}>. Change it? Type new value or hit Enter to skip.'.format(var_name, default_value))
 
     # Determine if the frontend allows interactive input
-    if sys.__stdout__.isatty():
+    if '__file__' in locals():
+        # code is being run by nbconvert, use the default value
+        var_value = default_value
+        print('$ Frontend does not allow interactive input. Used default value.\n')
+    else:
         # If the frontend allows, use interactive input
-        var_value =  input("> ")
+        var_value =  input("$ ")
+
         if var_value == '' or var_value.lower() == 'n' or var_value.lower() == 'no':
             var_value = default_value
-    else:
-        # If the frontend doesn't allow, use the default value
-        var_value = default_value
+            print('$ Used default value.\n')
+
     return var_value
 
 def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):

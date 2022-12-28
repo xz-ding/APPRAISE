@@ -26,11 +26,11 @@ def save_fasta(jobname, sequence, folder_path='./input_fasta/'):
     if not os.path.exists(folder_path):
         # Create a new directory because it does not exist
         os.makedirs(folder_path)
-        print("> Created folder {}".format(folder_path))
+        print("$ Created folder {}".format(folder_path))
 
     with open(folder_path + jobname + '.fasta', 'w') as f:
         f.write('> {}\n{}'.format(jobname, sequence))
-    print('> Generated ' + folder_path + jobname + '.fasta')
+    print('$ Generated ' + folder_path + jobname + '.fasta')
 
 
 def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
