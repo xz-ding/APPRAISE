@@ -187,7 +187,13 @@ def calculate_scores(df_measurements, version=1.2, angle_constraint=True, \
 
     return df_measurements.copy()
 
-def get_winning_percentage(df_average, feature_of_interest='Delta_B', \
+def find_rank(string, search_list):
+  try:
+    return search_list.index(string) + 1
+  except ValueError:
+    return 0
+
+def get_APPRAISE_ranking(df_average, feature_of_interest='Delta_B', \
     receptor_of_interest='receptor', feature_to_rank_with='auto', \
     tie_threshold='auto', p_value_threshold=0.05, number_of_repeats=10):
 
@@ -205,6 +211,7 @@ def get_winning_percentage(df_average, feature_of_interest='Delta_B', \
     #     df_average.loc[df_average['peptide_name'] == peptide]['match_points'] = list_match_points[0][i]
 
     # Calculate winning percentage
-    df_average['winning_percentage'] = df_average['match_points'] / len(list_peptide_order) / 2 + 0.5
+    df_average['winning_percentage_by_{}'.format(feature_of_interest)] = df_average['match_points'] / len(list_peptide_order) / 2 + 0.5
+    df_average['APPRAISE_ranking_by_{}'.format(feature_of_interest)] = df_average['peptide_name'].apply(find_rank, args=(list_peptide_order,)).astype(int)
 
     return df_average
