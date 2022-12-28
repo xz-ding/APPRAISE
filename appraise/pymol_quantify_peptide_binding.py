@@ -149,7 +149,7 @@ def parse_pdb_file_name(pdb_path):
 
 
 def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
-    glycine_linkers='auto'):
+    glycine_linkers='auto', min_linker_length=10):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
 
@@ -165,13 +165,15 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
     chain_list = cmd.get_chains(model_name)
+
     if glycine_linkers == True or (glycine_linkers == 'auto' and len(chain_list) == 1):
         _ = split_by_glycine_linkers(chain_list)
         chain_list = cmd.get_chains(model_name)
 
     if receptor_chain == 'last':
         receptor_chain = chain_list[-1]
-        list_peptide_chain = chain_list[0:-1]
+        chain_list.remove(receptor_chain)
+        list_peptide_chain = chain_list
     else:
         list_peptide_chain = []
         for chain in chain_list:
@@ -202,6 +204,9 @@ def find_glycine_linkers(selection_string='all', min_linker_length=25):
     for k, g in groupby(enumerate(glycine_linker_residue_indices), lambda ix: ix[0] - ix[1]):
         individual_glycine_linker_indices = map(itemgetter(1), g)
         list_glycine_linker_ranges += [[individual_glycine_linker_indices[0], individual_glycine_linker_indices[-1]]]
+    # return [100000,100000] in case there is no glycien linker
+    if list_glycine_linker_ranges == []:
+        list_glycine_linker_ranges = [[100000, 100000]]
     return list_glycine_linker_ranges
 
 
@@ -228,7 +233,7 @@ def split_by_glycine_linkers(list_old_chain_ids, min_linker_length=10):
             else:
                 list_new_chain_indices += [[old_chain_id, \
                     list_glycine_linker_ranges[i][1] + 1, \
-                    10000]]
+                    100000]]
 
     # get a list of new chain IDs
     list_new_chain_ids = []
@@ -328,12 +333,18 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     cmd.load(pdb_path)
     object_list = cmd.get_object_list('all')
     model_name = object_list[0]
+    print('\n\n > Processing model {}'.format(model_name))
+
+
+
+    #Split chains
     receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
         receptor_chain=receptor_chain, glycine_linkers=glycine_linkers)
-
-
-
-    print('\n\n > Processing model {}'.format(model_name))
+    print(list_peptide_chain)
+    # if it is a single-chain model (without glycien linkers), skip.
+    if len(list_peptide_chain) == 0:
+        print('Only one chain present in the model. Skipped.')
+        return
 
     # find out the receptor chain ID and generate a list of chain IDs for peptides
 
