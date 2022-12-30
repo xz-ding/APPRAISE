@@ -268,3 +268,15 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         plt.savefig('{}_ranked_by_{}.png'.format(receptor_of_interest, feature_to_rank_with), bbox_inches = 'tight', dpi=300)
 
     return xticklabels, yticklabels, list_match_points
+
+def database_quality_check(df):
+    # Quality check
+    print('\nQuality check: \n \
+    The following plot shows the number of models for each peptide variant in the database. \n \
+    You should expect to see an equal number of models in all variants. \n \
+    If the numbers are not equal, there might some models missing during structure prediction or quantification. You can still proceed with the risk of getting biased rankings.\n \
+    Double click on the plot to Zoom in. ')
+
+    plt.rcParams["figure.figsize"] = (len(set(df['peptide_name']))*1.5, 3)
+    sns.histplot(df, x='peptide_name')
+    plt.tight_layout()
