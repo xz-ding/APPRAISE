@@ -204,9 +204,6 @@ def find_glycine_linkers(selection_string='all', min_linker_length=25):
     for k, g in groupby(enumerate(glycine_linker_residue_indices), lambda ix: ix[0] - ix[1]):
         individual_glycine_linker_indices = map(itemgetter(1), g)
         list_glycine_linker_ranges += [[individual_glycine_linker_indices[0], individual_glycine_linker_indices[-1]]]
-    # return [100000,100000] in case there is no glycien linker
-    if list_glycine_linker_ranges == []:
-        list_glycine_linker_ranges = [[100000, 100000]]
     return list_glycine_linker_ranges
 
 
@@ -214,51 +211,56 @@ def split_by_glycine_linkers(list_old_chain_ids, min_linker_length=10):
     """
     Split all chains that are linked by glycines.
     """
+    print('APPRAISE> Splitting the model using glycine linkers.')
     list_new_chain_indices = []
     for old_chain_id in list_old_chain_ids:
         list_glycine_linker_ranges = find_glycine_linkers(old_chain_id, \
             min_linker_length=min_linker_length)
+        if len(list_glycine_linker_ranges) > 0:
+            # Identify the ranges for the first sub chain
+            if list_glycine_linker_ranges[0][0] != 1:
+                list_new_chain_indices += [[old_chain_id, 1, list_glycine_linker_ranges[0][0] - 1]]
+            #Identify the ranges for the other sub chains
+            for i, glycine_linkers in enumerate(list_glycine_linker_ranges):
+                cmd.do('remove chain {} and resi {}-{}'.format(old_chain_id, \
+                    glycine_linkers[0], glycine_linkers[1]))
+                if i != len(list_glycine_linker_ranges) - 1:
+                    list_new_chain_indices += [[old_chain_id, \
+                        list_glycine_linker_ranges[i][1] + 1, \
+                        list_glycine_linker_ranges[i + 1][0] - 1]]
+                else:
+                    list_new_chain_indices += [[old_chain_id, \
+                        list_glycine_linker_ranges[i][1] + 1, \
+                        100000]]
 
-        # Identify the ranges for the first sub chain
-        if list_glycine_linker_ranges[0][0] != 1:
-            list_new_chain_indices += [[old_chain_id, 1, list_glycine_linker_ranges[0][0] - 1]]
-        #Identify the ranges for the other sub chains
-        for i, glycine_linkers in enumerate(list_glycine_linker_ranges):
-            cmd.do('remove chain {} and resi {}-{}'.format(old_chain_id, \
-                glycine_linkers[0], glycine_linkers[1]))
-            if i != len(list_glycine_linker_ranges) - 1:
-                list_new_chain_indices += [[old_chain_id, \
-                    list_glycine_linker_ranges[i][1] + 1, \
-                    list_glycine_linker_ranges[i + 1][0] - 1]]
-            else:
-                list_new_chain_indices += [[old_chain_id, \
-                    list_glycine_linker_ranges[i][1] + 1, \
-                    100000]]
+    if len(list_new_chain_indices) > 0:
+        # get a list of new chain IDs
+        list_new_chain_ids = []
+        for i in range(len(list_new_chain_indices)):
+            candidate_char = 'A'
+            while (candidate_char in list_old_chain_ids) or (candidate_char in list_new_chain_ids):
+                 candidate_char = chr(ord(candidate_char) + 1)
+            list_new_chain_ids += [candidate_char]
 
-    # get a list of new chain IDs
-    list_new_chain_ids = []
-    for i in range(len(list_new_chain_indices)):
-        candidate_char = 'A'
-        while (candidate_char in list_old_chain_ids) or (candidate_char in list_new_chain_ids):
-             candidate_char = chr(ord(candidate_char) + 1)
-        list_new_chain_ids += [candidate_char]
+        # alter the IDs of new chains
+        for i, new_chain_indces in enumerate(list_new_chain_indices):
+            new_chain_id = list_new_chain_ids[i]
+            old_chain_id = new_chain_indces[0]
+            start_index = new_chain_indces[1]
+            end_index = new_chain_indces[2]
+            cmd.do('alter chain {} and resi {}-{}, chain=\"{}\"'.format(old_chain_id, \
+                start_index, end_index, new_chain_id))
+            cmd.do('alter chain {} and resi {}-{}, resi=str(int(resi) - {})'.format(new_chain_id, \
+                start_index, end_index, (start_index - 1)))
 
-    # alter the IDs of new chains
-    for i, new_chain_indces in enumerate(list_new_chain_indices):
-        new_chain_id = list_new_chain_ids[i]
-        old_chain_id = new_chain_indces[0]
-        start_index = new_chain_indces[1]
-        end_index = new_chain_indces[2]
-        cmd.do('alter chain {} and resi {}-{}, chain=\"{}\"'.format(old_chain_id, \
-            start_index, end_index, new_chain_id))
-        cmd.do('alter chain {} and resi {}-{}, resi=str(int(resi) - {})'.format(new_chain_id, \
-            start_index, end_index, (start_index - 1)))
+        #delete the empty old chains
+        for old_chain_id in list_old_chain_ids:
+            cmd.do('remove chain {}'.format(old_chain_id))
 
-    #delete the empty old chains
-    for old_chain_id in list_old_chain_ids:
-        cmd.do('remove chain {}'.format(old_chain_id))
-
-    return list_new_chain_ids
+        return list_new_chain_ids
+    else:
+        print('APPRAISE> No glycine linker detected.')
+        return list_old_chain_ids
 
 
 
@@ -340,7 +342,6 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     #Split chains
     receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
         receptor_chain=receptor_chain, glycine_linkers=glycine_linkers)
-    print(list_peptide_chain)
     # if it is a single-chain model (without glycien linkers), skip.
     if len(list_peptide_chain) == 0:
         print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
@@ -369,7 +370,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     elif type(anchor_site_global) == int or type(anchor_site_global) == float:
         anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {} and resi {}'.format(model_name, receptor_chain, anchor_site_global))), axis=0)
     else:
-        print("> Unrecognized membrane anchor site. Using C terminus of the receptor by default.")
+        print("APPRAISE> Unrecognized membrane anchor site. Using C terminus of the receptor by default.")
         anchor_site_coordinates = np.mean(np.array(cmd.get_coords('{} and chain {}'.format(model_name, receptor_chain ))[-30:]), axis=0)
 
     weighted_receptor_center = np.mean(np.array(get_pLDDT_weighted_coordinates('{} and chain {}'.format(model_name, receptor_chain ))), axis=0)
@@ -637,7 +638,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
                 interface_pLDDT, interface_pLDDT_competitor,\
                 vdw_strain, clash_number, vdw_strain_competitor, clash_number_competitor]
                 # peptide_direction, peptide_direction_competitor] #end_to_end_distance, \
-        print("> New measurements added for {} (peptide: {})".format(model_name, peptide_name))
+        print("APPRAISE> New measurements added for {} (peptide: {})".format(model_name, peptide_name))
 
         # Open file in append mode
         with open(database_path, 'a') as write_obj:
@@ -782,7 +783,7 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers)
         #cmd.do('delete all')
 
-    print("> Finished! Results are saved in {}".format(database_path))
+    print("APPRAISE> Finished! Results are saved in {}".format(database_path))
 
     return
 
@@ -805,15 +806,15 @@ def main():
 
     # Loop through the folders
     for folder_path in folder_path_list:
-        print("> Processing folder {} using default settings.".format(folder_path))
+        print("APPRAISE> Processing folder {} using default settings.".format(folder_path))
         quantify_results_folder(folder_path, dt_string=dt_string)
 
     # Report success
     if len(folder_path_list) > 1:
-        print("> Finished processing all folders in {}.".format(folder_path_list))
-    print("> Note: These PDBs were analyzed using default settings. If you wish"
-        + " to use non-standard settings, please run the script in PyMOL GUI and"
-        + " call function quantify_results_folder() with appropriate arguments.")
+        print("APPRAISE> Finished processing all folders in {}.".format(folder_path_list))
+    print("APPRAISE> Note: These PDBs were analyzed using default settings. If you"
+        + " wish to use non-standard settings, please run the script in PyMOL GUI "
+        + "and call function quantify_results_folder() with appropriate arguments.")
             # # Read output path
             # if len(sys.argv) > starting_index + 2:
             #     output_path = sys.argv[starting_index + 2]
