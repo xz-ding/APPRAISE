@@ -42,10 +42,10 @@ pip install appraise
 ```
 
 ### Option 2 (back-up)
-Download the repository to your local computer and unzip. In the terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder, and run the following line:
+Download the repository to your local computer and unzip. In the terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder and setup.py, and run the following line:
 
 ```
-pip install -e appraise
+pip install -e .
 ```
 
 ## Get started
