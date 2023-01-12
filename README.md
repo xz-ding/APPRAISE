@@ -32,6 +32,8 @@ APPRAISE 1.2 was tested with the following environment:
 
 ## Installation
 
+Installation of APPRAISE requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
+
 ### Option 1 (recommended)
 Install the distribution from PyPI. In the terminal, run:
 
