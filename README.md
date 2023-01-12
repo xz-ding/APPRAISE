@@ -61,4 +61,5 @@ APPRAISE [Github repository](https://github.com/xz-ding/APPRAISE)
 ColabFold [Github repository](https://github.com/sokrypton/ColabFold)
 (ColabFold provides a panel of user-friendly tools for structure modeling.)
 
-The APPRAISE manuscript: Pending
+The APPRAISE manuscript:
+Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \*: Corresponding authors.
