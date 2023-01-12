@@ -14,17 +14,24 @@ def interactive_input(var_name='', default_value=''):
     """
     Function for getting interactive input in the notebook.
     """
-    print('Default {} is [{}], need to change? Provide new value or hit Enter to use default'.format(var_name, default_value))
+    if isinstance(default_value, str):
+        print('$ Variable <{}> defaults to <\'{}\'>. Change it? Type new value or hit Enter to skip.'.format(var_name, default_value))
+    else:
+        print('$ Variable <{}> defaults to <{}>. Change it? Type new value or hit Enter to skip.'.format(var_name, default_value))
 
     # Determine if the frontend allows interactive input
-    if sys.__stdout__.isatty():
+    if '__file__' in locals():
+        # code is being run by nbconvert, use the default value
+        var_value = default_value
+        print('$ Frontend does not allow interactive input. Used default value.\n')
+    else:
         # If the frontend allows, use interactive input
-        var_value =  input("> ")
+        var_value =  input("$ ")
+
         if var_value == '' or var_value.lower() == 'n' or var_value.lower() == 'no':
             var_value = default_value
-    else:
-        # If the frontend doesn't allow, use the default value
-        var_value = default_value
+            print('$ Used default value.\n')
+
     return var_value
 
 def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):
@@ -107,7 +114,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             n_contact_lose = np.sum(df_peptide[metric_name+'_tstat'] < -tie_threshold)
 
 
-            #Count number of winning, losing or tie matches without threshold for breaking the ties
+            #Count number of winning, losing or tie matches with higher threshold for breaking the ties
             n_contact_win_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] > 2 * tie_threshold)
             n_contact_tie_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] == tie_threshold**2 * 4)
             n_contact_lose_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] < -2 * tie_threshold)
@@ -120,6 +127,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             #record the points
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points'] = match_points
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points_tie_breaker'] = match_points_tie_breaker
+
 
         list_peptide_order = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
         list_match_points = [df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points'].to_list(), \
@@ -260,3 +268,15 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
         plt.savefig('{}_ranked_by_{}.png'.format(receptor_of_interest, feature_to_rank_with), bbox_inches = 'tight', dpi=300)
 
     return xticklabels, yticklabels, list_match_points
+
+def database_quality_check(df):
+    # Quality check
+    print('\nQuality check: \n \
+    The following plot shows the number of models for each peptide variant in the database. \n \
+    You should expect to see an equal number of models in all variants. \n \
+    If the numbers are not equal, there might some models missing during structure prediction or quantification. You can still proceed with the risk of getting biased rankings.\n \
+    Double click on the plot to Zoom in. ')
+
+    plt.rcParams["figure.figsize"] = (len(set(df['peptide_name']))*1.5, 3)
+    sns.histplot(df, x='peptide_name')
+    plt.tight_layout()

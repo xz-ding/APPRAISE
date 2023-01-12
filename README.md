@@ -1,6 +1,10 @@
 # APPRAISE
 
-***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer.
+***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. This Python package includes tools for preparing input files and analyzing the modeled structures.
+
+Author: Xiaozhe Ding
+Email: dingxiaozhe@gmail.com, xding@caltech.edu
+Twitter: @DingXiaozhe
 
 ## Environment
 
@@ -30,9 +34,15 @@ APPRAISE 1.2 was tested with the following environment:
 
 ## Installation
 
-Download the repository to your local computer and unzip.
+### Option 1 (recommended)
+Install the distribution from PyPI. In the terminal, run:
 
-In a terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder, and run the following line:
+```
+pip install appraise
+```
+
+### Option 2 (back-up)
+Download the repository to your local computer and unzip. In the terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder, and run the following line:
 
 ```
 pip install -e appraise
@@ -45,4 +55,10 @@ The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to 
 
 ## References
 
-Pending
+Github repository for APPRAISE: https://github.com/xz-ding/APPRAISE
+(Contains the latest version of APPRAISE package and demo notebooks.)
+
+Github repository for ColabFold: https://github.com/sokrypton/ColabFold
+(ColabFold provides a panel of user-friendly tools for structure modeling.)
+
+The APPRAISE manuscript: Pending
