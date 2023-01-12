@@ -3,8 +3,10 @@
 ***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. This Python package includes tools for preparing input files and analyzing the modeled structures.
 
 Author: Xiaozhe Ding
+
 Email: dingxiaozhe@gmail.com, xding@caltech.edu
-Twitter: @DingXiaozhe
+
+Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en)
 
 ## Environment
 
@@ -56,10 +58,13 @@ The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to 
 ## References
 
 APPRAISE [Github repository](https://github.com/xz-ding/APPRAISE)
-(Contains the latest version of APPRAISE package and demo notebooks.)
+
+(The repository contains the latest version of APPRAISE package and demo notebooks.)
 
 ColabFold [Github repository](https://github.com/sokrypton/ColabFold)
+
 (ColabFold provides a panel of user-friendly tools for structure modeling.)
 
-The APPRAISE manuscript:
+Manuscript:
+
 Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \*: Corresponding authors.
