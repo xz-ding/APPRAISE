@@ -53,14 +53,14 @@ The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to 
 
 ## References
 
+Manuscript:
+
+Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \* Corresponding authors.
+
 [APPRAISE Github repository](https://github.com/xz-ding/APPRAISE)
 
 (The repository contains the latest version of APPRAISE package and demo notebooks.)
 
 [ColabFold Github repository](https://github.com/sokrypton/ColabFold)
 
-(ColabFold provides a panel of user-friendly tools for structure modeling.)
-
-Manuscript:
-
-Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \* Corresponding authors.
+(ColabFold provides a panel of user-friendly tools for structure modeling that are used by APPRAISE.)
