@@ -55,10 +55,10 @@ The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to 
 
 ## References
 
-Github repository for APPRAISE: https://github.com/xz-ding/APPRAISE
+APPRAISE [Github repository](https://github.com/xz-ding/APPRAISE)
 (Contains the latest version of APPRAISE package and demo notebooks.)
 
-Github repository for ColabFold: https://github.com/sokrypton/ColabFold
+ColabFold [Github repository](https://github.com/sokrypton/ColabFold)
 (ColabFold provides a panel of user-friendly tools for structure modeling.)
 
 The APPRAISE manuscript: Pending
