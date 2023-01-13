@@ -15,7 +15,9 @@ The basic service of Google Colaboratory is free, although you can pay to get st
 2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
 3. Go to "File --> save a Copy in Drive", and you can start playing with the notebook!
 
-## Environment
+## Local installation
+
+### Environment
 
 Local APPRAISE 1.2 was tested with the following environment:
 
@@ -40,18 +42,18 @@ Local APPRAISE 1.2 was tested with the following environment:
     - seaborn 0.11.2
 
 
-## Local installation
+### Installation options
 
 Installation of APPRAISE locally requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
 
-### Option 1 (recommended)
+#### Option 1 (recommended)
 Install the distribution from PyPI. In the terminal, run:
 
 ```
 pip install appraise
 ```
 
-### Option 2 (back-up)
+#### Option 2 (back-up)
 Download the repository to your local computer and unzip. In the terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder and setup.py, and run the following line:
 
 ```
