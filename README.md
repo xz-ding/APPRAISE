@@ -10,6 +10,11 @@ We recommend using APPRAISE remotely by running Colab_APPRAISE.ipynb notebook on
 
 The basic service of Google Colaboratory is free, although you can pay to get stable access to better hardwares.
 
+**How to run Colab_APPRAISE notebook**
+1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
+2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
+3. Go to "File --> save a Copy in Drive", and you can start playing with the notebook!
+
 ## Environment
 
 Local APPRAISE 1.2 was tested with the following environment:

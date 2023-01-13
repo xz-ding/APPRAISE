@@ -21,7 +21,7 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Linux'
+        'Operating System :: POSIX'
     ],
     install_requires=[
           'scipy>=1.4.1',
