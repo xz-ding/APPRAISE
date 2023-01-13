@@ -11,7 +11,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name='appraise',
-    version='1.2',
+    version='1.2.0.1',
     author='Xiaozhe Ding',
     author_email='xding@caltech.edu',
     description='Scripts and functions needed for for APPARISE.',

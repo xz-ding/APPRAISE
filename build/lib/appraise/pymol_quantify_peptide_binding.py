@@ -202,7 +202,7 @@ def find_glycine_linkers(selection_string='all', min_linker_length=25):
 
     list_glycine_linker_ranges = []
     for k, g in groupby(enumerate(glycine_linker_residue_indices), lambda ix: ix[0] - ix[1]):
-        individual_glycine_linker_indices = map(itemgetter(1), g)
+        individual_glycine_linker_indices = list(map(itemgetter(1), g))
         list_glycine_linker_ranges += [[individual_glycine_linker_indices[0], individual_glycine_linker_indices[-1]]]
     return list_glycine_linker_ranges
 
