@@ -4,9 +4,15 @@
 
 Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en))
 
+## Getting started without installation
+
+We recommend using APPRAISE remotely by running Colab_APPRAISE.ipynb notebook on Google Colaboratory. This allows you to perform APPRAISE step by step using a graphical interface, and the results will be stored in Google Drive. No local installation is needed when using this notebook.
+
+The basic service of Google Colaboratory is free, although you can pay to get stable access to better hardwares.
+
 ## Environment
 
-APPRAISE 1.2 was tested with the following environment:
+Local APPRAISE 1.2 was tested with the following environment:
 
  - MacOS 10.14.6
 
@@ -29,10 +35,9 @@ APPRAISE 1.2 was tested with the following environment:
     - seaborn 0.11.2
 
 
+## Local installation
 
-## Installation
-
-Installation of APPRAISE requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
+Installation of APPRAISE locally requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
 
 ### Option 1 (recommended)
 Install the distribution from PyPI. In the terminal, run:
@@ -47,10 +52,6 @@ Download the repository to your local computer and unzip. In the terminal, [chan
 ```
 pip install -e .
 ```
-
-## Get started
-
-The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to help you go through the APPRAISE workflow.
 
 
 ## References

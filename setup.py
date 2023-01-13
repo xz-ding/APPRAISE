@@ -11,17 +11,18 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name='appraise',
-    version='1.2.0.1',
+    version='1.2.1',
     author='Xiaozhe Ding',
     author_email='xding@caltech.edu',
     description='Scripts and functions needed for for APPARISE.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(),
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         'Operating System :: MacOS :: MacOS X',
-    ),
+        'Operating System :: Linux'
+    ],
     install_requires=[
           'scipy>=1.4.1',
           'numpy>=1.18.2',
