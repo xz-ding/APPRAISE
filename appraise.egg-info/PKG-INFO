@@ -1,11 +1,12 @@
 Metadata-Version: 2.1
 Name: appraise
-Version: 1.2.0.1
+Version: 1.2.1
 Summary: Scripts and functions needed for for APPARISE.
 Author: Xiaozhe Ding
 Author-email: xding@caltech.edu
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
@@ -15,9 +16,22 @@ License-File: LICENSE
 
 Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en))
 
-## Environment
+## Getting started without installation
 
-APPRAISE 1.2 was tested with the following environment:
+We recommend using APPRAISE remotely by running Colab_APPRAISE.ipynb notebook on Google Colaboratory. This allows you to perform APPRAISE step by step using a graphical interface, and the results will be stored in Google Drive. No local installation is needed when using this notebook.
+
+The basic service of Google Colaboratory is free, although you can pay to get stable access to better hardwares.
+
+**How to run Colab_APPRAISE notebook**
+1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
+2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
+3. Go to "File --> save a Copy in Drive", and you can start playing with the notebook!
+
+## Local installation
+
+### Environment
+
+Local APPRAISE 1.2 was tested with the following environment:
 
  - MacOS 10.14.6
 
@@ -40,28 +54,23 @@ APPRAISE 1.2 was tested with the following environment:
     - seaborn 0.11.2
 
 
+### Installation options
 
-## Installation
+Installation of APPRAISE locally requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
 
-Installation of APPRAISE requires pip. In most cases, pip comes with your Python environment. If not, you can [follow the instructions here to install pip](https://pip.pypa.io/en/stable/installation/).
-
-### Option 1 (recommended)
+#### Option 1 (recommended)
 Install the distribution from PyPI. In the terminal, run:
 
 ```
 pip install appraise
 ```
 
-### Option 2 (back-up)
+#### Option 2 (back-up)
 Download the repository to your local computer and unzip. In the terminal, [change the working folder](https://ss64.com/osx/cd.html) to the directory containing the appraise package folder and setup.py, and run the following line:
 
 ```
 pip install -e .
 ```
-
-## Get started
-
-The demo jupyter notebook (./demo/appraise_demo.ipynb) will serve as a guide to help you go through the APPRAISE workflow.
 
 
 ## References
