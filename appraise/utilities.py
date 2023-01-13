@@ -46,7 +46,7 @@ def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):
 
     for competition_name in set(df['competition_name']):
         df_competition = df[df['competition_name'] == competition_name].copy()
-        df_competition_mean = df_competition.groupby(by=['peptide_name', 'peptide_seq']).mean().reset_index()
+        df_competition_mean = df_competition.groupby(by=['peptide_name', 'peptide_seq']).mean(numeric_only=True).reset_index()
         df_competition_mean = df_competition_mean.sort_values(by=sorting_metric_name, ascending=False).reset_index()
         for i in range(len(df_competition_mean)):
             peptide_name = df_competition_mean.loc[i]['peptide_name']
@@ -129,13 +129,13 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
             df_average.loc[df_average['peptide_name'] == peptide_name, 'match_points_tie_breaker'] = match_points_tie_breaker
 
 
-        list_peptide_order = df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
-        list_match_points = [df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points'].to_list(), \
-                            df_average.groupby(by=['peptide_name']).mean().sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points_tie_breaker'].to_list()]
+        list_peptide_order = df_average.groupby(by=['peptide_name']).mean(numeric_only=True).sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['peptide_name'].to_list()
+        list_match_points = [df_average.groupby(by=['peptide_name']).mean(numeric_only=True).sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points'].to_list(), \
+                            df_average.groupby(by=['peptide_name']).mean(numeric_only=True).sort_values(by=['match_points', 'match_points_tie_breaker', metric_name], ascending=False).reset_index()['match_points_tie_breaker'].to_list()]
 
         return list_peptide_order, tie_threshold, list_match_points
     else:
-        return df_average.groupby(by=['peptide_name']).mean().sort_values(by=[metric_name], ascending=False).reset_index()['peptide_name'].to_list(), tie_threshold, None
+        return df_average.groupby(by=['peptide_name']).mean(numeric_only=True).sort_values(by=[metric_name], ascending=False).reset_index()['peptide_name'].to_list(), tie_threshold, None
 
 
 def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
