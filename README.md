@@ -15,7 +15,7 @@ The basic service of Google Colaboratory is free, although you can pay to get st
 **How to run Colab_APPRAISE notebook**
 1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
 2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
-3. Go to "File --> save a Copy in Drive", and you can start playing with the notebook!
+3. Go to "File --> save a copy in Drive", and you can start playing with the notebook!
 
 ## Local installation
 
