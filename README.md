@@ -8,11 +8,11 @@ Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: 
 
 ## Getting started without installation
 
-We recommend using APPRAISE remotely by running Colab_APPRAISE.ipynb notebook on Google Colaboratory. The web-based interface facilitates you to go through the APPRAISE process step by step, with results being stored in Google Drive. No need for a local installation when using this notebook.
+We recommend using APPRAISE remotely by running Colab-APPRAISE notebook on Google Colaboratory, which allows you to access APPRAISE with a **web-based interface**. The notebook walks you through the APPRAISE process step by step, and results are stored in Google Drive. No need for a local installation when using this notebook.
 
 The basic service of Google Colaboratory is free, although you can pay to get stable access to better hardwares.
 
-**How to run Colab_APPRAISE notebook**
+**How to run Colab-APPRAISE**
 1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
 2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
 3. Go to "File --> save a copy in Drive"
