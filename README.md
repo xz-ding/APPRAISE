@@ -65,7 +65,7 @@ pip install -e .
 
 ## References
 
-[Related manuscript](http://biorxiv.org/content/10.1101/2023.01.11.523680v1)
+[Manuscript](http://biorxiv.org/content/10.1101/2023.01.11.523680v1)
 
 Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \* Corresponding authors.
 
