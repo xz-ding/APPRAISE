@@ -15,7 +15,8 @@ The basic service of Google Colaboratory is free, although you can pay to get st
 **How to run Colab_APPRAISE notebook**
 1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
 2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
-3. Go to "File --> save a copy in Drive", and you can start playing with the notebook!
+3. Go to "File --> save a copy in Drive"
+4. Follow the Quick guide on the top of the notebook, and you can start APPRAISing!
 
 ## Local installation
 
@@ -71,10 +72,10 @@ Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinar
 
 [Github repository](https://github.com/xz-ding/APPRAISE)
 
-(The repository contains the latest version of APPRAISE package and demo notebooks.)
+The repository contains the latest version of APPRAISE package, Colab-APPRAISE notebook, and demo notebooks.
 
 ## Related resources
 
 [ColabFold](https://github.com/sokrypton/ColabFold)
 
-(ColabFold provides a panel of user-friendly tools for structure modeling that are used by APPRAISE.)
+ColabFold provides a panel of user-friendly tools for structure modeling that are used by APPRAISE.
