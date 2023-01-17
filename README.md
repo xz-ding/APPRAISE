@@ -62,6 +62,8 @@ Download the repository to your local computer and unzip. In the terminal, [chan
 pip install -e .
 ```
 
+### Demo
+You can find a few demo notebooks that work **locally** in the [demo folder on GitHub](https://github.com/GradinaruLab/APPRAISE/tree/main/demo).
 
 ## References
 
