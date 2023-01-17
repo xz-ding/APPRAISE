@@ -31,7 +31,7 @@ Local APPRAISE 1.2 was tested with the following environment:
 
  - PyMOL 2.3.3 (Schrodinger LLC.)
 
- - Python packages:
+ - Python packages (will be automatically handled by pip):
 
     - scipy 1.4.1
 
