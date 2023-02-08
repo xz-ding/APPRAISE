@@ -136,6 +136,9 @@ def generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global):
         for pdb_path_to_check in list_all_pdb:
             if '_relaxed_' in pdb_path_to_check:
                 use_relaxed_global = True
+
+    # find pdb files with matching names
+    use_relaxed = use_relaxed_global
     if use_relaxed:
         list_pdb_path = glob.glob(AF2_results_path + '*_relaxed_*.pdb')
     else:
