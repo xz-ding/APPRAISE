@@ -128,6 +128,14 @@ def generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global):
     """
     get a list of pdb paths from colabfold-alphafold output results.
     """
+    global use_relaxed_global
+    # automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
+    if use_relaxed_global == 'auto':
+        list_all_pdb = glob.glob(AF2_results_path + '*.pdb')
+        use_relaxed_global = False
+        for pdb_path_to_check in list_all_pdb:
+            if '_relaxed_' in pdb_path_to_check:
+                use_relaxed_global = True
     if use_relaxed:
         list_pdb_path = glob.glob(AF2_results_path + '*_relaxed_*.pdb')
     else:
@@ -777,12 +785,14 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             # Add contents of list as last row in the csv file
             csv_writer.writerow(list_to_append)
 
-    # automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
+
+    #  (redundant block) automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
     if use_relaxed_global == 'auto':
         use_relaxed_global = False
         for pdb_path_loaded in list_pdb_path:
             if '_relaxed_' in pdb_path_loaded:
                 use_relaxed_global = True
+
 
     # measure the pdb files one by one
     for pdb_path_loaded in list_pdb_path:
