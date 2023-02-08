@@ -780,13 +780,14 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     # automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
     if use_relaxed_global == 'auto':
         use_relaxed_global = False
-        for pdb_path in list_pdb_path:
-            if '_relaxed_' in pdb_path:
+        for pdb_path_loaded in list_pdb_path:
+            if '_relaxed_' in pdb_path_loaded:
                 use_relaxed_global = True
 
     # measure the pdb files one by one
-    for pdb_path in list_pdb_path:
+    for pdb_path_loaded in list_pdb_path:
         #cmd.load(pdb_path)
+        pdb_path = pdb_path_loaded
         quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers)
         #cmd.do('delete all')
 

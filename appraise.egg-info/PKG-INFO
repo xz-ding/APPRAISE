@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: appraise
-Version: 1.2.1
+Version: 1.2.2
 Summary: Scripts and functions needed for for APPARISE.
 Author: Xiaozhe Ding
 Author-email: xding@caltech.edu
@@ -10,22 +10,24 @@ Classifier: Operating System :: POSIX
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-# APPRAISE
+# APPRAISE: Rank binders by structure modeling
 
-***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. This Python package includes tools for preparing input files and analyzing the modeled structures.
+***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. The APPRAISE Python package includes tools for preparing input files and analyzing the modeled structures.
+
+![APPRAISE concept](./APPRAISE_concept.png)
 
 Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en))
 
 ## Getting started without installation
 
-We recommend using APPRAISE remotely by running Colab_APPRAISE.ipynb notebook on Google Colaboratory. This allows you to perform APPRAISE step by step using a graphical interface, and the results will be stored in Google Drive. No local installation is needed when using this notebook.
+We recommend using APPRAISE remotely by running Colab-APPRAISE notebook on Google Colaboratory, which allows you to access APPRAISE with a **web-based interface**. This notebook guides users through the APPRAISE process step-by-step, with results stored on Google Drive. No need for a local installation when using this notebook.
 
-The basic service of Google Colaboratory is free, although you can pay to get stable access to better hardwares.
+The basic service of Google Colaboratory is free, although you can choose paid plans to get more stable access to better hardwares.
 
-**How to run Colab_APPRAISE notebook**
-1. Go to [Google Colaboratory](https://colab.research.google.com/), and you will be prompted to open a notebook; If the splash page did not appear, Click "File --> Open notebook";
-2. Click the "Github" tab, paste the link https://github.com/GradinaruLab/APPRAISE/blob/main/Colab_APPRAISE.ipynb, and click the search icon;
-3. Go to "File --> save a Copy in Drive", and you can start playing with the notebook!
+**How to run Colab-APPRAISE**
+1. [Open Colab-APPRAISE notebook in Google Colaboratory](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/Colab_APPRAISE.ipynb);
+2. Go to "File --> save a copy in Drive" to save a copy of your own;
+3. Follow the Quick guide on the top of the notebook, and you can start APPRAISing!
 
 ## Local installation
 
@@ -41,7 +43,7 @@ Local APPRAISE 1.2 was tested with the following environment:
 
  - PyMOL 2.3.3 (Schrodinger LLC.)
 
- - Python packages:
+ - Python packages (will be automatically handled by pip):
 
     - scipy 1.4.1
 
@@ -72,17 +74,21 @@ Download the repository to your local computer and unzip. In the terminal, [chan
 pip install -e .
 ```
 
+### Demo
+You can find a few demo notebooks that work **locally** in the [demo folder on GitHub](https://github.com/GradinaruLab/APPRAISE/tree/main/demo).
 
 ## References
 
-Manuscript:
+[Manuscript](http://biorxiv.org/content/10.1101/2023.01.11.523680v1)
 
 Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \* Corresponding authors.
 
-[APPRAISE Github repository](https://github.com/xz-ding/APPRAISE)
+[Github repository](https://github.com/xz-ding/APPRAISE)
 
-(The repository contains the latest version of APPRAISE package and demo notebooks.)
+The repository contains the latest version of APPRAISE package, Colab-APPRAISE notebook, and demo notebooks.
 
-[ColabFold Github repository](https://github.com/sokrypton/ColabFold)
+## Related resources
 
-(ColabFold provides a panel of user-friendly tools for structure modeling that are used by APPRAISE.)
+[ColabFold](https://github.com/sokrypton/ColabFold)
+
+ColabFold provides a panel of user-friendly tools for structure modeling that are used by APPRAISE.
