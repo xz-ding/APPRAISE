@@ -1,0 +1,1821 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/allowing%20auto-fill%20of%20database%20file\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "1S4Ab6NFxBKe"
+      },
+      "source": [
+        "# Colab-APPRAISE notebook"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## **Before you start**"
+      ],
+      "metadata": {
+        "id": "mE3RbNyLqfGH"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "2nzhv4HKxBKg"
+      },
+      "source": [
+        "\n",
+        "This Jupyter notebook allows performing APPRAISE pipeline [in Google Collabotary](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/Colab_APPRAISE.ipynb) step-by-step. Read more about the methodology, applications, and limitations of APPRAISE in the [bioRxiv manuscript](https://www.biorxiv.org/content/10.1101/2023.01.11.523680v1).\n",
+        "\n",
+        "### **Quick guide**\n",
+        "\n",
+        "1. Hit the triangles on the left of titles to expand or collapse cells. \n",
+        " - <font color=\"grey\"> Tips:\n",
+        " - <font color=\"grey\"> You may click \"View --> Collapse secions\" or press \"Cmd/Ctrl + ]\" to get a cleaner view. </font> \n",
+        " - <font color=\"grey\"> You may use \"View --> Table of contents\" to jump to any specific step.\n",
+        "\n",
+        "2. Run the individual cells **sequentially** (following the step numbers) by clicking the play buttons on the left of the cells. \n",
+        "\n",
+        "3. Results are saved in your Google Drive after each top-level step (Steps 1, 2, 3, and 4). You can safely terminate and delete the runtime between these steps, although **you need to re-run step 0 every time you connect to a new runtime**.\n",
+        "\n",
+        "4. If you want to try the notebook before working with your own proteins, you can simply proceed with template inputs that are provided.\n",
+        " - <font color=\"grey\"> The only thing you'll need to manually change is the time-stamped database file name at the start of Step 4. Read the instructions when you get to that step.\n",
+        "\n",
+        "Author: Xiaozhe Ding (Email: xding@caltech.edu, dingxiaozhe@gmail.com; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en)). Feel free to raise an issue on [Github](https://github.com/xz-ding/APPRAISE) or email me with questions or suggestions."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "m7BCPIJ8xBKg"
+      },
+      "source": [
+        "## **Step 0 - Prepare the environment**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Guide to step 0** \n",
+        "\n",
+        "- This step mounts Google Drive and installs the APPRAISE package. **Run this step every time you connect to a new runtime.**\n",
+        "- A template spreadsheet with example input sequences will be provided in the project folder."
+      ],
+      "metadata": {
+        "id": "z1wSC9yazUgh"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **0.1 Mount google drive and load the project folder**"
+      ],
+      "metadata": {
+        "id": "fpAKp2RAvDlT"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')\n",
+        "\n",
+        "project_folder_name = 'APPRAISE_project_1' #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Fill in a project folder name and hit the play butoon to run.\n",
+        "#@markdown - <font color=\"grey\"> You'll be prompted to give access to your Google Drive. Please give the permission.\n",
+        "#@markdown - <font color=\"grey\"> A folder with this name will be created in the root directory of your Google Drive, if there wasn't one already. \n",
+        "#@markdown - <font color=\"grey\"> If you wish to store the data in a subfolder of your Google Drive, you can use the structure: \"layer_1_folder/layer_2_folder/.../APPRAISE_project_1\"\n",
+        "\n",
+        "\n",
+        "project_directory_path = '/content/drive/MyDrive/' + project_folder_name + '/'\n",
+        "\n",
+        "if os.path.exists(project_directory_path) == False:\n",
+        "    #Make a directory and generate a template csv file\n",
+        "    !mkdir $project_directory_path\n",
+        "    # List of example peptides\n",
+        "    peptides = [\n",
+        "        {'peptide_name': 'PHP.eB', 'peptide_seq': 'DGTLAVPFKAQAQTG'},\n",
+        "        {'peptide_name': 'AAV9', 'peptide_seq': 'AQAQAQTG'},\n",
+        "    ]\n",
+        "    # Open the CSV file for writing\n",
+        "    with open(project_directory_path + 'list_of_candidate_proteins_template.csv', 'w') as f:\n",
+        "        # Write the headers\n",
+        "        f.write('peptide_name,peptide_seq\\n')\n",
+        "        # Write the data\n",
+        "        for peptide in peptides:\n",
+        "            f.write(peptide['peptide_name'] + ',' + peptide['peptide_seq'] + '\\n')\n",
+        "\n",
+        "\n",
+        "# Store the project_directory_path in cache \n",
+        "cache_path = '/content/drive/MyDrive/APPRAISE_cache/'\n",
+        "if os.path.exists(cache_path) == False:\n",
+        "    #Make a directory and generate a template csv file\n",
+        "    !mkdir $cache_path\n",
+        "with open(cache_path + 'project_directory_path', 'w') as f:\n",
+        "    f.write(project_directory_path)\n",
+        "\n",
+        "# Set a function for reloading the path\n",
+        "def reload_project_path(cache_path='/content/drive/MyDrive/APPRAISE_cache/'):\n",
+        "    with open(cache_path + 'project_directory_path', 'r') as f:\n",
+        "        project_directory_path = f.read()\n",
+        "    return project_directory_path"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "1r0Qf58E7Yx2"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **0.2 Install APPRAISE package**"
+      ],
+      "metadata": {
+        "id": "AqzvOtrqvTc0"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "l7jOoIVAxBKh"
+      },
+      "outputs": [],
+      "source": [
+        "#@markdown - <font color=\"grey\"> Hit play button to run\n",
+        "!pip install appraise"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## **Step 1 Prepare input files for competitive structure modeling**"
+      ],
+      "metadata": {
+        "id": "ts7lUf2C1HDu"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Guide to step 1** \n",
+        "\n",
+        "- We'll generate fasta files needed for competitive structure modeling in this step."
+      ],
+      "metadata": {
+        "id": "LTWr4NdMyynV"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "###**1.1 Load candidate protein sequences**"
+      ],
+      "metadata": {
+        "id": "lmreDyZIusRR"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "Yro-aL4yxBKj"
+      },
+      "outputs": [],
+      "source": [
+        "import appraise\n",
+        "from appraise.utilities import *\n",
+        "from appraise.input_fasta_prep import *\n",
+        "\n",
+        "#@markdown Upload your input sequences in a .csv spreadsheet to the project folder in your Google Drive, fill in the name below, and hit the play button to load the spreadsheet.\n",
+        "\n",
+        "\n",
+        "csv_file_name = 'list_of_candidate_proteins_template.csv' #@param {type:\"string\"}\n",
+        "csv_file_path = project_directory_path + csv_file_name\n",
+        "#@markdown - <font color=\"grey\"> The .csv spreadsheet containing names and sequences of candidate engineered proteins. **A template file has already been provided in the project folder.** You may download the template file and modify based on the template.\n",
+        "#@markdown - <font color=\"grey\"> The spreadsheet should contain at least two columns titled \"peptide_name\" and \"peptide_seq\", respectively.  </font>\n",
+        "#@markdown - <font color=\"grey\"> You may check for more example files in the [demo](https://github.com/xz-ding/APPRAISE/tree/main/demo/example_input_sequences_from_manuscript).  </font>\n",
+        "#@markdown - <font color=\"grey\"> You'll see a preview of the list below. \n",
+        "df_input = pd.read_csv(csv_file_path)\n",
+        "df_input\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "###**1.2 Essential settings**"
+      ],
+      "metadata": {
+        "id": "HLiE89EMuzhH"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import re\n",
+        "\n",
+        "def check_alphanumeric(string):\n",
+        "    return bool(re.search(\"^[a-zA-Z0-9]+$\", string))\n",
+        "\n",
+        "receptor_name = 'Ly6a' #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Name of the receptor. **Use letters and numbers only.**\n",
+        "if check_alphanumeric(receptor_name) == False:\n",
+        "    raise ValueError(\"receptor_name does not allow non-alphanumeric characters. Please remove the special characters.\")\n",
+        "\n",
+        "\n",
+        "receptor_seq = \"LECYQCYGVPFETSCPSITCPYPDGVCVTQEAAVIVDSQTRKVKNNLCLPICPPNIESMEILGTKVNVKTSCCQEDLCNVAVP\" #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Receptor sequence to be used for modeling.  </font>\n",
+        "#@markdown - <font color=\"grey\"> We recommend using the minimal self-folding domain that is essential for the binding interaction to achieve the highest speed and accuracy. </font>\n",
+        "#@markdown - <font color=\"grey\"> Disordered sequences that are non-essential for binding may decrease the accuracy of modeling and should be truncated. Tips: 1. Truncated, crystallographic constructs used by structural biologists are usually good for modeling, if an experimental structure of the receptor is available; 2. You can also model the full-length receptor sequence using [ColabFold](https://github.com/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb) and find out the low-confidence (e.g., pLDDT < 50) terminal sequences that may be truncated. </font>\n",
+        "#@markdown - <font color=\"grey\"> Example sequences can be found in the [demo](https://github.com/xz-ding/APPRAISE/blob/main/demo/example_input_sequences_from_manuscript/receptor_sequences.csv). </font>\n",
+        "\n",
+        "competition_mode = 'pairwise' #@param ['pairwise', 'pooled', 'single']{type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Modes of competition: </font>\n",
+        "#@markdown -- <font color=\"grey\"> **pairwise** (default) Two candidate engineered proteins compete for a receptor. All possible pairs will be modeled exhaustively. </font>\n",
+        "#@markdown -- <font color=\"grey\"> **pooled** Candidate proteins will be grouped into fixed-sized groups and compete within the group. Each candidate protein will be in one group only.  </font>\n",
+        "#@markdown -- <font color=\"grey\"> **single** Complex models of one single engineered protein and the receptor will be modeled. </font>\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "_dU8ap1evoOv"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **1.3 Advanced settings**\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "NJ0JKUZyybqp"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "##### Hit the play button to proceed or expand and modify."
+      ],
+      "metadata": {
+        "id": "jnN_Xvsvi1Im"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "##################################################\n",
+        "#@markdown ##### **Advanced options for pairwise competition**\n",
+        "##################################################\n",
+        "square_matrix = True #@param {type:\"boolean\"}\n",
+        "#@markdown - <font color=\"grey\"> If True, all peptides in the list will be competing with each oter through a complete tournament.  </font>\n",
+        "#@markdown - <font color=\"grey\"> If False, each peptide from the csv file above will be competing with each peptide from another spreadsheet. You'll need to provide the path to other .csv spreadsheet. </font>\n",
+        "csv_file_path_2 = 'N/A' #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Provide path to the additional .csv spreadsheet if square_matrix is False. </font>\n",
+        "\n",
+        "\n",
+        "##################################################\n",
+        "#@markdown #####**Advanced options for pooled competition**\n",
+        "##################################################\n",
+        "pool_size = '4' #@param ['2', '3', '4'] {type:\"string\"}\n",
+        "pool_size = int(pool_size)\n",
+        "#@markdown - <font color=\"grey\"> The number of candidates in each pool.  </font>\n",
+        "random_seed = 42 #@param{type:'integer'}\n",
+        "#@markdown - <font color=\"grey\"> The seed for random grouping. The same seed number will result in the same grouping. </font>\n",
+        "number_of_groupings = 2 #@param{type:'integer'}\n",
+        "#@markdown - <font color=\"grey\"> It is recommended to model with multiple groupings to reduce the stochasticity of results. Total computational cost will scale linearly with the number of groupsings.  </font>\n",
+        "#@markdown - <font color=\"grey\"> Fasta files with different groupings will be merged in the same folder. </font>\n",
+        "\n",
+        "##################################################\n",
+        "#@markdown #####**Other advanced options**\n",
+        "##################################################\n",
+        "\n",
+        "subfolder_for_fasta_files = 'structure_modeling_input_fastas' #@param {type:\"string\"}\n",
+        "folder_path_for_fastas = project_directory_path + subfolder_for_fasta_files\n",
+        "#@markdown - <font color=\"grey\"> The destination folder that will contain the fasta files for structure modeling. </font>\n",
+        "#@markdown - <font color=\"grey\"> We suggest using the default folder name here so that you won't need to change in the following steps. </font>\n",
+        "\n",
+        "use_glycine_linker = False #@param {type:\"boolean\"}\n",
+        "#@markdown - <font color=\"grey\"> If ON, the complex models will be modeled as a single chain protein joint with glycines. </font>\n",
+        "#@markdown - <font color=\"grey\"> Default is OFF\n",
+        "#@markdown - <font color=\"grey\"> Turn ON this option this option if you intend to predict the structures with **ESMFold**. </font>\n",
+        "\n",
+        "glycine_linker_length=30 #@param {type:\"integer\"}\n",
+        "#@markdown - <font color=\"grey\"> If use_glycine_linker is True, use this variable to adjust the length of glycine linker. </font>\n",
+        "\n",
+        "prepare_receptor_model = True #@param {type:\"boolean\"}\n",
+        "#@markdown - <font color=\"grey\"> If True, a single-chain model with only the receptor will be modeled. The modeled structure can later be uploaded to [HullRad server](http://52.14.70.9/Run_hullrad.html) to measure the geometry properties of the receptor. </font>\n",
+        "\n"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "SuJS8CeGw-H6"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **1.4 Prepare fasta files**"
+      ],
+      "metadata": {
+        "id": "cbP1FZZOytvr"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown - <font color=\"grey\"> Hit play button to run\n",
+        "peptide_names, peptide_seqs = load_peptides(csv_file_path)\n",
+        "peptide_names_2 = []\n",
+        "peptide_seqs_2 = []\n",
+        "if competition_mode == 'pairwise' and square_matrix == 'False':\n",
+        "    peptide_names_2, peptide_seqs_2 = load_peptides(csv_file_path_2)\n",
+        "\n",
+        "if competition_mode == 'pooled':\n",
+        "    loop_number = number_of_groupings\n",
+        "else:\n",
+        "    loop_number = 1\n",
+        "\n",
+        "for i in range(loop_number):\n",
+        "    list_query_sequence, list_jobname = get_complex_fastas(receptor_name=receptor_name, receptor_seq=receptor_seq, list_peptide1_names=peptide_names,\\\n",
+        "                                        list_peptide1_seqs=peptide_seqs, mode=competition_mode, square_matrix=square_matrix,\\\n",
+        "                                        list_peptide2_names=peptide_names_2, list_peptide2_seqs=peptide_seqs_2, pool_size=pool_size,\\\n",
+        "                                        folder_path=folder_path_for_fastas, use_glycine_linker=use_glycine_linker,\\\n",
+        "                                        glycine_linker_length=glycine_linker_length, random_seed=random_seed,\\\n",
+        "                                        prepare_receptor_model=prepare_receptor_model)\n",
+        "    random_seed += 1\n",
+        "    prepare_receptor_model = False"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "3xLn02umxLAV"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "15bF_eZuxBKj"
+      },
+      "source": [
+        "## **Step 2 - Perform structure prediction**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "qLJF_PasxBKj"
+      },
+      "source": [
+        "**Guide to step 2** \n",
+        "\n",
+        "- For easy execution of structure prediction, here we have integrated slightly-modified versions of ColabFold, a Colab-based implementation of MMSeq2 multiple sequence alignment and protein folding methods ([Mirdita M et al. , Nature Methods (2022)](https://www.nature.com/articles/s41592-022-01488-1)). The latest version of ColabFold can be found in its [GitHub repository sokrypton/ColabFold](https://github.com/sokrypton/ColabFold). \n",
+        "\n",
+        "- You may choose one of the structure prediction methods (Step 2A or Step 2B) to proceed. At this moment, we recommend AlphaFold-multimer over ESMFold unless speed is a critical factor in your case."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **Step 2A - Predict structures with AlphaFold-multimer**\n",
+        "\n",
+        "- <font color=\"grey\"> Use this block if you want to perform the structure modeling using **AlphaFold-multimer**. \n",
+        "\n",
+        "- <font color=\"grey\"> This part of the notebook was based on [ColabFold/AlphaFold2_batch.ipynb](https://github.com/sokrypton/ColabFold/blob/main/batch/AlphaFold2_batch.ipynb). We recommend using the default settings pre-filled below (execpt the directories). You can find more instructions in the original notebook."
+      ],
+      "metadata": {
+        "id": "rlZq81d2cyfB"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2A.0 Show current GPU**"
+      ],
+      "metadata": {
+        "id": "HplfQ53_z2Ji"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown - <font color=\"grey\"> Structure modeling will require using a GPU session. \n",
+        "#@markdown - <font color=\"grey\"> If you see \"NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver.\", it means that your session is not equipped with a GPU accelarator. You may go to Colab's menu \"Runtime --> Change runtime type --> Hardware accelerator\" and choose \"GPU\". \n",
+        "#@markdown - <font color=\"grey\"> You'll need to re-run Step 0 after you change the runtime type.\n",
+        "#@markdown - <font color=\"grey\"> Note: Different GPU models may result in slightly different prediction results.\n",
+        "!nvidia-smi"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "p53kMH1mglQO"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2A.1 ColabFold settings (ok to keep default)**"
+      ],
+      "metadata": {
+        "id": "nyUY0Rb3zvSQ"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "##### Hit the play button to proceed or expand and modify."
+      ],
+      "metadata": {
+        "id": "QnbONP_Sj8Us"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown #### **Note: There is no need to change the default settings unless desired.**\n",
+        "\n",
+        "#@markdown ---\n",
+        "#@markdown ##### **Folder settings**\n",
+        "from sys import version_info \n",
+        "python_version = f\"{version_info.major}.{version_info.minor}\"\n",
+        "\n",
+        "subfolder_for_fasta_files = 'structure_modeling_input_fastas'  #@param {type:\"string\"}\n",
+        "input_dir = project_directory_path + subfolder_for_fasta_files\n",
+        "subfolder_for_predicted_structures = 'structure_modeling_results' #@param {type:\"string\"}\n",
+        "result_dir = project_directory_path + subfolder_for_predicted_structures\n",
+        "#@markdown - <font color=\"grey\"> We recommend keep the default names here\n",
+        "\n",
+        "\n",
+        "# number of models to use\n",
+        "#@markdown ---\n",
+        "#@markdown ##### **Advanced settings**\n",
+        "model_type = \"auto\" #@param [\"auto\", \"AlphaFold2-multimer-v2\", \"AlphaFold2-multimer-v1\"] {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> If \"auto\", AlphaFold2-multimer-v2 will be used for complexes and AlphaFold2 will be used for single chains.\n",
+        "msa_mode = \"MMseqs2 (UniRef+Environmental)\" #@param [\"MMseqs2 (UniRef+Environmental)\", \"MMseqs2 (UniRef only)\",\"single_sequence\",\"custom\"]\n",
+        "num_models = 5 #@param [1,2,3,4,5] {type:\"raw\"}\n",
+        "num_recycles = 3 #@param [1,3,6,12,24,48] {type:\"raw\"}\n",
+        "stop_at_score = 100 #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Early stop computing models once score > threshold (avg. plddt for \"structures\" and ptmscore for \"complexes\")\n",
+        "use_custom_msa = False\n",
+        "use_amber = False #@param {type:\"boolean\"}\n",
+        "use_templates = True #@param {type:\"boolean\"}\n",
+        "do_not_overwrite_results = True #@param {type:\"boolean\"}\n",
+        "zip_results = False"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "BoLipGF-csfO"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2A.2 Install dependencies**\n"
+      ],
+      "metadata": {
+        "id": "JMW8Xbzq1gRy"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown - <font color=\"grey\"> If you run into any errors in this cell, terminate this session (\"Runtime --> Disconnect and delete runtime\"), run Step 0.1 only (skip Step 0.2 and Step 1) and then start with Step 2.\n",
+        "\n",
+        "%%bash -s $use_amber $use_templates $python_version\n",
+        "\n",
+        "set -e\n",
+        "\n",
+        "USE_AMBER=$1\n",
+        "USE_TEMPLATES=$2\n",
+        "PYTHON_VERSION=$3\n",
+        "\n",
+        "if [ ! -f COLABFOLD_READY ]; then\n",
+        "  # install dependencies\n",
+        "  # We have to use \"--no-warn-conflicts\" because colab already has a lot preinstalled with requirements different to ours\n",
+        "  pip install -q --no-warn-conflicts \"colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold\"\n",
+        "  # high risk high gain\n",
+        "  pip install -q \"jax[cuda11_cudnn805]>=0.3.8,<0.4\" -f https://storage.googleapis.com/jax-releases/jax_releases.html\n",
+        "  touch COLABFOLD_READY\n",
+        "fi\n",
+        "\n",
+        "# Download params (~1min)\n",
+        "python -m colabfold.download\n",
+        "\n",
+        "# setup conda\n",
+        "if [ ${USE_AMBER} == \"True\" ] || [ ${USE_TEMPLATES} == \"True\" ]; then\n",
+        "  if [ ! -f CONDA_READY ]; then\n",
+        "    wget -qnc https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh\n",
+        "    bash Miniconda3-latest-Linux-x86_64.sh -bfp /usr/local 2>&1 1>/dev/null\n",
+        "    rm Miniconda3-latest-Linux-x86_64.sh\n",
+        "    touch CONDA_READY\n",
+        "  fi\n",
+        "fi\n",
+        "# setup template search\n",
+        "if [ ${USE_TEMPLATES} == \"True\" ] && [ ! -f HH_READY ]; then\n",
+        "  conda install -y -q -c conda-forge -c bioconda kalign2=2.04 hhsuite=3.3.0 python=\"${PYTHON_VERSION}\" 2>&1 1>/dev/null\n",
+        "  touch HH_READY\n",
+        "fi\n",
+        "# setup openmm for amber refinement\n",
+        "if [ ${USE_AMBER} == \"True\" ] && [ ! -f AMBER_READY ]; then\n",
+        "  conda install -y -q -c conda-forge openmm=7.5.1 python=\"${PYTHON_VERSION}\" pdbfixer 2>&1 1>/dev/null\n",
+        "  touch AMBER_READY\n",
+        "fi"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "geKWF2YaeWK-"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2A.3 Run Prediction**"
+      ],
+      "metadata": {
+        "id": "G-J-VK3m1lbc"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Force to download for the appropriate model type\n",
+        "if model_type == \"AlphaFold2-multimer-v1\":\n",
+        "    from colabfold.download import download_alphafold_params\n",
+        "    from pathlib import Path\n",
+        "    download_alphafold_params(model_type, Path(\"/root/.cache/colabfold/\"))\n",
+        "\n",
+        "import sys\n",
+        "\n",
+        "from colabfold.batch import get_queries, run\n",
+        "from colabfold.download import default_data_dir\n",
+        "from colabfold.utils import setup_logging\n",
+        "from pathlib import Path\n",
+        "\n",
+        "# For some reason we need that to get pdbfixer to import\n",
+        "if use_amber and f\"/usr/local/lib/python{python_version}/site-packages/\" not in sys.path:\n",
+        "    sys.path.insert(0, f\"/usr/local/lib/python{python_version}/site-packages/\")\n",
+        "\n",
+        "if 'logging_setup' not in globals():\n",
+        "    setup_logging(Path(result_dir).joinpath(\"log.txt\"))\n",
+        "    logging_setup = True\n",
+        "\n",
+        "queries, is_complex = get_queries(input_dir)\n",
+        "run(\n",
+        "    queries=queries,\n",
+        "    result_dir=result_dir,\n",
+        "    use_templates=use_templates,\n",
+        "    use_amber=use_amber,\n",
+        "    msa_mode=msa_mode,\n",
+        "    model_type=model_type,\n",
+        "    num_models=num_models,\n",
+        "    num_recycles=num_recycles,\n",
+        "    model_order=[3, 4, 5, 1, 2],\n",
+        "    is_complex=is_complex,\n",
+        "    data_dir=default_data_dir,\n",
+        "    keep_existing_results=do_not_overwrite_results,\n",
+        "    rank_by=\"auto\",\n",
+        "    pair_mode=\"unpaired+paired\",\n",
+        "    stop_at_score=stop_at_score,\n",
+        "    zip_results=zip_results,\n",
+        ")\n",
+        "\n",
+        "terminate_runtime_after_structure_prediction = False #@param {type:\"boolean\"}\n",
+        "#@markdown - <font color=\"grey\"> This is the **rate-limiting** step and can last hours to days depending on the number of competitions and the hardware.\n",
+        "#@markdown - <font color=\"grey\"> If you're paying for computing credits and expect this run to be long, we suggest turning ON terminate_runtime_after_structure_prediction. (This way, the runtime will be terminated and you will see an \"error message\". When you want to proceed afterwards, you'll need to re-run Step 0 to set up the environment before jumping to Step 3.)\n",
+        "if terminate_runtime_after_structure_prediction:\n",
+        "    from google.colab import runtime\n",
+        "    runtime.unassign()\n",
+        "     "
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "gnenlpH5euIW"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **Step 2B - Predict structures with ESMFold**\n",
+        "\n",
+        "- <font color=\"grey\"> Use this block if you want to perform the structure modeling using **ESMFold**. \n",
+        "\n",
+        "\n",
+        "- <font color=\"grey\"> This part of the notebook was based on [ColabFold/AlphaFold2_batch.ipynb](https://github.com/sokrypton/ColabFold/blob/main/batch/AlphaFold2_batch.ipynb) and [ColabFold/ESMFold.ipynb](https://github.com/sokrypton/ColabFold/blob/main/ESMFold.ipynb). We recommend using the default settings pre-filled below (execpt the directories). You can find more instructions in the original notebooks."
+      ],
+      "metadata": {
+        "id": "BNp9gGIwgVyv"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2B.0 Show current GPU**"
+      ],
+      "metadata": {
+        "id": "aFws2LOx1USL"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown - <font color=\"grey\"> Structure modeling will require using a GPU session. \n",
+        "#@markdown - <font color=\"grey\"> If you see \"NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver.\", it means that your session is not equipped with a GPU accelarator. You may go to Colab's menu \"Runtime --> Change runtime type --> Hardware accelerator\" and choose \"GPU\". \n",
+        "#@markdown - <font color=\"grey\"> You'll need to re-run Step 0 after you change the runtime type.\n",
+        "#@markdown - <font color=\"grey\"> Note: Different GPU models may result in slightly different prediction results.\n",
+        "!nvidia-smi"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "3rR4rUufho3D"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2B.1 Installation**"
+      ],
+      "metadata": {
+        "id": "kpVAPaOQ3CKS"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%time\n",
+        "#@title \n",
+        "#@markdown - <font color=\"grey\"> This cell installs ESMFold, OpenFold, download Params (~2min 30s), and prepares other utilities functions from ColabFold\n",
+        "\n",
+        "#@markdown - <font color=\"grey\"> If you run into any errors in this cell, terminate this session (\"Runtime --> Disconnect and delete runtime\"), run Step 0.1 only (skip Step 0.2 and Step 1) and then start with Step 2.\n",
+        "\n",
+        "#Installation\n",
+        "import os, time\n",
+        "if not os.path.isfile(\"esmfold.model\"):\n",
+        "  # download esmfold params\n",
+        "  os.system(\"apt-get install aria2 -qq\")\n",
+        "  os.system(\"aria2c -q -x 16 https://colabfold.steineggerlab.workers.dev/esm/esmfold.model &\")\n",
+        "\n",
+        "  # install libs\n",
+        "  os.system(\"pip install -q omegaconf pytorch_lightning biopython ml_collections einops py3Dmol\")\n",
+        "  os.system(\"pip install -q git+https://github.com/NVIDIA/dllogger.git\")\n",
+        "\n",
+        "  # install openfold\n",
+        "  commit = \"6908936b68ae89f67755240e2f588c09ec31d4c8\"\n",
+        "  os.system(f\"pip install -q git+https://github.com/aqlaboratory/openfold.git@{commit}\")\n",
+        "\n",
+        "  # install esmfold\n",
+        "  os.system(f\"pip install -q git+https://github.com/sokrypton/esm.git@beta\")\n",
+        "\n",
+        "  # wait for Params to finish downloading...\n",
+        "  if not os.path.isfile(\"esmfold.model\"):\n",
+        "    # backup source!\n",
+        "    os.system(\"aria2c -q -x 16 https://files.ipd.uw.edu/pub/esmfold/esmfold.model\")\n",
+        "  else:\n",
+        "    while os.path.isfile(\"esmfold.model.aria2\"):\n",
+        "      time.sleep(5)\n",
+        "\n",
+        "#######################################\n",
+        "#######################################\n",
+        "# Load other functions from ColabFold #\n",
+        "#######################################\n",
+        "#######################################\n",
+        "import json\n",
+        "import logging\n",
+        "import warnings\n",
+        "from pathlib import Path\n",
+        "from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING\n",
+        "\n",
+        "from absl import logging as absl_logging\n",
+        "from importlib_metadata import distribution\n",
+        "from tqdm import TqdmExperimentalWarning\n",
+        "\n",
+        "\n",
+        "\n",
+        "# parse_fasta from colabfold.batch\n",
+        "def parse_fasta(fasta_string: str) -> Tuple[List[str], List[str]]:\n",
+        "    \"\"\"Parses FASTA string and returns list of strings with amino-acid sequences.\n",
+        "    Arguments:\n",
+        "      fasta_string: The string contents of a FASTA file.\n",
+        "    Returns:\n",
+        "      A tuple of two lists:\n",
+        "      * A list of sequences.\n",
+        "      * A list of sequence descriptions taken from the comment lines. In the\n",
+        "        same order as the sequences.\n",
+        "    \"\"\"\n",
+        "    sequences = []\n",
+        "    descriptions = []\n",
+        "    index = -1\n",
+        "    for line in fasta_string.splitlines():\n",
+        "        line = line.strip()\n",
+        "        if line.startswith(\"#\"):\n",
+        "            continue\n",
+        "        if line.startswith(\">\"):\n",
+        "            index += 1\n",
+        "            descriptions.append(line[1:])  # Remove the '>' at the beginning.\n",
+        "            sequences.append(\"\")\n",
+        "            continue\n",
+        "        elif not line:\n",
+        "            continue  # Skip blank lines.\n",
+        "        sequences[index] += line\n",
+        "\n",
+        "    return sequences, descriptions\n",
+        "\n",
+        "# get_queries from colabfold.batch\n",
+        "def get_queries(\n",
+        "    input_path: Union[str, Path], sort_queries_by: str = \"length\"\n",
+        ") -> Tuple[List[Tuple[str, str, Optional[List[str]]]], bool]:\n",
+        "    \"\"\"Reads a directory of fasta files, a single fasta file or a csv file and returns a tuple\n",
+        "    of job name, sequence and the optional a3m lines\"\"\"\n",
+        "\n",
+        "    input_path = Path(input_path)\n",
+        "    if not input_path.exists():\n",
+        "        raise OSError(f\"{input_path} could not be found\")\n",
+        "\n",
+        "    if input_path.is_file():\n",
+        "        if input_path.suffix == \".csv\" or input_path.suffix == \".tsv\":\n",
+        "            sep = \"\\t\" if input_path.suffix == \".tsv\" else \",\"\n",
+        "            df = pandas.read_csv(input_path, sep=sep)\n",
+        "            assert \"id\" in df.columns and \"sequence\" in df.columns\n",
+        "            queries = [\n",
+        "                (seq_id, sequence.upper().split(\":\"), None)\n",
+        "                for seq_id, sequence in df[[\"id\", \"sequence\"]].itertuples(index=False)\n",
+        "            ]\n",
+        "            for i in range(len(queries)):\n",
+        "                if len(queries[i][1]) == 1:\n",
+        "                    queries[i] = (queries[i][0], queries[i][1][0], None)\n",
+        "        elif input_path.suffix == \".a3m\":\n",
+        "            (seqs, header) = parse_fasta(input_path.read_text())\n",
+        "            if len(seqs) == 0:\n",
+        "                raise ValueError(f\"{input_path} is empty\")\n",
+        "            query_sequence = seqs[0]\n",
+        "            # Use a list so we can easily extend this to multiple msas later\n",
+        "            a3m_lines = [input_path.read_text()]\n",
+        "            queries = [(input_path.stem, query_sequence, a3m_lines)]\n",
+        "        elif input_path.suffix in [\".fasta\", \".faa\", \".fa\"]:\n",
+        "            (sequences, headers) = parse_fasta(input_path.read_text())\n",
+        "            queries = []\n",
+        "            for sequence, header in zip(sequences, headers):\n",
+        "                sequence = sequence.upper()\n",
+        "                if sequence.count(\":\") == 0:\n",
+        "                    # Single sequence\n",
+        "                    queries.append((header, sequence, None))\n",
+        "                else:\n",
+        "                    # Complex mode\n",
+        "                    queries.append((header, sequence.upper().split(\":\"), None))\n",
+        "        else:\n",
+        "            raise ValueError(f\"Unknown file format {input_path.suffix}\")\n",
+        "    else:\n",
+        "        assert input_path.is_dir(), \"Expected either an input file or a input directory\"\n",
+        "        queries = []\n",
+        "        for file in sorted(input_path.iterdir()):\n",
+        "            #troubleshooting\n",
+        "            print(\"Parsing fasta file {}\".format(file))\n",
+        "\n",
+        "            if not file.is_file():\n",
+        "                continue\n",
+        "            if file.suffix.lower() not in [\".a3m\", \".fasta\", \".faa\"]:\n",
+        "                logger.warning(f\"non-fasta/a3m file in input directory: {file}\")\n",
+        "                continue\n",
+        "            (seqs, header) = parse_fasta(file.read_text())\n",
+        "            if len(seqs) == 0:\n",
+        "                logger.error(f\"{file} is empty\")\n",
+        "                continue\n",
+        "            query_sequence = seqs[0]\n",
+        "            if len(seqs) > 1 and file.suffix in [\".fasta\", \".faa\", \".fa\"]:\n",
+        "                logger.warning(\n",
+        "                    f\"More than one sequence in {file}, ignoring all but the first sequence\"\n",
+        "                )\n",
+        "\n",
+        "            if file.suffix.lower() == \".a3m\":\n",
+        "                a3m_lines = [file.read_text()]\n",
+        "                queries.append((file.stem, query_sequence.upper(), a3m_lines))\n",
+        "            else:\n",
+        "                if query_sequence.count(\":\") == 0:\n",
+        "                    # Single sequence\n",
+        "                    queries.append((file.stem, query_sequence, None))\n",
+        "                else:\n",
+        "                    # Complex mode\n",
+        "                    queries.append((file.stem, query_sequence.upper().split(\":\"), None))\n",
+        "\n",
+        "    # sort by seq. len\n",
+        "    if sort_queries_by == \"length\":\n",
+        "        queries.sort(key=lambda t: len(t[1]))\n",
+        "    elif sort_queries_by == \"random\":\n",
+        "        random.shuffle(queries)\n",
+        "    is_complex = False\n",
+        "    for job_number, (raw_jobname, query_sequence, a3m_lines) in enumerate(queries):\n",
+        "        if isinstance(query_sequence, list):\n",
+        "            is_complex = True\n",
+        "            break\n",
+        "        if a3m_lines is not None and a3m_lines[0].startswith(\"#\"):\n",
+        "            a3m_line = a3m_lines[0].splitlines()[0]\n",
+        "            tab_sep_entries = a3m_line[1:].split(\"\\t\")\n",
+        "            if len(tab_sep_entries) == 2:\n",
+        "                query_seq_len = tab_sep_entries[0].split(\",\")\n",
+        "                query_seq_len = list(map(int, query_seq_len))\n",
+        "                query_seqs_cardinality = tab_sep_entries[1].split(\",\")\n",
+        "                query_seqs_cardinality = list(map(int, query_seqs_cardinality))\n",
+        "                is_single_protein = (\n",
+        "                    True\n",
+        "                    if len(query_seq_len) == 1 and query_seqs_cardinality[0] == 1\n",
+        "                    else False\n",
+        "                )\n",
+        "                if not is_single_protein:\n",
+        "                    is_complex = True\n",
+        "                    break\n",
+        "    return queries, is_complex\n",
+        "\n",
+        "# TqdmHandler from colabfold.utils (needed for setup_logging)\n",
+        "class TqdmHandler(logging.StreamHandler):\n",
+        "    \"\"\"https://stackoverflow.com/a/38895482/3549270\"\"\"\n",
+        "\n",
+        "    def __init__(self):\n",
+        "        logging.StreamHandler.__init__(self)\n",
+        "\n",
+        "    def emit(self, record):\n",
+        "        # We need the native tqdm here\n",
+        "        from tqdm import tqdm\n",
+        "\n",
+        "        msg = self.format(record)\n",
+        "        tqdm.write(msg)\n",
+        "\n",
+        "# setup_logging from colabfold.utils\n",
+        "def setup_logging(log_file: Path):\n",
+        "    log_file.parent.mkdir(exist_ok=True, parents=True)\n",
+        "    root = logging.getLogger()\n",
+        "    if root.handlers:\n",
+        "        for handler in root.handlers:\n",
+        "            root.removeHandler(handler)\n",
+        "    logging.basicConfig(\n",
+        "        level=logging.INFO,\n",
+        "        format=\"%(asctime)s %(message)s\",\n",
+        "        handlers=[TqdmHandler(), logging.FileHandler(log_file)],\n",
+        "    )\n",
+        "    # otherwise jax will tell us about its search for devices\n",
+        "    absl_logging.set_verbosity(\"error\")\n",
+        "    warnings.simplefilter(action=\"ignore\", category=TqdmExperimentalWarning)\n",
+        "\n",
+        "#from colabfold.utils\n",
+        "def safe_filename(file: str) -> str:\n",
+        "    return \"\".join([c if c.isalnum() or c in [\"_\", \".\", \"-\"] else \"_\" for c in file])\n",
+        "\n",
+        "# default_data_dir from colabfold.\n",
+        "import appdirs\n",
+        "default_data_dir = Path(appdirs.user_cache_dir(__package__ or \"colabfold\"))"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "ZfcJXC5Uhvuq"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2B.2 ColabFold settings (ok to keep default)**"
+      ],
+      "metadata": {
+        "id": "KbnyZxce061J"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "##### Hit the play button to proceed or expand and modify."
+      ],
+      "metadata": {
+        "id": "RTZEOqaCj_Ad"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown ##### **Note: There is no need to change the default settings unless desired.**\n",
+        "\n",
+        "#@markdown ---\n",
+        "#@markdown #####**Folder settings**\n",
+        "\n",
+        "%%time\n",
+        "from string import ascii_uppercase, ascii_lowercase\n",
+        "import hashlib, re, os\n",
+        "import numpy as np\n",
+        "from jax.tree_util import tree_map\n",
+        "import matplotlib.pyplot as plt\n",
+        "from scipy.special import softmax\n",
+        "\n",
+        "def parse_output(output):\n",
+        "  pae = (output[\"aligned_confidence_probs\"][0] * np.arange(64)).mean(-1) * 31\n",
+        "  plddt = output[\"plddt\"][0,:,1]\n",
+        "  \n",
+        "  bins = np.append(0,np.linspace(2.3125,21.6875,63))\n",
+        "  sm_contacts = softmax(output[\"distogram_logits\"],-1)[0]\n",
+        "  sm_contacts = sm_contacts[...,bins<8].sum(-1)\n",
+        "  xyz = output[\"positions\"][-1,0,:,1]\n",
+        "  mask = output[\"atom37_atom_exists\"][0,:,1] == 1\n",
+        "  o = {\"pae\":pae[mask,:][:,mask],\n",
+        "       \"plddt\":plddt[mask],\n",
+        "       \"sm_contacts\":sm_contacts[mask,:][:,mask],\n",
+        "       \"xyz\":xyz[mask]}\n",
+        "  if \"contacts\" in output[\"lm_output\"]:\n",
+        "    lm_contacts = output[\"lm_output\"][\"contacts\"].astype(float)[0]\n",
+        "    o[\"lm_contacts\"] = lm_contacts[mask,:][:,mask]\n",
+        "  return o\n",
+        "\n",
+        "def get_hash(x): return hashlib.sha1(x.encode()).hexdigest()\n",
+        "alphabet_list = list(ascii_uppercase+ascii_lowercase)\n",
+        "\n",
+        "\n",
+        "#################\n",
+        "### Load data ###\n",
+        "#################\n",
+        "\n",
+        "subfolder_for_fasta_files = 'structure_modeling_input_fastas'  #@param {type:\"string\"}\n",
+        "input_dir = project_directory_path + subfolder_for_fasta_files\n",
+        "subfolder_for_predicted_structures = 'structure_modeling_results' #@param {type:\"string\"}\n",
+        "result_dir = project_directory_path + subfolder_for_predicted_structures\n",
+        "\n",
+        "#@markdown - <font color=\"grey\"> We recommend keep the default names here\n",
+        "\n",
+        "#Load queries\n",
+        "queries, is_complex = get_queries(input_dir)\n",
+        "\n",
+        "\n",
+        "# from batch.py\n",
+        "data_dir = default_data_dir\n",
+        "data_dir = Path(data_dir)\n",
+        "result_dir = Path(result_dir)\n",
+        "result_dir.mkdir(exist_ok=True)\n",
+        "\n",
+        "# jobname = \"test\" #@param {type:\"string\"}\n",
+        "# jobname = re.sub(r'\\W+', '', jobname)[:50]\n",
+        "\n",
+        "# sequence = \"GWSTELEKHREELKEFLKKEGITNVEIRIDNGRLEVRVEGGTERLKRFLEELRQKLEKKGYTVDIKIE\" #@param {type:\"string\"}\n",
+        "# sequence = re.sub(\"[^A-Z:]\", \"\", sequence.replace(\"/\",\":\").upper())\n",
+        "# sequence = re.sub(\":+\",\":\",sequence)\n",
+        "# sequence = re.sub(\"^[:]+\",\"\",sequence)\n",
+        "# sequence = re.sub(\"[:]+$\",\"\",sequence)\n",
+        "\n",
+        "#@markdown ---\n",
+        "#@markdown #####**Advanced Options**\n",
+        "num_recycles = 3 #@param [\"0\", \"1\", \"2\", \"3\", \"6\", \"12\"] {type:\"raw\"}\n",
+        "\n",
+        "get_LM_contacts = False\n",
+        "#get_LM_contacts = False #@param {type:\"boolean\"}\n",
+        "\n",
+        "copies = 1\n",
+        "# copies = 1 #@param {type:\"integer\"}\n",
+        "\n",
+        "glycine_linker_length = 30 #@param {type:\"number\"}\n",
+        "# if copies == \"\" or copies <= 0: copies = 1\n",
+        "# sequence = \":\".join([sequence] * copies)\n",
+        "\n",
+        "samples = None\n",
+        "masking_rate = 0.15\n",
+        "stochastic_mode = \"LM\"\n",
+        "# samples = None #@param [\"None\", \"1\", \"4\", \"8\", \"16\", \"32\", \"64\"] {type:\"raw\"}\n",
+        "# masking_rate = 0.15 #@param {type:\"number\"}\n",
+        "# stochastic_mode = \"LM\" #@param [\"LM\", \"LM_SM\", \"SM\"]\n",
+        "\n",
+        "# ID = jobname+\"_\"+get_hash(sequence)[:5]\n",
+        "# seqs = sequence.split(\":\")\n",
+        "# lengths = [len(s) for s in seqs]\n",
+        "# length = sum(lengths)\n",
+        "# print(\"length\",length)\n",
+        "\n",
+        "# u_seqs = list(set(seqs))\n",
+        "# if len(seqs) == 1: mode = \"mono\"\n",
+        "# elif len(u_seqs) == 1: mode = \"homo\"\n",
+        "# else: mode = \"hetero\"\n",
+        "\n",
+        "if \"model\" not in dir():\n",
+        "  import torch\n",
+        "  model = torch.load(\"esmfold.model\")\n",
+        "  model.cuda().requires_grad_(False)\n",
+        "\n",
+        "# # optimized for Tesla T4\n",
+        "# if length > 700:\n",
+        "#   model.trunk.set_chunk_size(64)\n",
+        "# else:\n",
+        "#   model.trunk.set_chunk_size(128)\n",
+        "\n",
+        "best_pdb_str = None\n",
+        "best_ptm = 0\n",
+        "best_output = None\n",
+        "traj = []\n",
+        "\n",
+        "num_samples = 1 if samples is None else samples\n",
+        "\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "FKdTkkoYh1HN"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **2B.3 Run ESMFold in batch**"
+      ],
+      "metadata": {
+        "id": "wLhQOvOu3JnM"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "###########\n",
+        "## Batch ##\n",
+        "###########\n",
+        "\n",
+        "\n",
+        "logger = logging.getLogger(__name__)\n",
+        "\n",
+        "keep_existing_results = False\n",
+        "\n",
+        "if 'logging_setup' not in globals():\n",
+        "    setup_logging(Path(result_dir).joinpath(\"log.txt\"))\n",
+        "    logging_setup = True\n",
+        "\n",
+        "\n",
+        "for job_number, (raw_jobname, query_sequence, a3m_lines) in enumerate(queries):\n",
+        "    jobname = safe_filename(raw_jobname)\n",
+        "    # In the colab version and with --zip we know we're done when a zip file has been written\n",
+        "    result_zip = result_dir.joinpath(jobname).with_suffix(\".result.zip\")\n",
+        "    if keep_existing_results and result_zip.is_file():\n",
+        "        logger.info(f\"Skipping {jobname} (result.zip)\")\n",
+        "        continue\n",
+        "    # In the local version we use a marker file\n",
+        "    is_done_marker = result_dir.joinpath(jobname + \".done.txt\")\n",
+        "    if keep_existing_results and is_done_marker.is_file():\n",
+        "        logger.info(f\"Skipping {jobname} (already done)\")\n",
+        "        continue\n",
+        "\n",
+        "    query_sequence_len = (\n",
+        "        len(query_sequence)\n",
+        "        if isinstance(query_sequence, str)\n",
+        "        else sum(len(s) for s in query_sequence)\n",
+        "    )\n",
+        "    logger.info(\n",
+        "        f\"Query {job_number + 1}/{len(queries)}: {jobname} (length {query_sequence_len})\"\n",
+        "    )\n",
+        "\n",
+        "\n",
+        "    # #add glycine linker if there isn't one\n",
+        "    glycine_linker_seq = 'G' * glycine_linker_length\n",
+        "    sequence = (\n",
+        "        query_sequence\n",
+        "        if isinstance(query_sequence, str)\n",
+        "        else glycine_linker_seq.join(query_sequence)\n",
+        "    )\n",
+        "\n",
+        "    print('> Sequence to model: ')\n",
+        "    print(sequence)\n",
+        "\n",
+        "    if len(sequence) > 700:\n",
+        "        model.trunk.set_chunk_size(64)\n",
+        "    else:\n",
+        "        model.trunk.set_chunk_size(128)\n",
+        "\n",
+        "    for seed in range(num_samples):\n",
+        "        torch.cuda.empty_cache()\n",
+        "        if samples is None:\n",
+        "            seed = \"default\"\n",
+        "            mask_rate = 0.0\n",
+        "            model.train(False)\n",
+        "        else:\n",
+        "            torch.manual_seed(seed)\n",
+        "            mask_rate = masking_rate if \"LM\" in stochastic_mode else 0.0\n",
+        "            model.train(\"SM\" in stochastic_mode)\n",
+        "\n",
+        "        output = model.infer(sequence,\n",
+        "                            num_recycles=num_recycles, #deleted argument chain_linker = \"X\"*chain_linker, from Alphafold-multimer\n",
+        "                            residue_index_offset=512,\n",
+        "                            mask_rate=mask_rate,\n",
+        "                            return_contacts=get_LM_contacts)\n",
+        "        \n",
+        "        pdb_str = model.output_to_pdb(output)[0]\n",
+        "        output = tree_map(lambda x: x.cpu().numpy(), output)\n",
+        "        ptm = output[\"ptm\"][0]\n",
+        "        plddt = output[\"plddt\"][0,:,1].mean()\n",
+        "        traj.append(parse_output(output))\n",
+        "        print(f'{seed} ptm: {ptm:.3f} plddt: {plddt:.1f}')\n",
+        "        if ptm > best_ptm:\n",
+        "            best_pdb_str = pdb_str\n",
+        "            best_ptm = ptm\n",
+        "            best_output = output\n",
+        "        #os.system(f\"mkdir -p {ID}\")\n",
+        "        if samples is None:\n",
+        "            pdb_filename = result_dir.joinpath(f\"{jobname}_unrelaxed_ptm{ptm:.3f}_r{num_recycles}_seed{seed}.pdb\")\n",
+        "        else:\n",
+        "            pdb_filename = result_dir.joinpath(f\"{jobname}_unrelaxed_ptm{ptm:.3f}_r{num_recycles}_seed{seed}_{stochastic_mode}_m{masking_rate:.2f}.pdb\")\n",
+        "\n",
+        "        with open(pdb_filename,\"w\") as out:\n",
+        "            out.write(pdb_str)\n",
+        "\n",
+        "terminate_runtime_after_structure_prediction = False #@param {type:\"boolean\"}\n",
+        "#@markdown - <font color=\"grey\"> This is the **rate-limiting** step and can last hours depending on the number of competitions and the hardware.\n",
+        "#@markdown - <font color=\"grey\"> If you're paying for computing credits and expect this run to be long, we suggest turning ON terminate_runtime_after_structure_prediction. (This way, the runtime will be terminated and you will see an \"error message\". When you want to proceed afterwards, you'll need to re-run Step 0 to set up the environment before jumping to Step 3.)\n",
+        "if terminate_runtime_after_structure_prediction:\n",
+        "    from google.colab import runtime\n",
+        "    runtime.unassign()\n"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "ONaCAOAvjI-1"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "2x1fmIaPxBKk"
+      },
+      "source": [
+        "## **Step 3 - Quantify structure models**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Guide to Step 3**\n",
+        "- In this step, you will use PyMOL script appraise/pymol_quantify_peptide_binding.py to analyze the pdb files generated in Step 2 and get a csv file (the \"database\" file) containing all measurements in parent folder of the pdb results folder. \n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "eggiHA3a51v6"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **3.1 Install open-source PyMOL**"
+      ],
+      "metadata": {
+        "id": "enyU6J3dkiOB"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "#@markdown - <font color=\"grey\">  Hit play button to install. \n",
+        "#@markdown - <font color=\"grey\">  The installation code was adapted from [colabOpenSourcePyMOLpySnips](https://github.com/MooersLab/colabOpenSourcePyMOLpySnips) by Dr. Blaine Mooers.\n",
+        "#@markdown - <font color=\"grey\">  If you see an error message during installation, restart the runtime (go to Runtime --> Disconnect and delete the runtime) and re-run Step 0 and then Step 3.\n",
+        "\n",
+        "from IPython.utils import io\n",
+        "import tqdm.notebook\n",
+        "import os\n",
+        "\"\"\"The PyMOL installation is done inside two nested context managers. This approach\n",
+        "was inspired by Dr. Christopher Schlick's (of the Phenix group at\n",
+        "Lawrence Berkeley National Laboratory) method for installing cctbx\n",
+        "in a Colab Notebook. He presented his work on September 1, 2021 at the IUCr\n",
+        "Crystallographic Computing School. I adapted Chris's approach here. It replaces my first approach\n",
+        "that requires seven steps. My approach was presentated at the SciPy2021 conference\n",
+        "in July 2021 and published in the\n",
+        "[proceedings](http://conference.scipy.org/proceedings/scipy2021/blaine_mooers.html).\n",
+        "The new approach is easier for beginners to use. The old approach is easier to debug\n",
+        "and could be used as a back-up approach.\n",
+        "\n",
+        "Thank you to Professor David Oppenheimer of the University of Florida for suggesting the use mamba and of Open Source PyMOL.\n",
+        "\"\"\"\n",
+        "total = 100\n",
+        "with tqdm.notebook.tqdm(total=total) as pbar:\n",
+        "    with io.capture_output() as captured:\n",
+        "\n",
+        "        !pip install -q condacolab\n",
+        "        import condacolab\n",
+        "        condacolab.install()\n",
+        "        pbar.update(10)\n",
+        "\n",
+        "        import sys\n",
+        "        sys.path.append('/usr/local/lib/python3.7/site-packages/')\n",
+        "        pbar.update(20)\n",
+        "\n",
+        "        # Install PyMOL\n",
+        "        %shell mamba install pymol-open-source --yes\n",
+        "\n",
+        "        pbar.update(70)"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "M3RBEwQx1ZkL"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **3.2 Run the APPRAISE analysis script**"
+      ],
+      "metadata": {
+        "id": "sIKQYnnGkcTg"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#@markdown **Folder path setting**\n",
+        "project_directory_path = reload_project_path()\n",
+        "\n",
+        "subfolder_for_predicted_structures = 'structure_modeling_results' #@param {type:\"string\"}\n",
+        "folder_path_for_predicted_structures = project_directory_path + subfolder_for_predicted_structures\n",
+        "\n",
+        "#@markdown - <font color=\"grey\">  The folder containing the structure prediction results from Step 2.\n",
+        "#@markdown - <font color=\"grey\">  You don't need to change the path if you used default folder path settings.\n",
+        "\n",
+        "# Get the path to the script\n",
+        "import appraise\n",
+        "import os\n",
+        "script_path = '/'.join(os.path.abspath(appraise.__file__).split('/')[:-2]) + '/appraise/pymol_quantify_peptide_binding.py'\n",
+        "\n",
+        "# Execute script\n",
+        "!pymol -cq $script_path $folder_path_for_predicted_structures"
+      ],
+      "metadata": {
+        "cellView": "form",
+        "id": "3PxzGv1l2fAf"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "pz4OJifTxBKk"
+      },
+      "source": [
+        "\n",
+        "\n",
+        "<font color=\"grey\">**Notes:**\n",
+        "\n",
+        "<font color=\"grey\"> *1. If you did not use ColabFold for the modeling, the file names of the models need to be changed to the following format, where the bracketed part can be any filler string with a total length of 14 characters:*\n",
+        "\n",
+        "<font color=\"grey\"> ``` 'ReceptorName_and_Peptide1Name_vs_Peptide2Name_vs_..._vs_PeptideNName_unrelaxed_XXXX...XXXX.pdb' ```\n",
+        "\n",
+        "<font color=\"grey\"> *2. Currently, Colab-APPRAISE notebook only allows you to run the script with default parameters (for example, the anchor site defaults to the C-terminus). If you need to change the parameters for the quantification function, use Advanced approach below instead.*\n",
+        "\n",
+        "<font/> "
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### <font color=\"grey\"> **(Advanced approach) Alternative step 3**"
+      ],
+      "metadata": {
+        "id": "gXM203Ro7ihb"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "<font color=\"grey\">  You can run the quantification script in a local installation of PyMOL using **PyMOL prompt**, which gives you **more control** of the parameters to be used for analysis. For example, you can change the anchor point of the receptor from the default (C-terminus) to the N-terminus or any other residues. </font>\n",
+        "\n",
+        "<font color=\"grey\">  First, you need a copy of the PyMOL script. If you already have a local installation of [APPRAISE package](https://pypi.org/project/appraise/), the script is already included in the package. If you don't have the package, you can also download the standalone PyMOL script [here](https://github.com/xz-ding/APPRAISE/blob/main/appraise/pymol_quantify_peptide_binding.py). </font>\n",
+        "\n",
+        "<font color=\"grey\"> Then, in PyMOL GUI, load the script and call the quantify_binding() function with desired arguments. </font>\n",
+        "\n",
+        "<font color=\"grey\"> For example:</font>\n",
+        "\n",
+        " ```\n",
+        "# Load the script (replace \"/path/to/APPRAISE\" with the actual path)\n",
+        "run /path/to/APPRAISE/appraise/pymol_quantify_peptide_binding.py\n",
+        "\n",
+        "# Call the quantification function (change the parameters as needed)\n",
+        "quantify_binding('path_to_results_folder/', use_relaxed=False, time_stamp=True, mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, membrane_anchor_site='N-term')\n",
+        "```\n",
+        "\n",
+        "<font color=\"grey\"> *Note: The script will take a few minutes to run, and the PyMOL GUI might be frozen while the script is running, which is normal.*</font>"
+      ],
+      "metadata": {
+        "id": "Jv1t3-lenpFp"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "LZAbzNu4xBKk"
+      },
+      "source": [
+        "## **Step 4 - Analyze quantification results**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Guide to Step 4**\n",
+        "- Perform physics-informed analysis of the competition results. \n",
+        "- Choose the right option below based on the competition type (Use 4A for **pairwise competition**, and use 4B for **pooled competition** or **single peptide binding**)"
+      ],
+      "metadata": {
+        "id": "itfzD73yxJxK"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "PoJrDDT8xBKm"
+      },
+      "source": [
+        "### **Step 4A - Analyze pairwise competition results**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Use this block to analyze **pairwise competition** results. If you're analyzing pooled competition or single peptide binding results, use block Step 4B instead."
+      ],
+      "metadata": {
+        "id": "kQhJ8kriBgAE"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4A.1 Load structure quantification resutls**\n"
+      ],
+      "metadata": {
+        "id": "xMJhukMblGhy"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "gMoMvF02xBKn"
+      },
+      "outputs": [],
+      "source": [
+        "# Import common packages\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "import glob\n",
+        "\n",
+        "# Import necessary APPRAISE modules\n",
+        "import appraise\n",
+        "from appraise.utilities import *\n",
+        "from appraise.score_calculation import *\n",
+        "\n",
+        "# Get the settings\n",
+        "#@markdown **Basic settings**\n",
+        "project_directory_path = reload_project_path()\n",
+        "database_file_name = 'database_APPRAISE_measurements_[timestamp].csv' #@param {type:\"string\"}\n",
+        "auto_fill_timestamp = True #@param {type:\"boolean\"}\n",
+        "\n",
+        "#@markdown - <font color=\"grey\"> If auto_fill_timestamp is ON, the database file with the lastest timestamp (generated by Step 3) will be used.\n",
+        "#@markdown - <font color=\"grey\"> Otherwise, you can manually provide the name of the quantification database file (*.csv*) you want to use (generated by Step 3). You can find the time-stamped file name in the final lines of the output from Step 3.2.\n",
+        "if auto_fill_timestamp or database_file_name == 'database_APPRAISE_measurements_[timestamp].csv':\n",
+        "    list_database_file_names = glob.glob(project_directory_path + 'database_APPRAISE_measurements_*.csv')\n",
+        "    if len(list_database_file_names) == 0:\n",
+        "        raise ValueError('No database file found under project directory.')\n",
+        "    else:\n",
+        "        database_path = sorted(list_database_file_names)[-1]\n",
+        "else:\n",
+        "    database_path = project_directory_path + database_file_name\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "APPRAISE_version = '1.2' #@param ['1.0', '1.1', '1.2'] {type:\"string\"}\n",
+        "APPRAISE_version = float(APPRAISE_version)\n",
+        "#@markdown - <font color=\"grey\"> Version of APPRAISE to use:\n",
+        "#@markdown - <font color=\"grey\"> **1.0** Considering energetic score only\n",
+        "#@markdown - <font color=\"grey\"> **1.1** Considering both energetic score and angle constraint\n",
+        "#@markdown - <font color=\"grey\"> **1.2** Considering energetic score, angle constraint, and depth constraint\n",
+        "\n",
+        "\n",
+        "#@markdown **Receptor hydrodynamic properties**\n",
+        "\n",
+        "receptor_of_interest = 'Ly6a' #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Receptor of interest (need to match the name in input fasta file names)\n",
+        "receptor_Dmax = 46.68 #@param {type:\"number\"}\n",
+        "receptor_AxialRatio = 1.74 #@param {type:\"number\"}\n",
+        "receptor_Rminor = receptor_Dmax/receptor_AxialRatio/2 \n",
+        "#@markdown - <font color=\"grey\"> You may calculate hydrodynamic properties of your receptor (**receptor_Dmax** and **receptor_AxialRatio**) using the [HullRad server](http://52.14.70.9/Run_hullrad.html). Upload a pdb containing the **receptor only** model to the server and record the **Dmax** and **Axial ratio**. (By default setting, you should have already got 5 predicted receptor-only models in folder_path_for_predicted_structures. Simply upload the model that is ranked #1 to HullRad server.)\n",
+        "#@markdown - <font color=\"grey\"> Rminor, the hydrodynamic radius along the minor axis of the receptor (considered as an ellipsoid), is automatically calculated using the formula Rminor = Dmax / AxialRatio / 2.\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Read and calculate scores\n",
+        "df = pd.read_csv(database_path)\n",
+        "df = df.loc[df['receptor_name'] == receptor_of_interest].copy()\n",
+        "df['receptor_Rminor'] = receptor_Rminor\n",
+        "list_peptide_names, list_peptide_seqs = get_peptide_list_from_model_names(df)\n",
+        "\n",
+        "df_sorted = sort_df_by_peptides_and_cleanup(df, list_peptide_names)\n",
+        "print('\\nA database with {} peptides is successfully loaded! \\n'.format(len(list_peptide_names)))\n",
+        "\n",
+        "# Quality check\n",
+        "database_quality_check(df)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4A.2 Calculate relative binding scores**"
+      ],
+      "metadata": {
+        "id": "CL__NS1hlKi3"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "R7nlkB8IxBKn",
+        "cellView": "form"
+      },
+      "outputs": [],
+      "source": [
+        "#@markdown - <font color=\"grey\">  Hit play button to run. \n",
+        "\n",
+        "# Get relative binding scores from each individual competition ($\\Delta B_2^{POI, competitor}$):\n",
+        "\n",
+        "# Get a dataframe that is sorted pair-wise\n",
+        "df_pairwise_sorted = sort_df_by_peptides_and_cleanup(df, list_peptide_names)\n",
+        "\n",
+        "# Calculate the pair-wise scores\n",
+        "df_pairwise_sorted = calculate_scores(df_pairwise_sorted, version=APPRAISE_version, depth_constraint=True)\n",
+        "print('Binding scores from each individual competition:')\n",
+        "df_pairwise_sorted[['peptide_name','competitor','Delta_B']]\n",
+        "\n",
+        "# Get mean relative binding scores ($\\overline{\\Delta B}_2^{POI, competitor}$)\n",
+        "\n",
+        "# Sort the peptides\n",
+        "df_pairwise_average = df_pairwise_sorted.groupby(by=['peptide_name','competitor','peptide_seq']).mean().dropna(subset=['Delta_B']).reset_index()\n",
+        "print('Mean binding scores:')\n",
+        "df_pairwise_average[['peptide_name','competitor','Delta_B']]"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4A.3 Get the heatmap and the ranking**"
+      ],
+      "metadata": {
+        "id": "jRiK_5xDwgdC"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "b7e0O_b_xBKn",
+        "cellView": "form"
+      },
+      "outputs": [],
+      "source": [
+        "#@markdown **Ranking setting**\n",
+        "feature_of_interest = 'Delta_B' #@param ['Delta_B'] {type:\"string\"}\n",
+        "rank_by_tournament = True #@param {type:\"boolean\"}\n",
+        "p_value_threshold = 0.05 #@param {type:\"number\"}\n",
+        "n_competitions = '5+5 (AlphaFold default)' #@param ['5+5 (AlphaFold default)', '1+1 (ESMFold default)'] {type:\"string\"}\n",
+        "if n_competitions == '5+5 (AlphaFold default)':\n",
+        "    number_of_repeats = 10\n",
+        "if n_competitions == '1+1 (ESMFold default)':\n",
+        "    number_of_repeats = 2\n",
+        "\n",
+        "\n",
+        "#@markdown **Figure setting**\n",
+        "title='APPRAISE 1.2 ranking' #@param {type:\"string\"}\n",
+        "\n",
+        "auto_range = False #@param {type:\"boolean\"}\n",
+        "manual_range_vmin = -100 #@param {type:\"number\"}\n",
+        "manual_range_vmax = 100 #@param {type:\"number\"}\n",
+        "if auto_range:\n",
+        "    vmin = 'auto'\n",
+        "    vmax = 'auto'\n",
+        "else:\n",
+        "    vmin = manual_range_vmin\n",
+        "    vmax = manual_range_vmax\n",
+        "#@markdown - <font color=\"grey\"> If auto_range is ON, the manual ranges will be overridden.\n",
+        "\n",
+        "auto_fig_size = True #@param {type:\"boolean\"}\n",
+        "manual_fig_size = 5 #@param {type:\"number\"}\n",
+        "if auto_fig_size:\n",
+        "    fig_size = 'auto'\n",
+        "else:\n",
+        "    fig_size = manual_fig_size\n",
+        "#@markdown - <font color=\"grey\"> If auto_fig_size is ON, the manual figure size will be overridden.\n",
+        "\n",
+        "\n",
+        "list_peptide_order, _, _ = plot_heatmap(df_pairwise_average, feature_of_interest=feature_of_interest, title=rank_by_tournament, rank_by_tournament=rank_by_tournament, save_figure=False, number_of_repeats=number_of_repeats, p_value_threshold=p_value_threshold, fig_size=fig_size, vmin=vmin, vmax=vmax)\n",
+        "heatmap_figure_path = '/'.join(database_path.split('/')[:-1]) + '/APPRAISE_pariwise_results_matrix.png'\n",
+        "plt.savefig(heatmap_figure_path, bbox_inches = 'tight', dpi=300)\n",
+        "\n",
+        "print('APPRAISE analysis finished!')\n",
+        "print('The final ranking is: {}'.format(list_peptide_order))\n",
+        "print('The heatmap is saved as {}'.format(heatmap_figure_path))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### **Step 4B - Analyze pooled competition results**"
+      ],
+      "metadata": {
+        "id": "hTtRSmgVC6VK"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Use this block to analyze **pooled competition** or **single peptide binding** results. If you're analyzing pairwise competition results, use block Step 4A instead."
+      ],
+      "metadata": {
+        "id": "3-L09on8BxN8"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4B.1 Load structure quantification results**"
+      ],
+      "metadata": {
+        "id": "BW2G8ApllXzh"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "dL82cQgcxBKl"
+      },
+      "outputs": [],
+      "source": [
+        "# Import common packages\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "\n",
+        "# Import necessary APPRAISE modules\n",
+        "import appraise\n",
+        "from appraise.utilities import *\n",
+        "from appraise.score_calculation import *\n",
+        "\n",
+        "# Get the settings\n",
+        "#@markdown **Basic settings**\n",
+        "\n",
+        "database_file_name = 'database_APPRAISE_measurements_datetime.csv' #@param {type:\"string\"}\n",
+        "database_path = project_directory_path + database_file_name\n",
+        "#@markdown - <font color=\"grey\"> Name of the quantification database file (*.csv) generated by Step 3.\n",
+        "#@markdown - <font color=\"grey\"> You can find the **time-stamped file name** in the final lines of the output from Step 3.2.\n",
+        "\n",
+        "APPRAISE_version = '1.2' #@param ['1.0', '1.1', '1.2'] {type:\"string\"}\n",
+        "APPRAISE_version = float(APPRAISE_version)\n",
+        "#@markdown - <font color=\"grey\"> Version of APPRAISE to use:\n",
+        "#@markdown - <font color=\"grey\"> **1.0** Considering energetic score only\n",
+        "#@markdown - <font color=\"grey\"> **1.1** Considering both energetic score and angle constraint\n",
+        "#@markdown - <font color=\"grey\"> **1.2** Considering energetic score, angle constraint, and depth constraint\n",
+        "\n",
+        "#@markdown **Receptor properties**\n",
+        "\n",
+        "receptor_of_interest = 'Ly6a' #@param {type:\"string\"}\n",
+        "#@markdown - <font color=\"grey\"> Name of the receptor of interest (need to match the name in input fasta file names)\n",
+        "receptor_Dmax = 46.68 #@param {type:\"number\"}\n",
+        "receptor_AxialRatio = 1.74 #@param {type:\"number\"}\n",
+        "receptor_Rminor = receptor_Dmax/receptor_AxialRatio/2 \n",
+        "#@markdown - <font color=\"grey\"> You may calculate hydrodynamic properties of your receptor (**receptor_Dmax** and **receptor_AxialRatio**) using the [HullRad server](http://52.14.70.9/Run_hullrad.html). Upload a pdb containing the **receptor only** model to the server and record the **Dmax** and **Axial ratio**. (By default setting, you should have already got 5 predicted receptor-only models in folder_path_for_predicted_structures. Simply upload the model that is ranked #1 to HullRad server.)\n",
+        "#@markdown - <font color=\"grey\"> Rminor, the hydrodynamic radius along the minor axis of the receptor (considered as an ellipsoid), is automatically calculated using the formula Rminor = Dmax / AxialRatio / 2.\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Read and calculate scores\n",
+        "df = pd.read_csv(database_path)\n",
+        "df = df.loc[df['receptor_name'] == receptor_of_interest].copy()\n",
+        "df['receptor_Rminor'] = receptor_Rminor\n",
+        "list_peptide_names, list_peptide_seqs = get_peptide_list_from_model_names(df)\n",
+        "\n",
+        "df_sorted = sort_df_by_peptides_and_cleanup(df, list_peptide_names, consider_competitor_name=False)\n",
+        "\n",
+        "print('\\nA database with {} peptides is successfully loaded! \\n'.format(len(list_peptide_names)))\n",
+        "\n",
+        "# Quality check\n",
+        "database_quality_check(df_sorted)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4B.2 Get a list of top peptides that can be used for stage 2 of HT-APPRAISE.**"
+      ],
+      "metadata": {
+        "id": "u2kPqyOvlbmX"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "c6bVBhP8xBKl",
+        "cellView": "form"
+      },
+      "outputs": [],
+      "source": [
+        "# Calculate absolute binding scores from each individual competition ($B_2^{POI, competitor}$)**\n",
+        "\n",
+        "df = calculate_scores(df, version=APPRAISE_version)\n",
+        "print('Binding scores from individual competitions:')\n",
+        "df[['peptide_name','B_POI']]\n",
+        "\n",
+        "# Get the mean binding scores ($\\overline{B}_2^{POI}$)\n",
+        "df_average_by_POI = df.groupby(by=['peptide_name','peptide_seq']).mean().dropna(subset=['B_POI']).reset_index()\n",
+        "print('Mean binding scores of each POI:')\n",
+        "df_average_by_POI[['peptide_name','B_POI']]\n",
+        "\n",
+        "#@markdown The results will be saved in the save directory as the database.\n",
+        "\n",
+        "# Select the top variants\n",
+        "N_top = 18 #@param {type:\"integer\"}\n",
+        "#@markdown - <font color=\"grey\"> Number of top variants to keep in the list.\n",
+        "df_average_by_POI = df_average_by_POI.sort_values(by='B_POI', ascending=False).reset_index()\n",
+        "df_selected_peptides = df_average_by_POI.loc[0:N_top-1, ['peptide_name', 'peptide_seq', 'B_POI']]\n",
+        "\n",
+        "\n",
+        "#Save the results\n",
+        "print('\\nSuccess!')\n",
+        "score_file_path = '/'.join(database_path.split('/')[:-1]) + '/APPRAISE{}_scores_of_all_peptides.csv'.format(str(APPRAISE_version))\n",
+        "df_average_by_POI.to_csv(score_file_path)\n",
+        "print('\\nThe APPRAISE scores of peptide variants are saved in {}'.format(score_file_path))\n",
+        "selected_peptide_list_path = '/'.join(database_path.split('/')[:-1]) + '/APPRAISE{}_selected_top_{}_peptides.csv'.format(str(APPRAISE_version), str(N_top))\n",
+        "df_selected_peptides.to_csv(selected_peptide_list_path)\n",
+        "print('\\nThe list of selected peptides is saved as {}'.format(selected_peptide_list_path))\n",
+        "\n",
+        "# Display the results\n",
+        "print('\\nHere is the list of selected peptide variants:\\n')\n",
+        "df_selected_peptides"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "#### **4B.3 Visualize the results**"
+      ],
+      "metadata": {
+        "id": "gc-0f67Iwocm"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "32fRQAyExBKl",
+        "cellView": "form"
+      },
+      "outputs": [],
+      "source": [
+        "# Configure the plot\n",
+        "sns.set_style(\"white\")\n",
+        "sns.set_context(\"paper\")\n",
+        "\n",
+        "total_number_of_variants = len(df_average_by_POI)\n",
+        "\n",
+        "#@markdown **Plot setting**\n",
+        "\n",
+        "# Set number of subplots\n",
+        "n_rows = 5 #@param {type:\"integer\"}\n",
+        "n_columns = int((total_number_of_variants + n_rows - 1) / n_rows)\n",
+        "#@markdown - <font color=\"grey\"> Number of rows of subplots. \n",
+        "\n",
+        "\n",
+        "#set figure size\n",
+        "auto_fig_size = True #@param {type:\"boolean\"}\n",
+        "manual_row_len = 10 #@param {type:\"number\"}\n",
+        "manual_column_len = 8 #@param {type:\"number\"}\n",
+        "if auto_fig_size:\n",
+        "    row_len = n_rows * 2\n",
+        "    col_len = n_columns * 0.4\n",
+        "else:\n",
+        "    row_len = manual_row_len\n",
+        "    col_len = manual_column_len\n",
+        "plt.rcParams[\"figure.figsize\"] = (row_len, col_len)\n",
+        "#@markdown - <font color=\"grey\"> If auto_fig_size is ON, the manual figure sizes will be overridden.\n",
+        "\n",
+        "save_figure = True #@param {type:\"boolean\"}\n",
+        "\n",
+        "\n",
+        "\n",
+        "fig, axes = plt.subplots(nrows=n_rows, ncols=n_columns)\n",
+        "\n",
+        "# Plot each peptide in a subplot\n",
+        "for i, peptide_name in enumerate(df_average_by_POI['peptide_name']):\n",
+        "    j = i // n_columns\n",
+        "    k = i % n_columns\n",
+        "    \n",
+        "    # Set the y axis display rules depending on the position\n",
+        "    if k == 0:\n",
+        "        sns.despine(bottom = True, left=False, right=True, ax=axes[j, k])\n",
+        "    else:\n",
+        "        sns.despine(bottom = True, left=True, right=True, ax=axes[j, k])\n",
+        "        axes[j,k].set(yticklabels=[])\n",
+        " \n",
+        "    # Set coloring -- highlight PHP.B, Dis90, and AAV9\n",
+        "    if peptide_name == 'PHP.B':\n",
+        "        color_setting = sns.color_palette()[0]\n",
+        "    elif peptide_name == 'Dis90':\n",
+        "        color_setting = sns.color_palette()[2]\n",
+        "    elif peptide_name == 'AAV9':\n",
+        "        color_setting = sns.color_palette(\"tab10\")[7]\n",
+        "    else:\n",
+        "        color_setting = sns.color_palette()[7]\n",
+        "    \n",
+        "    # Plot the data points\n",
+        "    sns.stripplot(ax=axes[j,k], y=\"B_POI\", data=df.loc[df['peptide_name']==peptide_name], color=color_setting)\n",
+        "    \n",
+        "    # Plot the mean bar\n",
+        "    sns.boxplot(ax=axes[j,k], \n",
+        "            showmeans=True,\n",
+        "            meanline=True,\n",
+        "            meanprops={'color': 'k', 'ls': '-', 'lw': 2},\n",
+        "            medianprops={'visible': False},\n",
+        "            whiskerprops={'visible': False},\n",
+        "            zorder=10,\n",
+        "            y=\"B_POI\",\n",
+        "            data=df.loc[df['peptide_name']==peptide_name],\n",
+        "            showfliers=False,\n",
+        "            showbox=False,\n",
+        "            showcaps=False)\n",
+        "    \n",
+        "    # Annotate the reads\n",
+        "    axes[j, k].annotate(int(np.mean(df.loc[df['peptide_name']==peptide_name, \"B_POI\"])), xy=(0.5, -0.1), xycoords='axes fraction', ha='center', va='center')\n",
+        "    #axes[j, k].set_title(variable_name, wrap=True)\n",
+        "    axes[j,k].set_ylim(-50, 400)\n",
+        "    axes[j,k].set_xlabel('')\n",
+        "    axes[j,k].set_ylabel('')\n",
+        "    axes[j,k].set(xticklabels=[])\n",
+        "   \n",
+        "    \n",
+        "plt.tight_layout()\n",
+        "if save_figure:\n",
+        "    fig.savefig('/'.join(database_path.split('/')[:-1]) + '/APPRAISE_pooled_overview.png', dpi=300)\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3 (ipykernel)",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.9.13"
+    },
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "accelerator": "GPU",
+    "gpuClass": "standard"
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
