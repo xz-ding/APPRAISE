@@ -128,6 +128,17 @@ def generate_pdb_path_list(AF2_results_path, use_relaxed=use_relaxed_global):
     """
     get a list of pdb paths from colabfold-alphafold output results.
     """
+    global use_relaxed_global
+    # automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
+    if use_relaxed_global == 'auto':
+        list_all_pdb = glob.glob(AF2_results_path + '*.pdb')
+        use_relaxed_global = False
+        for pdb_path_to_check in list_all_pdb:
+            if '_relaxed_' in pdb_path_to_check:
+                use_relaxed_global = True
+
+    # find pdb files with matching names
+    use_relaxed = use_relaxed_global
     if use_relaxed:
         list_pdb_path = glob.glob(AF2_results_path + '*_relaxed_*.pdb')
     else:
@@ -651,7 +662,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     return
 
 def quantify_results_folder(AF2_results_path='./*result*/', \
-    receptor_chain='last', anchor_site='C-term', use_relaxed=False, time_stamp=True,
+    receptor_chain='last', anchor_site='C-term', use_relaxed='auto', time_stamp=True,
     mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, output_path='auto',
     glycine_linkers='auto', dt_string='now'):
     """
@@ -665,8 +676,9 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         # Example 1: chain A = peptide 1, chain B = peptide 2, chain C = receptor
         # Example 2: chain B = peptide 2, chain C = receptor
 
-    use_relaxed: (boolean) whether to use Amber-relaxed models for the
-    quantification.
+    use_relaxed: (string or boolean) whether to use Amber-relaxed models for the
+    quantification. If 'auto', APPRAISE will use relaxed models if relaxed models
+     are available and use unrelaxed models otherwise.
 
     time_stamp: (boolean) whether to add timestamp to the output file name
     (to avoid complications between multiple measurements).
@@ -776,10 +788,19 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             # Add contents of list as last row in the csv file
             csv_writer.writerow(list_to_append)
 
+
+    #  (redundant block) automatically determine if the models were amber-relaxed and whether relaxed models should be used for analysis.
+    if use_relaxed_global == 'auto':
+        use_relaxed_global = False
+        for pdb_path_loaded in list_pdb_path:
+            if '_relaxed_' in pdb_path_loaded:
+                use_relaxed_global = True
+
+
     # measure the pdb files one by one
-    for loaded_pdb_path in list_pdb_path:
-        pdb_path = loaded_pdb_path
+    for pdb_path_loaded in list_pdb_path:
         #cmd.load(pdb_path)
+        pdb_path = pdb_path_loaded
         quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers)
         #cmd.do('delete all')
 
