@@ -622,32 +622,55 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             else:
                 pLDDT_threshold_globaled_peptide_receptor_distance = 100
                 pLDDT_threshold_globaled_peptide_receptor_distance_difference = 0
-        else:
-            total_contact_atom_in_interface_difference = None
 
-        list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
-                list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
-                str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, chang_et_al_distance, chang_et_al_distance_competitor,\
-                weighted_peptide_receptor_distance, peptide_tip_receptor_distance, peptide_tip_receptor_distance_competitor, pLDDT_threshold_globaled_peptide_receptor_distance, \
-                peptide_receptor_distance_difference, weighted_peptide_receptor_distance_difference, peptide_tip_receptor_distance_difference, pLDDT_threshold_globaled_peptide_receptor_distance_difference,\
-                total_contact_atom_in_interface_thresholded, total_contact_atom_in_interface_ins_only,\
-                total_contact_atom_in_interface_thresholded_difference, total_contact_atom_in_interface_ins_only_difference, \
-                total_contact_atom_in_interface, total_contact_atom_in_interface_competitor,\
-                total_contact_atom_in_interface_weighted, total_contact_atom_in_interface_weighted_competitor,\
-                angle_between_membrane_anchor_and_peptide, angle_between_membrane_anchor_and_competitor_peptide,\
-                binding_angle_factor, binding_angle_factor_competitor,\
-                contact_point_distance_to_membrane, contact_point_distance_to_membrane_competitor, \
-                distance_to_membrane_factor, distance_to_membrane_factor_competitor, \
-                insert_contact_distance, insert_contact_distance_competitor,\
-                weighted_peptide_contact_distance, weighted_peptide_contact_distance_competitor,\
-                pLDDT_weighted_linear_center_contact_distance, pLDDT_weighted_linear_center_contact_distance_competitor,\
-                #folded_factor, folded_factor_competitor,\
-                total_contact_atom_in_interface_difference, total_contact_atom_in_interface_angle_factored, \
-                total_contact_atom_in_interface_difference_angle_factored, \
-                angle_between_membrane_anchor_and_peptide, \
-                average_pLDDT, pLDDT_threshold_global, n_atom_above_threshold,\
-                interface_pLDDT, interface_pLDDT_competitor,\
-                vdw_strain, clash_number, vdw_strain_competitor, clash_number_competitor]
+
+            list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
+                    list_competitor_name, peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
+                    str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, chang_et_al_distance, chang_et_al_distance_competitor,\
+                    weighted_peptide_receptor_distance, peptide_tip_receptor_distance, peptide_tip_receptor_distance_competitor, pLDDT_threshold_globaled_peptide_receptor_distance, \
+                    peptide_receptor_distance_difference, weighted_peptide_receptor_distance_difference, peptide_tip_receptor_distance_difference, pLDDT_threshold_globaled_peptide_receptor_distance_difference,\
+                    total_contact_atom_in_interface_thresholded, total_contact_atom_in_interface_ins_only,\
+                    total_contact_atom_in_interface_thresholded_difference, total_contact_atom_in_interface_ins_only_difference, \
+                    total_contact_atom_in_interface, total_contact_atom_in_interface_competitor,\
+                    total_contact_atom_in_interface_weighted, total_contact_atom_in_interface_weighted_competitor,\
+                    angle_between_membrane_anchor_and_peptide, angle_between_membrane_anchor_and_competitor_peptide,\
+                    binding_angle_factor, binding_angle_factor_competitor,\
+                    contact_point_distance_to_membrane, contact_point_distance_to_membrane_competitor, \
+                    distance_to_membrane_factor, distance_to_membrane_factor_competitor, \
+                    insert_contact_distance, insert_contact_distance_competitor,\
+                    weighted_peptide_contact_distance, weighted_peptide_contact_distance_competitor,\
+                    pLDDT_weighted_linear_center_contact_distance, pLDDT_weighted_linear_center_contact_distance_competitor,\
+                    #folded_factor, folded_factor_competitor,\
+                    total_contact_atom_in_interface_difference, total_contact_atom_in_interface_angle_factored, \
+                    total_contact_atom_in_interface_difference_angle_factored, \
+                    angle_between_membrane_anchor_and_peptide, \
+                    average_pLDDT, pLDDT_threshold_global, n_atom_above_threshold,\
+                    interface_pLDDT, interface_pLDDT_competitor,\
+                    vdw_strain, clash_number, vdw_strain_competitor, clash_number_competitor]
+        else:
+            list_to_append = [model_name, receptor_name, peptide_chain, peptide_name, \
+                    'N.A.', peptide_seq, peptide_length, receptor_Rg, anchor_site_global,\
+                    str(pep_mod_start_resi_global), str(pep_mod_end_resi_global), peptide_receptor_distance, chang_et_al_distance, 'N.A.',\
+                    weighted_peptide_receptor_distance, peptide_tip_receptor_distance, 'N.A.', 'N.A.', \
+                    'N.A.', 'N.A.', 'N.A.', 'N.A.',\
+                    total_contact_atom_in_interface_thresholded, total_contact_atom_in_interface_ins_only,\
+                    'N.A.', 'N.A.', \
+                    total_contact_atom_in_interface, 'N.A.',\
+                    total_contact_atom_in_interface_weighted, 'N.A.',\
+                    angle_between_membrane_anchor_and_peptide, 'N.A.',\
+                    binding_angle_factor, 'N.A.',\
+                    contact_point_distance_to_membrane, 'N.A.', \
+                    distance_to_membrane_factor, 'N.A.', \
+                    insert_contact_distance, 'N.A.',\
+                    weighted_peptide_contact_distance, 'N.A.',\
+                    pLDDT_weighted_linear_center_contact_distance, 'N.A.',\
+                    #folded_factor, folded_factor_competitor,\
+                    'N.A.', total_contact_atom_in_interface_angle_factored, \
+                    'N.A.', \
+                    angle_between_membrane_anchor_and_peptide, \
+                    average_pLDDT, pLDDT_threshold_global, n_atom_above_threshold,\
+                    interface_pLDDT, 'N.A.',\
+                    vdw_strain, clash_number, 'N.A.', 'N.A.']
                 # peptide_direction, peptide_direction_competitor] #end_to_end_distance, \
         print("APPRAISE> New measurements added for {} (peptide: {})".format(model_name, peptide_name))
 
@@ -664,7 +687,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 def quantify_results_folder(AF2_results_path='./*result*/', \
     receptor_chain='last', anchor_site='C-term', use_relaxed='auto', time_stamp=True,
     mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, output_path='auto',
-    glycine_linkers='auto', dt_string='now'):
+    glycine_linkers='auto', dt_string='now', pairwise_mode=True):
     """
     AF2_results_path: (str) path to the folder(s) that contain the AF2 modeling
     results. Wildcard is allowed. Default: all folders containing "results" in
@@ -801,7 +824,7 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     for pdb_path_loaded in list_pdb_path:
         #cmd.load(pdb_path)
         pdb_path = pdb_path_loaded
-        quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers)
+        quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers, pairwise_mode=pairwise_mode)
         #cmd.do('delete all')
 
     print("APPRAISE> Finished! Results are saved in {}".format(database_path))
