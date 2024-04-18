@@ -67,9 +67,13 @@ You can find a few demo notebooks that work **locally** in the [demo folder on G
 
 ## References
 
-[Manuscript](https://doi.org/10.1016/j.ymthe.2024.04.003)
+[Manuscript](https://www.cell.com/molecular-therapy-family/molecular-therapy/fulltext/S1525-0016(24)00219-3)
 
 Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. Molecular Therapy (2024). \* Corresponding authors.
+
+[Manuscript-related data](https://data.caltech.edu/records/kxjgj-tfk18)
+
+The dataset contains all structural models and sequences used in Ding et al., 2024.
 
 [Github repository](https://github.com/xz-ding/APPRAISE)
 
