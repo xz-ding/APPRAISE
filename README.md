@@ -67,9 +67,9 @@ You can find a few demo notebooks that work **locally** in the [demo folder on G
 
 ## References
 
-[Manuscript](http://biorxiv.org/content/10.1101/2023.01.11.523680)
+[Manuscript](https://doi.org/10.1016/j.ymthe.2024.04.003)
 
-Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. BioRxiv (2023). \* Corresponding authors.
+Xiaozhe Ding\*, Xinhong Chen, Erin E. Sullivan, Timothy F Shay, Viviana Gradinaru\*. APPRAISE: Fast, accurate ranking of engineered proteins by receptor binding propensity using structural modeling. Molecular Therapy (2024). \* Corresponding authors.
 
 [Github repository](https://github.com/xz-ding/APPRAISE)
 
