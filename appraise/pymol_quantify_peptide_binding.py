@@ -358,6 +358,9 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
         return
 
+    # Auto-disable pairwise mode when there is only one peptide chain.
+    effective_pairwise_mode = pairwise_mode and len(list_peptide_chain) > 1
+
     # find out the receptor chain ID and generate a list of chain IDs for peptides
 
 
@@ -506,7 +509,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         clash_number = cmd.count_atoms('(chain {} ) within {} of chain {}'.format(peptide_chain, 1, receptor_chain))
 
 
-        if pairwise_mode:
+        if effective_pairwise_mode:
             # Clean up and load the same model to avoid some internal pymol bug
             cmd.do('delete all')
             cmd.load(pdb_path)
@@ -884,7 +887,7 @@ Option 1: Run the quantification script in pymol prompt
     run /path/to/APPRAISE/appraise/pymol_quantify_peptide_binding.py
 
     # Call the quantification function (change the parameters as needed)
-    quantify_binding('path_to_results_folder/', use_relaxed=False, time_stamp=True, mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, membrane_anchor_site='C-term')
+    quantify_results_folder('path_to_results_folder/', use_relaxed=False, time_stamp=True, mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, anchor_site='C-term')
 *******************************
 
 *******************************
