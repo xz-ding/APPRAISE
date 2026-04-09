@@ -36,6 +36,30 @@ def interactive_input(var_name='', default_value=''):
 
     return var_value
 
+
+def read_appraise_database(database_path):
+    """
+    Read an APPRAISE quantification database with a compatibility fallback for
+    older CSVs that used the literal string ``NA`` as a peptide placeholder.
+    """
+    df = pd.read_csv(database_path)
+
+    if (
+        'peptide_name' in df.columns
+        and 'model_name' in df.columns
+        and len(df) > 0
+        and df['peptide_name'].isna().all()
+        and df['model_name'].astype(str).str.contains(r'_and_|_targeting_peptide_').any()
+    ):
+        print(
+            "APPRAISE> Reloading the database with keep_default_na=False because "
+            "pandas interpreted peptide placeholders as missing values. This "
+            "usually happens when an older Step 3 run wrote the literal label 'NA'."
+        )
+        df = pd.read_csv(database_path, keep_default_na=False)
+
+    return df
+
 def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):
     """
     Get a list of peptide from a database dataframe.

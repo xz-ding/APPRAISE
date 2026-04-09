@@ -19,6 +19,8 @@ from string import ascii_uppercase, ascii_lowercase
 STRUCTURE_FILE_EXTENSIONS = (".pdb", ".cif", ".mmcif")
 MULTICHAIN_BACKENDS = {"boltz1", "chai1", "openfold3"}
 _CHAIN_IDS = list(ascii_uppercase + ascii_lowercase)
+_AUXILIARY_DIRECTORY_PREFIXES = ("templates_",)
+_AUXILIARY_DIRECTORY_SUFFIXES = ("_env", "_pairgreedy")
 _BACKEND_ALIASES = {
     "af2multimer": "legacy_fasta",
     "af2multimerv1": "legacy_fasta",
@@ -218,7 +220,15 @@ def _iter_structure_files(root_path):
         return
 
     for extension in STRUCTURE_FILE_EXTENSIONS:
-        yield from sorted(root_path.rglob("*{}".format(extension)))
+        for candidate in sorted(root_path.rglob("*{}".format(extension))):
+            relative_parts = candidate.relative_to(root_path).parts[:-1]
+            if any(
+                part.startswith(_AUXILIARY_DIRECTORY_PREFIXES)
+                or part.endswith(_AUXILIARY_DIRECTORY_SUFFIXES)
+                for part in relative_parts
+            ):
+                continue
+            yield candidate
 
 
 def discover_structure_files(results_path, use_relaxed="auto"):

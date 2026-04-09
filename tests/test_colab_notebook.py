@@ -96,8 +96,18 @@ class ColabNotebookRegressionTests(unittest.TestCase):
         self.assertIn("usually do **not** need to rename structure outputs", notes)
         self.assertNotIn("14 characters", notes)
 
+    def test_step32_surfaces_structure_discovery_and_script_output(self):
+        step32 = self._find_cell("APPRAISE> Found {len(structure_files)} structure files")
+        self.assertIn("from appraise.modeling_backends import discover_structure_files", step32)
+        self.assertIn("No APPRAISE-compatible structure files were found", step32)
+        self.assertIn("except subprocess.CalledProcessError as exc", step32)
+        self.assertIn("APPRAISE Step 3.2 failed", step32)
+        self.assertIn("capture_output=True", step32)
+        self.assertIn("APPRAISE> Step 3.2 completed successfully.", step32)
+
     def test_step4_reports_empty_database_more_helpfully(self):
         pairwise_cell = self._find_cell("No rows in the selected database match receptor_of_interest")
+        self.assertIn("read_appraise_database(database_path)", pairwise_cell)
         self.assertIn("0 peptide variants were detected after parsing model names", pairwise_cell)
         self.assertIn("contains only receptor-only models", pairwise_cell)
 

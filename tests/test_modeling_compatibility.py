@@ -13,6 +13,7 @@ from appraise.modeling_backends import (
     parse_appraise_job_name,
 )
 from appraise.pymol_quantify_peptide_binding import (
+    count_database_measurements,
     generate_pdb_path_list,
     parse_pdb_file_name,
 )
@@ -168,6 +169,23 @@ class StructureDiscoveryCompatibilityTests(unittest.TestCase):
             self.assertEqual(discovered, expected)
             self.assertEqual(generate_pdb_path_list(tmpdir, use_relaxed="auto"), expected)
 
+    def test_colabfold_auxiliary_template_directories_are_ignored(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            predicted_pdb = root / "LY6A_and_pepA_vs_pepB_unrelaxed_rank_001_model_1_seed_000.pdb"
+            env_template = root / "LY6A_and_pepA_vs_pepB_env" / "templates_101" / "1abc.cif"
+            pairgreedy_template = root / "LY6A_and_pepA_vs_pepB_pairgreedy" / "candidate.cif"
+
+            predicted_pdb.write_text("MODEL     1\n")
+            env_template.parent.mkdir(parents=True, exist_ok=True)
+            env_template.write_text("data_mock\n#\n")
+            pairgreedy_template.parent.mkdir(parents=True, exist_ok=True)
+            pairgreedy_template.write_text("data_mock\n#\n")
+
+            discovered = discover_structure_files(tmpdir, use_relaxed="auto")
+
+            self.assertEqual(discovered, [str(predicted_pdb.resolve())])
+
     def test_job_name_parsing_supports_legacy_and_new_backends(self):
         legacy_name = "LY6A_and_pepA_vs_pepB_unrelaxed_rank_001_model_1_seed_000.pdb"
         boltz_name = "/tmp/predictions/LY6A_and_pepA_vs_pepB/LY6A_and_pepA_vs_pepB_model_0.cif"
@@ -180,6 +198,19 @@ class StructureDiscoveryCompatibilityTests(unittest.TestCase):
 
 
 class ExistingPipelineCompatibilityTests(unittest.TestCase):
+    def test_count_database_measurements_ignores_header_only_csv(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            database_path = Path(tmpdir) / "database_APPRAISE_measurements.csv"
+            database_path.write_text("model_name,receptor_name,peptide_name\n")
+            self.assertEqual(count_database_measurements(database_path), 0)
+
+            database_path.write_text(
+                "model_name,receptor_name,peptide_name\n"
+                "LY6A_and_pepA_unrelaxed_rank_001,LY6A,pepA\n"
+                "LY6A_and_pepB_unrelaxed_rank_001,LY6A,pepB\n"
+            )
+            self.assertEqual(count_database_measurements(database_path), 2)
+
     def test_get_peptide_list_from_model_names_handles_modern_model_names(self):
         df = pd.DataFrame(
             {

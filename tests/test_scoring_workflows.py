@@ -10,6 +10,7 @@ from appraise.score_calculation import calculate_scores
 from appraise.utilities import (
     database_quality_check,
     plot_heatmap,
+    read_appraise_database,
     sort_df_by_peptides_and_cleanup,
 )
 
@@ -118,6 +119,24 @@ class ScoringWorkflowTests(unittest.TestCase):
             "Cannot run database quality check on an empty peptide database",
         ):
             database_quality_check(df)
+
+    def test_read_appraise_database_recovers_legacy_na_peptide_placeholders(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            database_path = Path(tmpdir) / "database_APPRAISE_measurements_test.csv"
+            database_path.write_text(
+                "\n".join(
+                    [
+                        "model_name,receptor_name,peptide_name",
+                        "LY6A_and_PHP.eB_vs_AAV9_unrelaxed_rank_001,LY6A,NA",
+                        "LY6A_and_PHP.eB_vs_AAV9_unrelaxed_rank_002,LY6A,NA",
+                    ]
+                )
+            )
+
+            df = read_appraise_database(database_path)
+
+            self.assertEqual(df["peptide_name"].tolist(), ["NA", "NA"])
+            self.assertFalse(df["peptide_name"].isna().any())
 
 
 if __name__ == "__main__":

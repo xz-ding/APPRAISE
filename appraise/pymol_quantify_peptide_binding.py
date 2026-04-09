@@ -44,6 +44,20 @@ pdb_path = ' '
 database_path = ' '
 
 
+def count_database_measurements(database_csv_path):
+    """
+    Count the number of quantified measurement rows in an APPRAISE database.
+    Header-only CSVs return 0.
+    """
+    if not os.path.exists(database_csv_path):
+        return 0
+
+    with open(database_csv_path, newline='') as read_obj:
+        row_count = sum(1 for _ in csv.reader(read_obj))
+
+    return max(row_count - 1, 0)
+
+
 
 
 def count_clash(selection='(all)', name='bump_check', quiet=1, clash_distance_threshold=1):
@@ -360,6 +374,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     containing multiple chains will be processed as is.
 
     """
+    rows_appended = 0
+
     #Clean up and load the new pdb file
     cmd.do('delete all')
     if extract_appraise_job_name is not None:
@@ -379,7 +395,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     # if it is a single-chain model (without glycien linkers), skip.
     if len(list_peptide_chain) == 0:
         print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
-        return
+        return rows_appended
 
     # Auto-disable pairwise mode when there is only one peptide chain.
     effective_pairwise_mode = pairwise_mode and len(list_peptide_chain) > 1
@@ -428,7 +444,17 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         if len(list_peptide_name) == len(list_peptide_chain):
             peptide_name = list_peptide_name[j]
         else:
-            peptide_name = "NA"
+            peptide_name = "UNKNOWN_PEPTIDE_{}".format(peptide_chain or j + 1)
+            print(
+                "APPRAISE> Warning: model name {} encoded {} peptide name(s), but PyMOL found {} peptide chain(s). "
+                "Using placeholder name {} for chain {}.".format(
+                    model_name,
+                    len(list_peptide_name),
+                    len(list_peptide_chain),
+                    peptide_name,
+                    peptide_chain,
+                )
+            )
 
         # An AAV9-specific modification to account for shorter peptide length (because of lack of insertion)
         if peptide_name == 'AAV9' and mod_start_resi_global > 2:
@@ -706,9 +732,10 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             csv_writer = csv.writer(write_obj)
             # Add contents of list as last row in the csv file
             csv_writer.writerow(list_to_append)
+        rows_appended += 1
     #Clean up all pdbs
     cmd.do('delete all')
-    return
+    return rows_appended
 
 def quantify_results_folder(AF2_results_path='./*result*/', \
     receptor_chain='last', anchor_site='C-term', use_relaxed='auto', time_stamp=True,
@@ -847,15 +874,38 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             if '_relaxed_' in pdb_path_loaded:
                 use_relaxed_global = True
 
+    if len(list_pdb_path) == 0:
+        raise FileNotFoundError(
+            "APPRAISE did not find any structure files to quantify under {}. "
+            "Confirm that the results folder contains predicted .pdb/.cif/.mmcif files.".format(
+                AF2_results_path
+            )
+        )
 
+    initial_measurement_count = count_database_measurements(database_path)
+    measurement_rows_added = 0
     # measure the pdb files one by one
     for pdb_path_loaded in list_pdb_path:
         #cmd.load(pdb_path)
         pdb_path = pdb_path_loaded
-        quantify_peptide_binding_in_pdb(glycine_linkers=glycine_linkers, pairwise_mode=pairwise_mode)
+        measurement_rows_added += quantify_peptide_binding_in_pdb(
+            glycine_linkers=glycine_linkers, pairwise_mode=pairwise_mode
+        )
         #cmd.do('delete all')
 
-    print("APPRAISE> Finished! Results are saved in {}".format(database_path))
+    final_measurement_count = count_database_measurements(database_path)
+    if final_measurement_count <= initial_measurement_count or measurement_rows_added == 0:
+        raise RuntimeError(
+            "APPRAISE created the database file but did not append any measurement rows. "
+            "This usually means the discovered structures were skipped during quantification "
+            "(for example due to chain parsing problems or PyMOL-side processing failures)."
+        )
+
+    print(
+        "APPRAISE> Finished! Added {} measurement rows. Results are saved in {}".format(
+            measurement_rows_added, database_path
+        )
+    )
 
     return
 
