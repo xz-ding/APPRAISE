@@ -19,6 +19,15 @@ class ColabNotebookRegressionTests(unittest.TestCase):
                 return source
         self.fail(f"Could not find notebook cell containing: {expected_text!r}")
 
+    def test_step0_installs_appraise_from_pypi(self):
+        self._find_cell("### **0.2 Install APPRAISE package**")
+        install_cell = self._find_cell("!pip install -q --upgrade appraise")
+
+        self.assertIn("Install the latest released APPRAISE package from PyPI", install_cell)
+        self.assertIn("recommended path for the public notebook", install_cell)
+        self.assertIn("replace this command with a GitHub install manually", install_cell)
+        self.assertNotIn("git+https://github.com/xz-ding/APPRAISE.git", install_cell)
+
     def test_step1_backend_selector_lists_new_backends(self):
         source = self._find_cell("modeling_backend = 'colabfold'")
         self.assertIn("['colabfold', 'boltz1', 'chai1', 'openfold3']", source)
