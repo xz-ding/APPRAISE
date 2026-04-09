@@ -6,4 +6,4 @@ from .utilities import *
 __author__ = 'Xiaozhe Ding'
 __email__ = 'xding@caltech.edu'
 __email__ = 'dingxiaozhe@gmail.com'
-__version__ = '1.3.1'
+__version__ = '1.2.6'
