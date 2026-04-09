@@ -7,7 +7,11 @@ import pandas as pd
 
 from appraise.input_fasta_prep import get_complex_fastas
 from appraise.score_calculation import calculate_scores
-from appraise.utilities import plot_heatmap, sort_df_by_peptides_and_cleanup
+from appraise.utilities import (
+    database_quality_check,
+    plot_heatmap,
+    sort_df_by_peptides_and_cleanup,
+)
 
 
 matplotlib.use("Agg")
@@ -99,6 +103,21 @@ class ScoringWorkflowTests(unittest.TestCase):
             .index.tolist()
         )
         self.assertEqual(top_hits, ["SRK-53", "SRK-50", "Dis90"])
+
+    def test_database_quality_check_raises_helpful_error_on_empty_peptide_database(self):
+        df = pd.DataFrame(
+            {
+                "receptor_name": ["LY6A"],
+                "model_name": ["LY6A_receptor_model"],
+                "peptide_name": [None],
+            }
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Cannot run database quality check on an empty peptide database",
+        ):
+            database_quality_check(df)
 
 
 if __name__ == "__main__":

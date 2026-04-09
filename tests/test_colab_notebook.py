@@ -96,6 +96,11 @@ class ColabNotebookRegressionTests(unittest.TestCase):
         self.assertIn("usually do **not** need to rename structure outputs", notes)
         self.assertNotIn("14 characters", notes)
 
+    def test_step4_reports_empty_database_more_helpfully(self):
+        pairwise_cell = self._find_cell("No rows in the selected database match receptor_of_interest")
+        self.assertIn("0 peptide variants were detected after parsing model names", pairwise_cell)
+        self.assertIn("contains only receptor-only models", pairwise_cell)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -272,6 +272,20 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
     return xticklabels, yticklabels, list_match_points
 
 def database_quality_check(df):
+    if 'peptide_name' not in df.columns:
+        raise ValueError(
+            "database_quality_check expects a 'peptide_name' column in the input dataframe."
+        )
+
+    df_plot = df.dropna(subset=['peptide_name']).copy()
+    number_of_peptides = df_plot['peptide_name'].nunique()
+    if len(df_plot) == 0 or number_of_peptides == 0:
+        raise ValueError(
+            "Cannot run database quality check on an empty peptide database. "
+            "Check that you selected the correct quantification database and receptor_of_interest, "
+            "and confirm that Step 3 produced peptide-containing models."
+        )
+
     # Quality check
     print('\nQuality check: \n \
     The following plot shows the number of models for each peptide variant in the database. \n \
@@ -279,6 +293,6 @@ def database_quality_check(df):
     If the numbers are not equal, there might some models missing during structure prediction or quantification. You can still proceed with the risk of getting biased rankings.\n \
     Double click on the plot to Zoom in. ')
 
-    plt.rcParams["figure.figsize"] = (len(set(df['peptide_name']))*1.5, 3)
-    sns.histplot(df, x='peptide_name')
+    plt.rcParams["figure.figsize"] = (max(number_of_peptides * 1.5, 3), 3)
+    sns.histplot(df_plot, x='peptide_name', discrete=True)
     plt.tight_layout()
