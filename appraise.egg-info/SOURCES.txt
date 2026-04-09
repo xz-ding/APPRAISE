@@ -3,6 +3,7 @@ README.md
 setup.py
 appraise/__init__.py
 appraise/input_fasta_prep.py
+appraise/modeling_backends.py
 appraise/pymol_quantify_peptide_binding.py
 appraise/score_calculation.py
 appraise/utilities.py
@@ -11,3 +12,6 @@ appraise.egg-info/SOURCES.txt
 appraise.egg-info/dependency_links.txt
 appraise.egg-info/requires.txt
 appraise.egg-info/top_level.txt
+tests/test_colab_notebook.py
+tests/test_modeling_compatibility.py
+tests/test_scoring_workflows.py
