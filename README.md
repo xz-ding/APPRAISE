@@ -2,6 +2,8 @@
 
 ***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. The APPRAISE Python package includes tools for preparing input files and analyzing the modeled structures.
 
+Current APPRAISE supports backend-specific input generation for legacy ColabFold/AlphaFold-style FASTA files as well as newer open-source multimer tools including **Boltz-1**, **Chai-1**, and **OpenFold3**. On the output side, APPRAISE can now discover nested `.pdb`, `.cif`, and `.mmcif` structure files as long as the APPRAISE job name is preserved as the input file stem or enclosing folder name. Support beyond **AlphaFold2-multimer** and **ESMFold** should currently be treated as **BETA** only.
+
 ![APPRAISE concept](./APPRAISE_concept.png)
 
 Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en))
@@ -17,11 +19,26 @@ The basic service of Google Colaboratory is free, although you can choose paid p
 2. Go to "File --> save a copy in Drive" to save a copy of your own;
 3. Follow the Quick guide on the top of the notebook, and you can start APPRAISing!
 
+The notebook now supports these modeling paths:
+
+- Step 2A: AlphaFold-multimer via ColabFold
+- Step 2B: ESMFold
+- Step 2C: Boltz-1
+- Step 2D: Chai-1
+- OpenFold3: prepare inputs in Step 1, run OpenFold3 externally, then return to Step 3 for quantification
+
+At the moment, support beyond AlphaFold2-multimer and ESMFold is **BETA** only. Boltz-1, Chai-1, and OpenFold3 integration are available for early adopters, but they have not yet been validated as extensively as the legacy APPRAISE workflows.
+
+Legacy compatibility is preserved:
+
+- Step 2A still supports the AlphaFold2-multimer `v1`, `v2`, and `v3` model choices exposed in the notebook
+- Step 2B still uses APPRAISE's legacy FASTA inputs, including optional glycine-linker single-chain inputs for ESMFold-style runs
+
 ## Local installation
 
 ### Environment
 
-Local APPRAISE 1.2 was tested with the following environment:
+Historical reference environment from APPRAISE 1.2:
 
  - MacOS 10.14.6
 
@@ -64,6 +81,60 @@ pip install -e .
 
 ### Demo
 You can find a few demo notebooks that work **locally** in the [demo folder on GitHub](https://github.com/GradinaruLab/APPRAISE/tree/main/demo).
+
+## Preparing inputs for newer modeling backends
+
+These newer backend integrations are currently **BETA**. We recommend manually checking a few representative structures and rankings before using them for a larger screening campaign.
+
+`appraise.input_fasta_prep.get_complex_fastas(...)` now accepts a `modeling_backend` argument. APPRAISE keeps its own competition job name as the file stem and writes backend-specific input files:
+
+- `modeling_backend='colabfold'`, `'alphafold2_multimer'`, `'alphafold2_multimer_v1'`, `'alphafold2_multimer_v2'`, `'alphafold2_multimer_v3'`, `'esmfold'`, or `'esmfold2'`: legacy colon-separated `.fasta`
+- `modeling_backend='boltz1'`: one Boltz YAML file per APPRAISE job
+- `modeling_backend='chai1'`: one multi-chain Chai FASTA file per APPRAISE job
+- `modeling_backend='openfold3'`: one OpenFold3 query `.json` per APPRAISE job
+
+Example:
+
+```python
+from appraise.input_fasta_prep import get_complex_fastas
+
+get_complex_fastas(
+    receptor_name="LY6A",
+    receptor_seq="...",
+    list_peptide1_names=["PHP.eB", "AAV9"],
+    list_peptide1_seqs=["...", "..."],
+    mode="pairwise",
+    modeling_backend="boltz1",
+    folder_path="./boltz_inputs/",
+)
+```
+
+## Using newer modeling backends from Colab-APPRAISE
+
+These Colab paths are currently **BETA** for Boltz-1, Chai-1, and OpenFold3. The legacy AlphaFold2-multimer and ESMFold notebook flows remain the best-validated APPRAISE paths at this moment.
+
+In `Colab_APPRAISE.ipynb`, Step 1.4 exposes the same `modeling_backend` selector used by the Python API. Match the backend choice in Step 1 to the modeling block you plan to run next:
+
+- `modeling_backend='colabfold'`: Step 2A or Step 2B
+- `modeling_backend='boltz1'`: Step 2C, which consumes APPRAISE-generated Boltz YAML inputs and writes nested Boltz result folders
+- `modeling_backend='chai1'`: Step 2D, which consumes APPRAISE-generated Chai FASTA inputs and writes one result folder per APPRAISE job
+- `modeling_backend='openfold3'`: prepare APPRAISE JSON inputs in Step 1, run OpenFold3 outside the notebook, then return to Step 3 for quantification
+
+Step 3 of the notebook can quantify flat or nested `.pdb`, `.cif`, and `.mmcif` outputs, so APPRAISE can score results from newer backends as long as the APPRAISE job name is preserved in the input file stem or enclosing result folder name.
+
+## Using APPRAISE with external structure-modeling runs
+
+External integration for Boltz-1, Chai-1, and OpenFold3 is currently **BETA** at the APPRAISE layer. Input/output compatibility is supported, but we still recommend manual sanity checks before relying on those workflows for production decisions.
+
+When you run Boltz-1, Chai-1, or OpenFold3 outside APPRAISE, keep the APPRAISE job name as the input file stem. APPRAISE uses that stem to match structure outputs back to peptide competitions during quantification.
+
+If you start from APPRAISE-generated Step 1 inputs, no additional renaming is usually required. If you export to another naming scheme, preserve the APPRAISE job name either in the structure file stem or in its parent result-folder name.
+
+APPRAISE quantification now supports:
+
+- flat or nested result folders
+- legacy AlphaFold/ColabFold `_relaxed_*.pdb` and `_unrelaxed_*.pdb` outputs
+- newer `.cif` and `.mmcif` outputs from tools such as Boltz-1, Chai-1, and OpenFold3
 
 ## References
 

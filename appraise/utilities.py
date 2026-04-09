@@ -10,6 +10,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import sys
 
+from appraise.modeling_backends import extract_appraise_job_name
+
 def interactive_input(var_name='', default_value=''):
     """
     Function for getting interactive input in the notebook.
@@ -39,7 +41,7 @@ def get_peptide_list_from_model_names(df, sorting_metric_name = 'peptide_name'):
     Get a list of peptide from a database dataframe.
 
     """
-    df['competition_name'] = df['model_name'].str.slice_replace(-15, None, '')
+    df['competition_name'] = df['model_name'].map(extract_appraise_job_name)
 
     list_peptide_names = []
     list_peptide_seqs = []

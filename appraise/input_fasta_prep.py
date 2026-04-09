@@ -8,6 +8,11 @@ import os
 import pandas as pd
 import numpy as np
 
+from appraise.modeling_backends import (
+    backend_supports_multichain_native_inputs,
+    save_modeling_input,
+)
+
 
 def save_fasta(jobname, sequence, folder_path='./input_fasta/'):
     """
@@ -38,6 +43,7 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                        list_peptide2_names=[], list_peptide2_seqs=[], pool_size=4,
                        folder_path='./input_fasta/', use_glycine_linker=False,
                        glycine_linker_length=30, random_seed=42,
+                       modeling_backend='colabfold',
                        prepare_receptor_model=True):
     """
     Create and save input fastas for structural modeling in ColabFold (with
@@ -56,10 +62,23 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
         folder_path (str, optional): The path to the folder where the fasta files will be saved. Defaults to './input_fasta/'.
         use_glycine_linker (bool, optional): If True, the peptides and receptor will be linked with a glycine linker of a specified length. If False, the peptides and receptor will be linked with a colon (:) character. Defaults to False.
         glycine_linker_length (int, optional): The length of the glycine linker to be used when the use_glycine_linker argument is set to True. Defaults to 30.
+        modeling_backend (str, optional): Modeling backend used to format the
+            saved input files. Supported values include legacy
+            ColabFold/AlphaFold/ESMFold FASTA aliases such as 'colabfold',
+            'alphafold2_multimer', and 'esmfold', plus 'boltz1', 'chai1', and
+            'openfold3'. Defaults to 'colabfold'.
         prepare_receptor_model (bool, optional): If True, an additional fasta file with receptor sequence only will be prepared. Defaults to True.
     """
     list_query_sequence = []
     list_jobname = []
+
+    if backend_supports_multichain_native_inputs(modeling_backend) and use_glycine_linker:
+        print(
+            "Warning: backend {!r} natively supports separate protein chains. "
+            "APPRAISE will ignore use_glycine_linker=True and write multichain "
+            "inputs instead.".format(modeling_backend)
+        )
+        use_glycine_linker = False
 
     if use_glycine_linker is False:
         split_linker = ':'
@@ -77,14 +96,32 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
                 jobname = receptor_name + "_and_" + peptide1_name
                 list_query_sequence += [query_sequence]
                 list_jobname += [jobname]
-                save_fasta(jobname, query_sequence, folder_path)
+                save_modeling_input(
+                    jobname=jobname,
+                    query_sequence=query_sequence,
+                    receptor_name=receptor_name,
+                    receptor_seq=receptor_seq,
+                    peptide_names=[peptide1_name],
+                    peptide_seqs=[list_peptide1_seqs[j]],
+                    folder_path=folder_path,
+                    modeling_backend=modeling_backend,
+                )
             else:
                 for k, peptide2_name in enumerate(list_peptide2_names):
                     query_sequence = list_peptide1_seqs[j] + split_linker + list_peptide2_seqs[k] + split_linker + receptor_seq
                     jobname = receptor_name + "_and_" + peptide1_name + "_vs_" + peptide2_name
                     list_query_sequence += [query_sequence]
                     list_jobname += [jobname]
-                    save_fasta(jobname, query_sequence, folder_path)
+                    save_modeling_input(
+                        jobname=jobname,
+                        query_sequence=query_sequence,
+                        receptor_name=receptor_name,
+                        receptor_seq=receptor_seq,
+                        peptide_names=[peptide1_name, peptide2_name],
+                        peptide_seqs=[list_peptide1_seqs[j], list_peptide2_seqs[k]],
+                        folder_path=folder_path,
+                        modeling_backend=modeling_backend,
+                    )
 
         # Prepare a fasta for receptor-only model if requested
         if prepare_receptor_model:
@@ -92,7 +129,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[],
+                peptide_seqs=[],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
     elif mode == 'single':
         for j, peptide1_name in enumerate(list_peptide1_names):
@@ -100,7 +146,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_and_" + peptide1_name
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[peptide1_name],
+                peptide_seqs=[list_peptide1_seqs[j]],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
         # Prepare a fasta for receptor-only model if requested
         if prepare_receptor_model:
@@ -108,7 +163,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[],
+                peptide_seqs=[],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
     elif mode == 'pooled':
         df_peptides_to_model = pd.DataFrame({'peptide_name': list_peptide1_names, 'peptide_seq': list_peptide1_seqs})
@@ -133,7 +197,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             #record the generated results
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=df_pool['peptide_name'].to_list(),
+                peptide_seqs=df_pool['peptide_seq'].to_list(),
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
         # Deal with the remaining leftover sequences
         if len(df_peptides_to_model) > 0:
@@ -152,7 +225,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             #record the generated results
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=df_pool['peptide_name'].to_list(),
+                peptide_seqs=df_pool['peptide_seq'].to_list(),
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
         # Prepare a fasta for receptor-only model if requested
         if prepare_receptor_model:
@@ -160,7 +242,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[],
+                peptide_seqs=[],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
     elif mode == 'single_chains' or mode == 'single_chain':
         # Prepare single chain fastas for the petides and receptors
@@ -169,7 +260,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_targeting_peptide_" + peptide1_name
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[peptide1_name],
+                peptide_seqs=[list_peptide1_seqs[j]],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
         # Prepare a fasta for receptor-only model if requested
         if prepare_receptor_model:
@@ -177,7 +277,16 @@ def get_complex_fastas(receptor_name, receptor_seq, list_peptide1_names,
             jobname = receptor_name + "_receptor_model"
             list_query_sequence += [query_sequence]
             list_jobname += [jobname]
-            save_fasta(jobname, query_sequence, folder_path)
+            save_modeling_input(
+                jobname=jobname,
+                query_sequence=query_sequence,
+                receptor_name=receptor_name,
+                receptor_seq=receptor_seq,
+                peptide_names=[],
+                peptide_seqs=[],
+                folder_path=folder_path,
+                modeling_backend=modeling_backend,
+            )
 
     return list_query_sequence, list_jobname
 
