@@ -113,7 +113,7 @@ get_complex_fastas(
 
 These Colab paths are currently **BETA** for Boltz-1, Chai-1, and OpenFold3. The legacy AlphaFold2-multimer and ESMFold notebook flows remain the best-validated APPRAISE paths at this moment.
 
-In `Colab_APPRAISE.ipynb`, Step 1.4 exposes the same `modeling_backend` selector used by the Python API. Match the backend choice in Step 1 to the modeling block you plan to run next:
+In `Colab_APPRAISE.ipynb`, Step 1.3 exposes the same `modeling_backend` selector used by the Python API, and Step 1.4 materializes the corresponding input files. Match the backend choice in Step 1 to the modeling block you plan to run next:
 
 - `modeling_backend='colabfold'`: Step 2A or Step 2B
 - `modeling_backend='boltz1'`: Step 2C, which consumes APPRAISE-generated Boltz YAML inputs and writes nested Boltz result folders

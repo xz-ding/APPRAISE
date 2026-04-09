@@ -63,7 +63,7 @@ class ColabNotebookRegressionTests(unittest.TestCase):
             '["alphafold2_multimer_v1", "alphafold2_multimer_v2", "alphafold2_multimer_v3"]',
             settings,
         )
-        self.assertIn("keep `modeling_backend='colabfold'` in Step 1.4", self._find_cell("### **Step 2A - Predict structures with AlphaFold-multimer**"))
+        self.assertIn("keep `modeling_backend='colabfold'` in Step 1.3", self._find_cell("### **Step 2A - Predict structures with AlphaFold-multimer**"))
         self.assertIn("from colabfold.batch import get_queries, run", run_cell)
         self.assertIn("num_relax = 1 if use_amber else 0", run_cell)
         self.assertIn('user_agent="colabfold/appraise-colab"', run_cell)
@@ -73,7 +73,7 @@ class ColabNotebookRegressionTests(unittest.TestCase):
         install = self._find_cell("Transformers-based ESMFold workflow")
         run_cell = self._find_cell("pdb_filename = result_dir.joinpath(f\"{jobname}_unrelaxed_ptm")
 
-        self.assertIn("keep `modeling_backend='colabfold'` in Step 1.4", step)
+        self.assertIn("keep `modeling_backend='colabfold'` in Step 1.3", step)
         self.assertIn("def safe_filename", install)
         self.assertIn("def setup_logging", install)
         self.assertIn("default_data_dir = Path.home() / '.cache' / 'huggingface'", install)
