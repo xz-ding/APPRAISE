@@ -142,7 +142,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 
             #Count number of winning, losing or tie matches with higher threshold for breaking the ties
             n_contact_win_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] > 2 * tie_threshold)
-            n_contact_tie_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] == tie_threshold**2 * 4)
+            n_contact_tie_tie_breaker = np.sum(np.abs(df_peptide[metric_name+'_tstat']) <= 2 * tie_threshold)
             n_contact_lose_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] < -2 * tie_threshold)
 
 
