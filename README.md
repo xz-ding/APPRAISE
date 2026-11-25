@@ -1,5 +1,7 @@
 # APPRAISE: Rank binders by structure modeling
 
+**Try the β₂AR nanobody example.** The candidate notebook remeasures ten published structures on CPU, ranks Nb6B9 and Nb80, and saves a table and heatmap. Choose **Runtime → Run all**. Google Drive results appear under `MyDrive/APPRAISE/b2ar`. The notebook also offers explicit free-GPU validation runs with ESMFold2-Fast and AlphaFold2-multimer. [Open the candidate in Colab](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/6a13198a8d09fea3573ab389d842c08b231cc3a9/notebooks/Colab_APPRAISE_candidate.ipynb) · [Python and command-line examples](docs/nanobody-runner.md)
+
 ***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. The APPRAISE Python package includes tools for preparing input files and analyzing the modeled structures.
 
 Current APPRAISE supports backend-specific input generation for legacy ColabFold/AlphaFold-style FASTA files as well as newer open-source multimer tools including **Boltz-1**, **Chai-1**, and **OpenFold3**. On the output side, APPRAISE can now discover nested `.pdb`, `.cif`, and `.mmcif` structure files as long as the APPRAISE job name is preserved as the input file stem or enclosing folder name. Support beyond **AlphaFold2-multimer** and **ESMFold** should currently be treated as **BETA** only.

@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-25",
+  "status": "awaiting_colab_account",
+  "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
+  "repository": "xz-ding/APPRAISE",
+  "base": "8898c203d35b51d64b4766342ed9a9a32630cc13",
+  "pull_request": "https://github.com/xz-ding/APPRAISE/pull/1",
+  "branch": "codex/appraise-colab-runner",
+  "package_revision": "da9986b07d7b6967bbdcf75eb1ea2496a78abb14",
+  "notebook_revision": "6a13198a8d09fea3573ab389d842c08b231cc3a9",
+  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/6a13198a8d09fea3573ab389d842c08b231cc3a9/notebooks/Colab_APPRAISE_candidate.ipynb",
+  "cpu": {
+    "local": "macOS arm64, Python 3.12.3",
+    "local_tests_passed": 36,
+    "local_subtests_passed": 5,
+    "ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45721724297",
+    "ci_status": "success",
+    "ci_tests_passed": 36,
+    "ci_subtests_passed": 5,
+    "macos_candidate_artifact_sha256": {
+      "appraise-1.3.2-py3-none-any.whl": "9fe2828d8ed25c5525462e89af1c0d53e310a9debee0d3ab12af73ffacde3c34",
+      "appraise-1.3.2.tar.gz": "5cc9ec47e29cf6bcea45df2ce17c2656cef435d91afc91581dac6bebdfb87a1a"
+    },
+    "linux_candidate_artifact_sha256": {
+      "appraise-1.3.2-py3-none-any.whl": "b8ec9a6f90fb0a350b086f02feaa9252bb61870670e75a4239018ecc3eefeee2",
+      "appraise-1.3.2.tar.gz": "43a01675d4d9013902ae7c57053fbdcf4570db9c31853c5329ca9a0ea0ecd7de"
+    },
+    "examples": {
+      "b2ar-reference": {
+        "jobs": 36,
+        "structures": 180,
+        "measurements": 360,
+        "order": [
+          "Nb6B9",
+          "Nb6A5",
+          "Nb6A9",
+          "Nb6A10",
+          "Nb6B11",
+          "Nb80"
+        ],
+        "comparison": {
+          "experimental_order": [
+            "Nb6B9",
+            "Nb6A9",
+            "Nb6A5",
+            "Nb6B11",
+            "Nb6A10",
+            "Nb80"
+          ],
+          "historical_order": [
+            "Nb6B9",
+            "Nb6A5",
+            "Nb6A9",
+            "Nb6A10",
+            "Nb6B11",
+            "Nb80"
+          ],
+          "ranks": {
+            "Nb6B9": 1.0,
+            "Nb6A9": 3.0,
+            "Nb6A5": 2.0,
+            "Nb6B11": 5.0,
+            "Nb6A10": 4.0,
+            "Nb80": 6.0
+          },
+          "spearman_rho": 0.8857142857142858,
+          "historical_rho": 0.8857142857142857,
+          "delta_from_historical": 1.1102230246251565e-16,
+          "minimum_rho": 0.8285714285714286,
+          "meets_ranking_criterion": true,
+          "evidence": "published AlphaFold2 measurements"
+        },
+        "ranking_sha256": "d70c793d704f3f640a9a8123a0584fdade2bcea548931d4dc3b12bc31340c96c"
+      },
+      "b2ar-saved": {
+        "jobs": 2,
+        "structures": 10,
+        "measurements": 20,
+        "order": [
+          "Nb6B9",
+          "Nb80"
+        ],
+        "comparison": null,
+        "ranking_sha256": "e64e5e1fda63cde6d5d5803bd8e8f75fc7f7704990563f4e0a1cc870a9b911d1"
+      }
+    }
+  },
+  "free_colab": {
+    "sign_in": "required",
+    "browser": "Codex built-in browser",
+    "gpu": null,
+    "paid_spend_usd": 0,
+    "drive_target": "/content/drive/MyDrive/APPRAISE/b2ar",
+    "drive_write_verified": false,
+    "fresh_folding_receipt": null
+  },
+  "esmfold2": {
+    "status": "blocked before qualification",
+    "variant": "ColabFold2 preview ESMFold2-Fast",
+    "new_benchmark_structures": 0,
+    "required_structures": 180,
+    "new_measurements": 0,
+    "required_measurements": 360,
+    "required_spearman_rho": 0.8285714285714286,
+    "required_unique_first": "Nb6B9",
+    "required_unique_last": "Nb80"
+  },
+  "default_selection": "CPU saved structures in candidate notebook. Fresh GPU auto blocked pending measured support.",
+  "publication": {
+    "candidate_version": "1.3.2",
+    "merged": false,
+    "tag": null,
+    "published": false,
+    "workflow": "publish.yml",
+    "project": "appraise",
+    "environment": "pypi",
+    "pypi_publisher_verification": "pending owner access",
+    "github_environment": "absent on read-back; automatic approval declined provisioning without an explicit tag pattern in the creation request"
+  },
+  "next_action": {
+    "account_holder": "Sign in to Google in the built-in Colab tab.",
+    "agent": "Request a free GPU, verify the checkpoint destination, and run the 554-residue pilot with the pinned candidate."
+  }
+}
