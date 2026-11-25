@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from appraise import runner
+from appraise import nanobody_models, runner
 from appraise.nanobody import comparison, evaluate, panel, reference_measurements, resource
 from appraise.utilities import rank_tournament_results
 
@@ -91,6 +91,13 @@ def test_partial_saved_run_recovers_by_identity(tmp_path, monkeypatch):
     assert runner.resume(root)["status"] == "complete"
     assert first_file.stat().st_mtime_ns == first_mtime
     assert pd.read_csv(first_measure).shape[0] == 2
+    manifest_path = root / "run_manifest.json"
+    manifest = read(manifest_path)
+    manifest["samples"]["b2AR_and_Nb6B9_vs_Nb80/1"]["observed_chains"] = ["C", "C", "D"]
+    manifest_path.write_text(json.dumps(manifest))
+    assert runner.resume(root)["status"] == "complete"
+    assert read(manifest_path)["samples"]["b2AR_and_Nb6B9_vs_Nb80/1"]["observed_chains"] == ["B", "C", "D"]
+    assert first_file.stat().st_mtime_ns == first_mtime
     second_file = next(p for p in root.glob("models/*/*/*.pdb") if p != first_file)
     second_mtime = second_file.stat().st_mtime_ns
     first_file.write_text("broken PDB")
@@ -146,3 +153,34 @@ def test_csv_exact_panel_and_freeze_sample_counts(tmp_path):
     table.to_csv(path, index=False)
     with pytest.raises(ValueError, match="mismatch"):
         runner.preflight(cfg)
+
+
+@pytest.mark.parametrize("engine", ["colabfold", "esmfold2-fast"])
+def test_backend_requests_one_identifiable_sample_on_resume(tmp_path, monkeypatch, engine):
+    monkeypatch.setattr(nanobody_models.metadata, "version", lambda name: "1.6.3" if name == "colabfold" else "3.1.18")
+    monkeypatch.setattr(nanobody_models, "runtime", lambda: {"gpu": {"compute_cap": "7.5"}})
+    monkeypatch.setattr(nanobody_models, "_ported_files", lambda path: tmp_path / "entry.py")
+    job = "b2AR_and_Nb80_vs_Nb80"
+    work = tmp_path / "work"
+    def fake_command(cmd, log, env=None):
+        if engine == "colabfold":
+            assert cmd[cmd.index("--model-order") + 1] == "4"
+            assert cmd[cmd.index("--random-seed") + 1] == "17"
+            assert cmd[cmd.index("--num-models") + 1] == cmd[cmd.index("--num-seeds") + 1] == "1"
+            folder = work / "output"
+            model = job + "_unrelaxed_rank_001_alphafold2_multimer_v2_model_4_seed_017.pdb"
+            conf = job + "_scores_rank_001_alphafold2_multimer_v2_model_4_seed_017.json"
+        else:
+            request = read(work / "input.json")
+            assert request["modelSeeds"] == [20]
+            assert [p["protein"]["id"] for p in request["sequences"]] == [["A", "B"], "C"]
+            assert "--use_esm_embeddings" in cmd and "--num_diffusion_samples=1" in cmd
+            folder = work / "output" / job.lower() / "seed-20_sample-0"
+            model, conf = "native_model.cif", "native_summary_confidences.json"
+        folder.mkdir(parents=True)
+        (folder / model).write_text("format fixture")
+        (folder / conf).write_text(json.dumps({"iptm": 0.5}))
+        return {"elapsed_seconds": 1}
+    monkeypatch.setattr(nanobody_models, "_checked_command", fake_command)
+    model, conf, usage = nanobody_models.predict(engine, job, ["Nb80", "Nb80"], 3, 17, work, tmp_path / "log")
+    assert model.is_file() and read(conf)["iptm"] == 0.5 and usage["elapsed_seconds"] == 1

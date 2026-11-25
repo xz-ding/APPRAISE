@@ -62,7 +62,10 @@ def _write(path, content):
         except BaseException:
             tmp.unlink(missing_ok=True)
             raise
-    os.replace(tmp, path)
+    try:
+        os.replace(tmp, path)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def _read(path):
@@ -173,17 +176,24 @@ def _prepare_structure(folder, scratch, job, names, index, settings, record, log
     engine = settings["engine"]
     target = folder / (f"{job}_unrelaxed_model_{index + 1}" + (".cif" if engine == "esmfold2-fast" else ".pdb"))
     confidence = folder / "confidence.json"
-    if (_current(target, record.get("structure_sha256")) and record.get("observed_chains")
-            and (engine == "saved" or _current(confidence, record.get("confidence_sha256")))):
-        return target
-    if engine == "saved":
+    valid_bytes = (_current(target, record.get("structure_sha256"))
+                   and (engine == "saved" or _current(confidence, record.get("confidence_sha256"))))
+    declared = "B,C,D" if engine == "saved" else "A,B,C"
+    def validation_key(chains, digest):
+        return _hash(json.dumps([_revision("nanobody_structure"), record["fingerprint"], declared, chains, digest]).encode())
+    if valid_bytes:
+        prior = record.get("observed_chains", [])
+        if (len(prior) == 3 and len(set(prior)) == 3
+                and record.get("chain_validation") == validation_key(prior, record["structure_sha256"])):
+            return target
+        data = target.read_bytes()
+    elif engine == "saved":
         structures = panel()["structures"]
         archived = sorted(n for n in structures if n.startswith(job + "_unrelaxed_"))[index]
         data = gzip.decompress(resource(archived + ".gz").read_bytes())
         if _hash(data) != structures[archived]:
             raise ValueError(f"The bundled structure failed its archive checksum: {archived}")
         record["source_file"] = archived
-        declared = "B,C,D"
     else:
         if not runtime()["gpu"]:
             raise RunIssue("gpu_unavailable", "New predictions require an attached NVIDIA GPU.",
@@ -197,14 +207,16 @@ def _prepare_structure(folder, scratch, job, names, index, settings, record, log
         data = model.read_bytes()
         _write(confidence, scores.read_bytes())
         record["confidence_sha256"] = _hash(confidence.read_bytes())
-        declared = "A,B,C"
     # Inspect before publishing an inference checkpoint. Reuse is tied to these exact bytes.
     candidate = scratch / target.name
     candidate.write_bytes(data)
     identity = scratch / "chains.json"
     _worker(["--inspect", candidate, identity, *names, declared], log)
-    _write(target, data)
-    record.update(structure_sha256=_hash(data), observed_chains=_read(identity), structure=str(target.relative_to(folder.parents[2])),
+    if not valid_bytes:
+        _write(target, data)
+    chains = _read(identity)
+    record.update(structure_sha256=_hash(data), observed_chains=chains, chain_validation=validation_key(chains, _hash(data)),
+                  structure=str(target.relative_to(folder.parents[2])),
                   plddt_source="native model confidence, 0-100", structure_verified_at=_now())
     record.pop("measurement_sha256", None)
     return target
@@ -247,8 +259,9 @@ def _execute(root, settings, manifest, result, report_progress):
     engine = settings["engine"]
     manifest_path = root / "run_manifest.json"
     log = root / "run.log"
+    segment_start = time.monotonic()
     def checkpoint(stage, active_input=None):
-        result.update(stage=stage, active_input=active_input)
+        result.update(stage=stage, active_input=active_input, elapsed_seconds=round(time.monotonic() - segment_start, 2))
         with log.open("a", encoding="utf-8") as stream:
             stream.write(f"{_now()} {stage} {active_input or ''} {result['completed_predictions']}/{totals['expected_predictions']}\n")
         _json(manifest_path, manifest)
@@ -335,7 +348,7 @@ def run(config, *, progress=None):
         manifest_path = root / "run_manifest.json"
         if manifest_path.exists():
             existing = _read(manifest_path)
-            if (existing.get("schema_version") != 1 or not isinstance(existing.get("samples"), dict)
+            if (not isinstance(existing, dict) or existing.get("schema_version") != 1 or not isinstance(existing.get("samples"), dict)
                     or not isinstance(existing.get("segments"), list) or not existing.get("run_id")):
                 raise RunIssue("invalid_manifest", "The saved run manifest is unreadable or has an unsupported schema.",
                                "Restore its last durable copy, or use a new directory.")
@@ -366,6 +379,9 @@ def run(config, *, progress=None):
         result.update(status="interrupted", failure_code="interrupted", error="Run interrupted.", next_action="Resume the same run directory.")
     except RunIssue as exc:
         result.update(status=exc.status, failure_code=exc.code, error=str(exc), next_action=exc.action)
+    except MemoryError as exc:
+        result.update(status="failed", failure_code="insufficient_memory", error=str(exc),
+                      next_action="Review the measured GPU and run.log. Choose a separate saved-structure run or resume on a suitable free GPU.")
     except (OSError, ValueError, KeyError, ImportError, subprocess.SubprocessError, RuntimeError) as exc:
         stage = result["stage"]
         action = "Check the inputs and output directory." if stage == "configuration" else "Read run.log, correct the reported error and resume the same directory."

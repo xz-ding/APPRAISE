@@ -66,6 +66,14 @@ def _checked_command(command, log, env=None):
         start = time.monotonic()
         try:
             subprocess.run(command, stdout=stream, stderr=subprocess.STDOUT, check=True, env=env)
+        except subprocess.CalledProcessError as exc:
+            # Include the upstream diagnostic in the structured result as well as the full log.
+            with log.open("rb") as errors:
+                errors.seek(max(0, errors.seek(0, os.SEEK_END) - 6000))
+                lines = errors.read().decode(errors="replace").strip().splitlines()
+            if any(marker in " ".join(lines).lower() for marker in ("out of memory", "out of gpu memory", "resource_exhausted")):
+                raise MemoryError("The selected GPU ran out of memory during inference. The original settings and completed samples are preserved.") from exc
+            raise RuntimeError(lines[-1] if lines else str(exc)) from exc
         finally:
             monitor.terminate()
             monitor.wait(timeout=10)

@@ -35,7 +35,7 @@ def identify_chains(cmd, path, left, right, declared):
             raise ValueError(f"Invalid native pLDDT on the 0–100 scale for chain {chain}.")
     if len(observed) != 3:
         raise ValueError(f"Expected three protein chains in {path.name}, found {list(observed)}.")
-    if declared and [observed.get(k) for k in declared] == expected:
+    if set(declared) == set(observed) and [observed.get(k) for k in declared] == expected:
         return list(declared)
     if len(set(expected)) < len(expected):
         raise ValueError("Identical nanobody copies require matching chain IDs from the producer.")

@@ -25,7 +25,8 @@ def main(argv=None):
     command = args.pop("command")
     def progress(event):
         print(f"{event['stage']} {event.get('active_input') or ''} "
-              f"{event['completed_predictions']}/{event['expected_predictions']}", file=sys.stderr, flush=True)
+              f"{event['completed_predictions']}/{event['expected_predictions']} · {event['elapsed_seconds']:.0f}s",
+              file=sys.stderr, flush=True)
     result = resume(args["run_dir"], progress=progress) if command == "resume" else run(RunConfig(**args), progress=progress)
     print(json.dumps(result, indent=2, allow_nan=False))
     return {"complete": 0, "failed": 1, "blocked": 3, "interrupted": 130}[result["status"]]
