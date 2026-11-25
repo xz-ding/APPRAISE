@@ -1,0 +1,57 @@
+name: Publish APPRAISE to PyPI
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  release_ref:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: Check the release tag is on canonical main
+        run: |
+          test "$GITHUB_REPOSITORY" = "xz-ding/APPRAISE"
+          test "$GITHUB_REF_TYPE" = tag
+          git merge-base --is-ancestor HEAD origin/main
+          python - <<'PY'
+          import ast, os
+          from pathlib import Path
+          tree = ast.parse(Path("appraise/__init__.py").read_text())
+          version, = [n.value.value for n in tree.body if isinstance(n, ast.Assign)
+                      and any(getattr(t, "id", None) == "__version__" for t in n.targets)]
+          assert os.environ["GITHUB_REF_NAME"] == f"v{version}"
+          PY
+  build:
+    needs: release_ref
+    uses: ./.github/workflows/cpu.yml
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/project/appraise/
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: appraise-distributions
+          path: dist/
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: appraise-wheel-report
+          path: report/
+      - name: Verify the exact tested files
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          report = json.loads(Path("report/wheel-report.json").read_text())
+          assert os.environ["GITHUB_REF_NAME"] == "v" + report["version"]
+          actual = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in Path("dist").iterdir()}
+          assert actual == report["artifacts"]
+          PY
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
