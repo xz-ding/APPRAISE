@@ -4,7 +4,7 @@ The November 25 owner-supplied plan is recorded byte for byte in `AGENT_EXECUTIO
 
 ## What runs today
 
-The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Candidate notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/0529084684d3f8a0c3fa08b8ae8d461703139146/notebooks/Colab_APPRAISE_candidate.ipynb) · [Usage](nanobody-runner.md)
+The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Candidate notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb) · [Usage](nanobody-runner.md)
 
 | Evidence | Result |
 |---|---|
@@ -16,7 +16,7 @@ The notebook, noninteractive command and Python interface share the published β
 | ESMFold2-Fast | The v3.1.20 port with the streamed ESM-C loader completed both input orders. It produced ten distinct 554-residue structures, 20 measurements, the ranked table and heatmap. Nb6B9 placed first. |
 | Six-nanobody comparison | JapanFold ESMFold2-Fast completed 36 ordered inputs, 180 distinct structures and 360 measurements. Spearman ρ was 33/35 against the experimental ranking. Nb80 finished fifth. The qualification gate requires sixth place. [Ranking](results/esmfold2-japanfold-b2ar-six-ranking.csv) |
 
-All 40 scoped checks and five subtests passed locally and on GitHub’s Linux runner. They cover the two notebooks, backend I/O, the nanobody workflow, and archived measurement parsing. They also test ties, missing coverage, ensemble identities, checksum recovery, and signed colors in the guided and manual score matrices. [Hosted CPU checks](https://github.com/xz-ding/APPRAISE/actions/runs/45877547525)
+The latest candidate passed 44 scoped tests and five subtests locally. The earlier candidate passed 40 scoped tests and five subtests on GitHub’s Linux runner. They cover the two notebooks, backend I/O, the nanobody workflow, and archived measurement parsing. They also test ties, missing coverage, ensemble identities, checksum recovery, and signed colors in the guided and manual score matrices. [Hosted CPU checks](https://github.com/xz-ding/APPRAISE/actions/runs/45877547525)
 
 ## Free-Colab validation
 

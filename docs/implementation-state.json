@@ -8,8 +8,8 @@
   "pull_request": "https://github.com/xz-ding/APPRAISE/pull/1",
   "branch": "codex/appraise-colab-runner",
   "package_revision": "1f6de6b18250ff387bf261a72eec65121a551027",
-  "notebook_revision": "0529084684d3f8a0c3fa08b8ae8d461703139146",
-  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/0529084684d3f8a0c3fa08b8ae8d461703139146/notebooks/Colab_APPRAISE_candidate.ipynb",
+  "notebook_revision": "31934881b32c2ba9c101084bcffad972c0e0f3e6",
+  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb",
   "cpu": {
     "local": "macOS arm64, Python 3.12.3",
     "local_tests_passed": 38,

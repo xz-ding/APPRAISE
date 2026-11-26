@@ -1,6 +1,6 @@
 # Run the β₂AR nanobody example
 
-Choose **Runtime → Run all** in the candidate notebook. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/0529084684d3f8a0c3fa08b8ae8d461703139146/notebooks/Colab_APPRAISE_candidate.ipynb)
+Choose **Runtime → Run all** in the candidate notebook. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb)
 
 ## Use the same workflow locally
 
