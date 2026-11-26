@@ -23,9 +23,9 @@ class ColabNotebookRegressionTests(unittest.TestCase):
 
     def test_step0_installs_appraise_from_pypi(self):
         self._find_cell("### **0.2 Install APPRAISE package**")
-        install_cell = self._find_cell('"-m", "pip", "install", "-q", "appraise==1.2.6"')
+        install_cell = self._find_cell('"-m", "pip", "install", "-q", "appraise==1.3.2"')
 
-        self.assertIn("Install APPRAISE 1.2.6 from PyPI", install_cell)
+        self.assertIn("Install APPRAISE 1.3.2 from PyPI", install_cell)
         self.assertIn("recommended path for the public notebook", install_cell)
         self.assertIn("replace this command with a GitHub install manually", install_cell)
         self.assertNotIn("git+https://github.com/xz-ding/APPRAISE.git", install_cell)
