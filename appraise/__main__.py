@@ -25,6 +25,8 @@ def main(argv=None):
     args = vars(parser.parse_args(argv))
     command = args.pop("command")
     def progress(event):
+        if event["stage"] == "preflight":
+            print(f"{event['selected_engine']} · {event['selection_reason']}", file=sys.stderr, flush=True)
         print(f"{event['stage']} {event.get('active_input') or ''} "
               f"{event['completed_predictions']}/{event['expected_predictions']} · {event['elapsed_seconds']:.0f}s",
               file=sys.stderr, flush=True)

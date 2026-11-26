@@ -208,10 +208,8 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
     receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. Use verified chain boundaries for newly processed structures.
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
     chain_list = cmd.get_chains(model_name)
@@ -220,7 +218,9 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
             raise ValueError('The declared chain roles do not match the loaded structure.')
         return chain_order[-1], list(chain_order[:-1])
 
-    if glycine_linkers == True or (glycine_linkers == 'auto' and len(chain_list) == 1):
+    if not chain_list:
+        raise ValueError('The structure has no chains.')
+    if glycine_linkers is True:
         _ = split_by_glycine_linkers(chain_list)
         chain_list = cmd.get_chains(model_name)
 
@@ -378,10 +378,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     receptor_chain: (string) can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. Resolve joined ESMFold v1 files with original input metadata.
 
     """
     rows_appended = 0
@@ -402,9 +400,13 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     #Split chains
     receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
         receptor_chain=receptor_chain, glycine_linkers=glycine_linkers, chain_order=chain_order)
-    # if it is a single-chain model (without glycien linkers), skip.
     if len(list_peptide_chain) == 0:
-        print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
+        if '_and_' in model_name:
+            raise ValueError(
+                f'{pdb_path}: the competition contains only one chain. For an old joined ESMFold v1 model, '
+                'recover the boundaries with restore_esmfold_v1_chains and the original separated input sequences.'
+            )
+        print('[Warning] Skipped a single-chain receptor-only model.')
         return rows_appended
 
     # Auto-disable pairwise mode when there is only one peptide chain.
@@ -792,10 +794,8 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     output_path: (str) the folder that will store the database file. If auto,
     it will be the same folder that stores the AF2_results folder.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. By default APPRAISE expects distinct chains in each competition.
 
     dt_string: (str) the date-time string to be attached to the database file as
     time stamp.

@@ -132,21 +132,36 @@ def _plan(settings):
 
 
 def preflight(config):
-    settings = _configuration(config)
-    _, counts = _plan(settings)
     hardware = runtime()
+    settings, reason = _select_engine(_configuration(config), hardware)
+    _, counts = _plan(settings)
     return dict(counts, settings=settings, runtime=hardware, output_dir=str(Path(config.output_dir).resolve()),
-                selection_reason=_reason(settings["engine"]))
+                selection_reason=reason)
 
 
 def _reason(engine):
     return {
-        "auto": "No fresh-folding configuration has completed free-Colab qualification. Choose a validation engine explicitly or score the saved structures.",
+        "auto": "Automatic fresh folding is available for the verified β₂AR panel on a Colab T4 with at least 4 GiB of free GPU memory. Choose an engine explicitly or score saved structures.",
         "reference": "Re-score the published six-nanobody measurements on CPU.",
         "saved": "Re-measure the ten published reciprocal structures on CPU.",
         "colabfold": "Explicit AlphaFold2-multimer v2 validation run with templates.",
         "esmfold2-fast": "Explicit experimental ColabFold2 preview ESMFold2-Fast validation run.",
     }[engine]
+
+
+def _select_engine(settings, hardware, saved_engine=None):
+    if settings["engine"] != "auto":
+        return settings, _reason(settings["engine"])
+    gpu = hardware.get("gpu") or {}
+    free_memory = str(gpu.get("memory.free", ""))
+    if saved_engine == "colabfold":
+        reason = "Resuming with the previously selected AlphaFold2-multimer v2 fallback."
+    elif (hardware.get("colab_release") and gpu.get("name") == "Tesla T4"
+          and free_memory.isdecimal() and int(free_memory) >= 4096):
+        reason = "Selected the validated AlphaFold2-multimer v2 fallback for the β₂AR panel on a Colab T4."
+    else:
+        return settings, _reason("auto")
+    return dict(settings, engine="colabfold", protocol=PROTOCOLS["colabfold"]), reason
 
 
 def _sample_inputs(job, names, settings, index):
@@ -272,7 +287,7 @@ def _execute(root, settings, manifest, result, report_progress):
 
     checkpoint("preflight")
     if engine == "auto":
-        raise RunIssue("unqualified_configuration", _reason(engine),
+        raise RunIssue("unqualified_configuration", result["selection_reason"],
                        "Use b2ar-saved on CPU, or select a validation engine in a new run directory.", "blocked")
     if engine == "reference":
         frame = reference_measurements()
@@ -337,9 +352,7 @@ def run(config, *, progress=None):
     started = time.monotonic()
     lock = None
     try:
-        settings = _configuration(config)
-        _, counts = _plan(settings)
-        result.update(counts, selected_engine=settings["engine"], selection_reason=_reason(settings["engine"]))
+        requested = _configuration(config)
         root.mkdir(parents=True, exist_ok=True)
         lock = (root / ".appraise.lock").open("a")
         try:
@@ -347,15 +360,27 @@ def run(config, *, progress=None):
         except BlockingIOError:
             raise RunIssue("run_busy", "Another process is writing this run directory.", "Wait for that process, then resume.", "blocked")
         manifest_path = root / "run_manifest.json"
+        existing = None
         if manifest_path.exists():
             existing = _read(manifest_path)
             if (not isinstance(existing, dict) or existing.get("schema_version") != 1 or not isinstance(existing.get("samples"), dict)
                     or not isinstance(existing.get("segments"), list) or not existing.get("run_id")):
                 raise RunIssue("invalid_manifest", "The saved run manifest is unreadable or has an unsupported schema.",
                                "Restore its last durable copy, or use a new directory.")
+        hardware = runtime()
+        saved_engine = None
+        if existing is not None and existing["config"].get("engine") == "auto":
+            saved_engine = existing["settings"]["engine"]
+        settings, reason = _select_engine(requested, hardware, saved_engine)
+        _, counts = _plan(settings)
+        result.update(counts, selected_engine=settings["engine"], selection_reason=reason)
+        if existing is not None:
             if existing["settings"] != settings:
-                raise RunIssue("config_mismatch", "The saved run uses different inputs or settings.",
-                               "Resume the existing run or choose a new output directory.")
+                unresolved = requested["engine"] == "auto" and existing["settings"] == requested and not existing["samples"]
+                if not unresolved:
+                    raise RunIssue("config_mismatch", "The saved run uses different inputs or settings.",
+                                   "Resume the existing run or choose a new output directory.")
+                existing["settings"] = settings
             manifest = existing
         else:
             if any(p.name != ".appraise.lock" for p in root.iterdir()):
@@ -366,7 +391,6 @@ def run(config, *, progress=None):
                 normalized = pd.DataFrame(list(settings["sequences"].items()), columns=["peptide_name", "peptide_seq"])
                 _write(root / "candidates.csv", normalized.to_csv(index=False).encode())
                 manifest["config"]["candidates_csv"] = "candidates.csv"
-        hardware = runtime()
         # Keep validation/quantification edits independent of expensive inference.
         manifest.update(inference_revision="b2ar-structure-v1/" + _revision("nanobody_models", "_esmfold2_port"),
                         quantification_revision=_revision("pymol_quantify_peptide_binding", "nanobody_structure") + "/" + hardware["packages"].get("pymol-open-source", "unknown"),

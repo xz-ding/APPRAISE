@@ -161,16 +161,40 @@ def test_chain_identity_in_pdb_and_mmcif(tmp_path):
 
 
 def test_unqualified_default_and_missing_gpu_return_actionable_status(tmp_path, monkeypatch):
+    monkeypatch.setattr(runner, "runtime", lambda: {"gpu": None, "packages": {}})
     result = runner.run(runner.RunConfig(output_dir=str(tmp_path / "auto")))
     assert result["failure_code"] == "unqualified_configuration"
     assert result["expected_predictions"] == 10 and result["completed_predictions"] == 0
-    monkeypatch.setattr(runner, "runtime", lambda: {"gpu": None, "packages": {}})
     result = runner.run(runner.RunConfig(output_dir=str(tmp_path / "fresh"), engine="esmfold2-fast"))
     assert result["status"] == "blocked" and result["failure_code"] in {"gpu_unavailable", "pymol_missing"}
     assert "resume" in result["next_action"]
     invalid = subprocess.run([sys.executable, "-m", "appraise", "score", "--predictions-per-input", "0",
                               "--output", str(tmp_path / "invalid")], capture_output=True, text=True)
     assert invalid.returncode == 1 and json.loads(invalid.stdout)["failure_code"] == "configuration_error"
+
+
+def test_auto_selects_and_pins_t4_fallback_on_resume(tmp_path, monkeypatch):
+    pytest.importorskip("pymol")
+    hardware = {"colab_release": "test-image", "gpu": {"name": "Tesla T4", "memory.free": "[N/A]"}, "packages": {}}
+    monkeypatch.setattr(runner, "runtime", lambda: hardware)
+    config = runner.RunConfig(output_dir=tmp_path / "fallback")
+    assert runner.preflight(config)["settings"]["engine"] == "auto"
+    hardware["gpu"]["memory.free"] = "4095"
+    blocked = runner.run(config)
+    assert blocked["failure_code"] == "unqualified_configuration"
+
+    hardware["gpu"]["memory.free"] = "4096"
+    assert runner.preflight(config)["settings"]["protocol"] == nanobody_models.PROTOCOLS["colabfold"]
+    events = []
+    resolved = runner.resume(config.output_dir, progress=events.append)
+    assert resolved["run_id"] == blocked["run_id"]
+    assert resolved["selected_engine"] == "colabfold" and resolved["failure_code"] == "engine_missing"
+    assert events[0]["stage"] == "preflight" and "fallback" in events[0]["selection_reason"]
+
+    hardware["gpu"] = None
+    later = runner.resume(config.output_dir)
+    assert later["run_id"] == blocked["run_id"]
+    assert later["selected_engine"] == "colabfold" and later["failure_code"] == "gpu_unavailable"
 
 
 def test_cli_keeps_library_diagnostics_out_of_result_json(monkeypatch, capsys):

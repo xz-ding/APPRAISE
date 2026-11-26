@@ -15,6 +15,8 @@ import re
 from pathlib import Path
 from string import ascii_uppercase, ascii_lowercase
 
+from .legacy_esmfold import linker_length
+
 
 STRUCTURE_FILE_EXTENSIONS = (".pdb", ".cif", ".mmcif")
 MULTICHAIN_BACKENDS = {"boltz1", "chai1", "openfold3"}
@@ -178,6 +180,19 @@ def save_modeling_input(
 
     if backend == "legacy_fasta":
         output_path = output_folder / "{}.fasta".format(jobname)
+        sidecar = output_path.with_suffix(".chains.json")
+        if peptide_names and ":" not in query_sequence:
+            records = _build_chain_records(receptor_name, receptor_seq, peptide_names, peptide_seqs)
+            sequence = query_sequence.upper()
+            original = [record["sequence"].upper() for record in records]
+            try:
+                linker_length(sequence, original)
+            except ValueError:
+                sidecar.unlink(missing_ok=True)
+            else:
+                sidecar.write_text(json.dumps(records, indent=2) + "\n")
+        else:
+            sidecar.unlink(missing_ok=True)
         output_path.write_text("> {}\n{}".format(jobname, query_sequence))
     else:
         chain_records = _build_chain_records(
