@@ -1,13 +1,13 @@
 # Run the β₂AR nanobody example
 
-Choose **Runtime → Run all** in the candidate notebook. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb)
+Choose **Runtime → Run all** in Colab-APPRAISE. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb)
 
 ## Use the same workflow locally
 
-Install this candidate in a Python 3.12 virtual environment. Commands write one JSON result to stdout and progress to stderr.
+Install APPRAISE in a Python 3.12 virtual environment. Commands write one JSON result to stdout and progress to stderr.
 
 ```sh
-python -m pip install 'appraise[structures] @ git+https://github.com/xz-ding/APPRAISE.git@1f6de6b18250ff387bf261a72eec65121a551027'
+python -m pip install 'appraise[structures]==1.3.2'
 python -m appraise score --example b2ar-saved --output runs/saved
 python -m appraise resume --run-dir runs/saved
 python -m appraise score --example b2ar-reference --output runs/reference

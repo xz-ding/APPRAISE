@@ -1,6 +1,6 @@
 # APPRAISE: Rank binders by structure modeling
 
-**Try the β₂AR nanobody example.** Choose **Runtime → Run all** to rank Nb6B9 and Nb80 on CPU from ten published structures. Download the ranked table and heatmap from the notebook, or enable `save_to_drive` to keep them under `MyDrive/APPRAISE/b2ar`. For fresh predictions on a free T4, choose AlphaFold2-multimer. ESMFold2-Fast is experimental. [Open the candidate in Colab](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb) · [Python and command-line examples](docs/nanobody-runner.md)
+**Try the β₂AR nanobody example.** Choose **Runtime → Run all** to rank Nb6B9 and Nb80 on CPU from ten published structures. Download the ranked table and heatmap from the notebook, or enable `save_to_drive` to keep them under `MyDrive/APPRAISE/b2ar`. For fresh predictions on a free T4, choose AlphaFold2-multimer. ESMFold2-Fast is experimental. [Open Colab-APPRAISE](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb) · [Python and command-line examples](docs/nanobody-runner.md)
 
 ***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. The APPRAISE Python package includes tools for preparing input files and analyzing the modeled structures.
 
@@ -10,18 +10,11 @@ Current APPRAISE supports backend-specific input generation for legacy ColabFold
 
 Author: Xiaozhe Ding (Email: dingxiaozhe@gmail.com, xding@caltech.edu; Twitter: [@DingXiaozhe](https://twitter.com/dingxiaozhe?lang=en))
 
-## Getting started without installation
+## Advanced manual workflows
 
-We recommend using APPRAISE remotely by running Colab-APPRAISE notebook on Google Colaboratory, which allows you to access APPRAISE with a **web-based interface**. This notebook guides users through the APPRAISE process step-by-step, with results stored on Google Drive. No need for a local installation when using this notebook.
+Use the advanced notebook for manual input preparation and additional modeling backends. Save a copy in Drive and follow the notebook's Quick Guide. [Open the advanced notebook in Colab](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/Colab_APPRAISE.ipynb)
 
-The basic service of Google Colaboratory is free, although you can choose paid plans to get more stable access to better hardwares.
-
-**How to run Colab-APPRAISE**
-1. [Open Colab-APPRAISE notebook in Google Colaboratory](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/Colab_APPRAISE.ipynb);
-2. Go to "File --> save a copy in Drive" to save a copy of your own;
-3. Follow the Quick guide on the top of the notebook, and you can start APPRAISing!
-
-The notebook now supports these modeling paths:
+The advanced notebook supports these modeling paths:
 
 - Step 2A: AlphaFold-multimer via ColabFold
 - Step 2B: ESMFold
