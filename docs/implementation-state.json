@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "status": "all_japanfold_benchmark_complete_release_checks_in_progress",
+  "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
+  "repository": "xz-ding/APPRAISE",
+  "base": "8898c203d35b51d64b4766342ed9a9a32630cc13",
+  "pull_request": "https://github.com/xz-ding/APPRAISE/pull/1",
+  "branch": "codex/appraise-colab-runner",
+  "package_revision": "1f6de6b18250ff387bf261a72eec65121a551027",
+  "notebook_revision": "31934881b32c2ba9c101084bcffad972c0e0f3e6",
+  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb",
+  "cpu": {
+    "local": "macOS arm64, Python 3.12.3",
+    "local_tests_passed": 38,
+    "local_subtests_passed": 5,
+    "ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45728726304",
+    "ci_status": "success",
+    "ci_tests_passed": 38,
+    "ci_subtests_passed": 5,
+    "linux_candidate_artifact_sha256": {
+      "appraise-1.3.2-py3-none-any.whl": "4d43d52e0af78b162118d48c64f39c97dde647ff99c04f48007dc4f66b402552",
+      "appraise-1.3.2.tar.gz": "fdcb4652cefed80aba7325b73927ffbd9e714a0fd70232de6872cacbf1dbfd74"
+    },
+    "examples": {
+      "b2ar-reference": {
+        "jobs": 36,
+        "structures": 180,
+        "measurements": 360,
+        "order": [
+          "Nb6B9",
+          "Nb6A5",
+          "Nb6A9",
+          "Nb6A10",
+          "Nb6B11",
+          "Nb80"
+        ],
+        "comparison": {
+          "experimental_order": [
+            "Nb6B9",
+            "Nb6A9",
+            "Nb6A5",
+            "Nb6B11",
+            "Nb6A10",
+            "Nb80"
+          ],
+          "historical_order": [
+            "Nb6B9",
+            "Nb6A5",
+            "Nb6A9",
+            "Nb6A10",
+            "Nb6B11",
+            "Nb80"
+          ],
+          "ranks": {
+            "Nb6B9": 1.0,
+            "Nb6A9": 3.0,
+            "Nb6A5": 2.0,
+            "Nb6B11": 5.0,
+            "Nb6A10": 4.0,
+            "Nb80": 6.0
+          },
+          "spearman_rho": 0.8857142857142858,
+          "historical_rho": 0.8857142857142857,
+          "delta_from_historical": 1.1102230246251565e-16,
+          "minimum_rho": 0.8285714285714286,
+          "meets_ranking_criterion": true,
+          "evidence": "published AlphaFold2 measurements"
+        },
+        "ranking_sha256": "d70c793d704f3f640a9a8123a0584fdade2bcea548931d4dc3b12bc31340c96c"
+      },
+      "b2ar-saved": {
+        "jobs": 2,
+        "structures": 10,
+        "measurements": 20,
+        "order": [
+          "Nb6B9",
+          "Nb80"
+        ],
+        "comparison": null,
+        "ranking_sha256": "e64e5e1fda63cde6d5d5803bd8e8f75fc7f7704990563f4e0a1cc870a9b911d1"
+      }
+    },
+    "previous_macos_candidate_artifact_sha256": {
+      "appraise-1.3.2-py3-none-any.whl": "9fe2828d8ed25c5525462e89af1c0d53e310a9debee0d3ab12af73ffacde3c34",
+      "appraise-1.3.2.tar.gz": "5cc9ec47e29cf6bcea45df2ce17c2656cef435d91afc91581dac6bebdfb87a1a"
+    },
+    "score_matrix_check": {
+      "local_tests_passed": 40,
+      "local_subtests_passed": 5,
+      "notebooks": [
+        "Colab_APPRAISE.ipynb",
+        "notebooks/Colab_APPRAISE_candidate.ipynb"
+      ],
+      "linux_ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45877547525",
+      "ci_status": "success"
+    }
+  },
+  "free_colab": {
+    "sign_in": "complete",
+    "browser": "Codex built-in browser",
+    "gpu": {
+      "name": "Tesla T4",
+      "memory_total_mib": 15360,
+      "memory_free_mib": 14913,
+      "compute_capability": "7.5",
+      "driver": "580.82.07",
+      "driver_cuda": "13.0"
+    },
+    "paid_spend_usd": 0,
+    "drive_target": "/content/drive/MyDrive/APPRAISE/b2ar",
+    "drive_write_verified": false,
+    "fresh_folding_receipt": {
+      "model": "ESMFold2-Fast",
+      "port": "alphafold3-colabfold 3.1.20",
+      "port_revision": "3e1e1c19b304dd318e5b59c570ee9c91862b1dd5",
+      "weights_revision": "6527d516857d9006063536809505951e2c30df9f",
+      "tower_loader_sha256": "304ed05b7717130cdfff74f9f1ce80efcde1c08d3b37b1dc42dddc8a66379efc",
+      "run_dir": "/content/appraise-local/b2ar/b2ar-two-esmfold2-fast-v3120",
+      "seed": 0,
+      "steps": 15,
+      "recycles": 10,
+      "residues": 554,
+      "chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "predictions": 1,
+      "measurements": 2,
+      "model_command_elapsed_seconds": 366.207,
+      "peak_observed_device_mib": 11333,
+      "iptm": 0.45,
+      "structure_sha256": "185743114c8474e43a7ba9a6a71cee3a339ee7a926b17b2bdbc08fcdea8dc862",
+      "measurements_sha256": "eb79aab9e17fded7ac7a8fd12fd03b89e46b1226077779029a97b7a904117c61"
+    },
+    "allocation": "free T4",
+    "local_write_verified": true,
+    "local_checkpoint_root": "/content/appraise-local/b2ar",
+    "runtime": {
+      "colab_release": "release-colab-external-images_20261118-060058_RC00",
+      "python": "3.13.16",
+      "jax": "0.11.1",
+      "jaxlib": "0.11.1",
+      "jax_cuda13_plugin": "0.11.1",
+      "system_memory_bytes": 13605818368
+    },
+    "fallback_first_sample": {
+      "status": "validated",
+      "model": "AlphaFold2-multimer v2",
+      "colabfold": "1.6.3",
+      "templated": true,
+      "chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "predictions": 1,
+      "measurements": 2,
+      "iptm": 0.46,
+      "model_command_elapsed_seconds": 791.348,
+      "peak_observed_device_mib": 3083,
+      "structure_sha256": "69863cf47f9a04c10d327f4776c3ada9d267fff76c2c82ce200da6619a4e6360",
+      "measurements_sha256": "3fd193a5441c5210863c24b52326601215be6d9c9c83c957cf819a97a0bbba6b"
+    },
+    "guided_run": {
+      "engine": "ESMFold2-Fast",
+      "path": "/content/appraise-local/b2ar/b2ar-two-esmfold2-fast-v3120",
+      "status": "complete",
+      "ordered_inputs": 2,
+      "distinct_verified_structures": 10,
+      "candidate_measurements": 20,
+      "full_chain_roles_verified_for_every_structure": [
+        "A",
+        "B",
+        "C"
+      ],
+      "predictions_per_input": 5,
+      "seeds_per_input": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "wall_seconds_excluding_setup": 3532.606,
+      "median_model_command_seconds": 343.73,
+      "peak_observed_device_mib": 11333,
+      "ranking_order": [
+        "Nb6B9",
+        "Nb80"
+      ],
+      "mean_delta_b": {
+        "Nb6B9": 29.919799965915253,
+        "Nb80": -29.919799858269283
+      },
+      "sha256": {
+        "ranking.csv": "49aee0e4fe5916426ae6fbe4099596e86ab3ef009e8ef759a18c8e5e8e134c5f",
+        "heatmap.png": "6ee3d055a2edf0f2c642597e722a268d311b7fef60c44103207f380830694ab1",
+        "measurements.csv": "f6cd95841a644f7ec53c43fa1cd534848877d54638a2da9f24087e346e730228",
+        "run_manifest.json": "8b1267124271f09010cad614a59212b91e48e04f974d5d20f6823d1759ae2678"
+      },
+      "setup_note": "The repaired port ran from a newly installed environment and reused the pinned weights and ESM-C cache prepared earlier in the same runtime."
+    },
+    "fallback_resume": {
+      "state": "complete; verified the first-model hash after resume",
+      "path": "/content/appraise-local/b2ar/b2ar-two-colabfold",
+      "cache": "alignments and templates generated by pinned ColabFold for the exact two FASTA inputs"
+    },
+    "fallback_guided_run": {
+      "engine": "AlphaFold2-multimer v2 via ColabFold 1.6.3",
+      "path": "/content/appraise-local/b2ar/b2ar-two-colabfold",
+      "status": "complete",
+      "templates_enabled": true,
+      "ordered_inputs": 2,
+      "distinct_verified_structures": 10,
+      "candidate_measurements": 20,
+      "predictions_per_input": 5,
+      "recycles_requested": 3,
+      "model_checkpoints_per_input": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "seed": 0,
+      "resumed_wall_seconds_excluding_preparation": 2178.457,
+      "first_command_seconds_including_weights_and_search": 791.348,
+      "median_model_command_seconds": 230.14,
+      "peak_observed_device_mib": 3083,
+      "ranking_order": [
+        "Nb6B9",
+        "Nb80"
+      ],
+      "mean_delta_b": {
+        "Nb6B9": 217.21561197061163,
+        "Nb80": -217.21561205780205
+      },
+      "reused_first_structure_sha256": "69863cf47f9a04c10d327f4776c3ada9d267fff76c2c82ce200da6619a4e6360",
+      "sha256": {
+        "ranking.csv": "8f452a8481978a46cdc47d2de77abddf42b4bd7554b0667238e207c2f657d12d",
+        "heatmap.png": "132ed36a776dc33548f44c100df79029a488ae81eb15eb2f34f40615d321deda",
+        "measurements.csv": "f7c144b64829cc78355dea582d0b7d2332fb91f8b8aa4c20a5f215d83a3c9622",
+        "run_manifest.json": "ed1a62e69893d4959da5abbf54eb1770e1bf31c022427b061275d7fff5c64c3d"
+      },
+      "resume_note": "Completed in the same assigned runtime after a browser reconnect. The original CLI was resumed with the official ColabFold MSA-only records and a shared JAX compile cache."
+    }
+  },
+  "esmfold2": {
+    "status": "The all-JapanFold ESMFold2-Fast panel is complete. It reached the correlation cutoff and Nb80 ranked fifth. The last-place criterion was missed.",
+    "variant": "ColabFold2 preview ESMFold2-Fast",
+    "new_benchmark_structures": 180,
+    "required_structures": 180,
+    "new_measurements": 360,
+    "required_measurements": 360,
+    "required_spearman_rho": 0.8285714285714286,
+    "required_unique_first": "Nb6B9",
+    "required_unique_last": "Nb80",
+    "benchmark_run": {
+      "run_id": "1771fadf-bdf3-422a-bec7-c7c12b8980bd",
+      "started_utc": "2026-11-26T05:08:40Z",
+      "working_directory": "/content/appraise-local/b2ar/b2ar-six-esmfold2-fast",
+      "checkpoint_folder": "My Drive/APPRAISE/b2ar",
+      "checkpoint_method": "Checksum-verified Markdown archives written through the Drive web editor. Automatic approval review rejected the broad Drive filesystem mount.",
+      "durably_saved_ordered_inputs": 3,
+      "durably_saved_structures": 15,
+      "durably_saved_measurements": 30,
+      "first_checkpoint": {
+        "name": "APPRAISE checkpoint 1771fadf 001-001.md",
+        "sha256": "06ec71abeba5d9bc1b581aac5ca6a8fc3a59bbb40aed61d2b4fe70e302c719b4",
+        "archive_bytes": 106705,
+        "readback_verified": true,
+        "restored_files_verified": 3
+      },
+      "additional_checkpoints": [
+        {
+          "name": "APPRAISE checkpoint 1771fadf 002-003.md",
+          "sha256": "ba0f30af19a6c5106bfb6356045fb161bad4f4250723be2f3f39aac685497394",
+          "archive_bytes": 209929,
+          "readback_verified": true,
+          "restored_files_verified": 9
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 004-005.md",
+          "sha256": "1b7b5eb755f25140139375f98aab9558c87549fd56d3847f16c9a7ea70f326a6",
+          "archive_bytes": 209981,
+          "readback_verified": true
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 006-008.md",
+          "sha256": "c6facf74a4cef23d0d7cabd62bd921ef4f0fb0a9873e495167b61ac7d48b89a7",
+          "archive_bytes": 313695,
+          "readback_verified": true,
+          "restored_files_verified": 24
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 009-010.md",
+          "sha256": "824f6c372c10051fc64a1ec4df63417efbc321dd1755beb52e811832df6b3ee5",
+          "archive_bytes": 212115,
+          "readback_verified": true
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 011-015.md",
+          "sha256": "94db35bff1d25d158517169a7d4c3794ebf51f18a2670e2914d6e2c726002ce1",
+          "archive_bytes": 520038,
+          "readback_verified": true
+        }
+      ],
+      "initial_device": "Tesla T4",
+      "setup_seconds": 37.07,
+      "first_prediction_and_measurement_seconds": 708.06,
+      "first_five_predictions_and_measurement_seconds": 1975.41,
+      "correlation": null,
+      "first_ten_predictions_and_measurement_seconds": 3520.16,
+      "first_fifteen_predictions_and_measurement_seconds": 5083.26,
+      "interruption": {
+        "last_live_structures": 18,
+        "last_live_measurements": 36,
+        "active_input": "b2AR_and_Nb80_vs_Nb6A5/4",
+        "gpu_compute_tier": "free",
+        "reconnect_outcome": "You cannot currently connect to a GPU due to usage limits in Colab.",
+        "original_runtime_disk_present_in_new_session": false,
+        "predictions_to_repeat_after_interruption": [
+          16,
+          17,
+          18
+        ]
+      },
+      "fresh_cpu_restore": {
+        "verified_archives": 6,
+        "verified_structures": 15,
+        "verified_measurements": 30,
+        "verified_files": 45,
+        "path": "/content/appraise-checkpoint-readback/1771fadf",
+        "resume_from_prediction": 16
+      },
+      "resume_check": {
+        "date_pacific": "2026-11-26",
+        "gpu_reconnect_outcome": "You cannot currently connect to a GPU due to usage limits in Colab.",
+        "runtime": "Free Colab CPU",
+        "appraise_revision": "9c7e2e9590d90b02c46d2cf00e3be904867452ee",
+        "pymol_version": "3.2.0a0.post5859",
+        "run_id_preserved": true,
+        "reused_ordered_inputs": 3,
+        "reused_structures": 15,
+        "reused_measurements": 30,
+        "unchanged_verified_files": 45,
+        "cli_status": "blocked",
+        "cli_exit_code": 3,
+        "failure_code": "gpu_unavailable",
+        "first_missing_input": "b2AR_and_Nb80_vs_Nb6A5/1",
+        "resume_from_prediction": 16,
+        "replay_seconds": 0.497
+      }
+    },
+    "stock_port_attempts": [
+      {
+        "port": "3.1.18",
+        "loader": "upstream",
+        "elapsed_seconds": 43.241,
+        "peak_observed_device_mib": 11299,
+        "status": "failed before first structure",
+        "evidence": "Model exited during loader initialization."
+      },
+      {
+        "port": "3.1.18",
+        "loader": "upstream",
+        "elapsed_seconds": 44.308,
+        "peak_observed_device_mib": 11299,
+        "status": "failed before first structure",
+        "evidence": "Kernel oom_kill counter increased from 3 to 4 while running ESM-C."
+      },
+      {
+        "port": "3.1.18",
+        "loader": "streamed",
+        "elapsed_seconds": 338.382,
+        "peak_observed_device_mib": 11315,
+        "status": "failed before first structure",
+        "evidence": "ESM-C completed. The trunk expected 447 features and the pinned checkpoint supplied 451."
+      }
+    ],
+    "port_fix": "https://github.com/sokrypton/alphafold3/commit/d87fa1eacaf275847f69e7f3ea854c362985de18",
+    "streamed_candidate": {
+      "port": "3.1.20",
+      "install_seconds": 43.55,
+      "status": "completed the reciprocal two-nanobody run"
+    },
+    "mixed_backend_benchmark": {
+      "run_id": "1771fadf-bdf3-422a-bec7-c7c12b8980bd",
+      "status": "complete",
+      "ordered_inputs": 36,
+      "distinct_structures": 180,
+      "measurements": 360,
+      "colabfold2_preview_structures": 15,
+      "japanfold_esmfold2_fast_structures": 165,
+      "scientific_scope": "The first three ordered inputs are from ColabFold2 and the other 33 are from JapanFold. The accuracy estimate applies to the combined panel. Per-implementation accuracy requires a separate full panel.",
+      "comparison": {
+        "experimental_order": [
+          "Nb6B9",
+          "Nb6A9",
+          "Nb6A5",
+          "Nb6B11",
+          "Nb6A10",
+          "Nb80"
+        ],
+        "historical_order": [
+          "Nb6B9",
+          "Nb6A5",
+          "Nb6A9",
+          "Nb6A10",
+          "Nb6B11",
+          "Nb80"
+        ],
+        "ranks": {
+          "Nb6B9": 1.0,
+          "Nb6A9": 2.0,
+          "Nb6A5": 3.0,
+          "Nb6B11": 5.0,
+          "Nb6A10": 6.0,
+          "Nb80": 4.0
+        },
+        "spearman_rho": 0.8285714285714287,
+        "historical_rho": 0.8857142857142857,
+        "delta_from_historical": -0.05714285714285694,
+        "minimum_rho": 0.8285714285714286,
+        "meets_ranking_criterion": false,
+        "evidence": "ColabFold2 preview and JapanFold ESMFold2-Fast",
+        "spearman_rho_vs_alphafold2_order": 0.7142857142857143
+      },
+      "ranking_order": [
+        "Nb6B9",
+        "Nb6A9",
+        "Nb6A5",
+        "Nb80",
+        "Nb6B11",
+        "Nb6A10"
+      ],
+      "japanfold": {
+        "model": "esmfold2-fast",
+        "requested_params_without_seed": {
+          "fast": true,
+          "recycling_steps": 10,
+          "sampling_steps": 15,
+          "diffusion_samples": 1,
+          "output_format": "cif",
+          "write_pae": true
+        },
+        "logged_counts": {
+          "trunk": [
+            11
+          ],
+          "diffusion": [
+            11
+          ]
+        },
+        "processor_hour_USD": 0.26,
+        "settled_receipts": 25,
+        "processor_seconds": 2480.68,
+        "actual_charge_USD": 0.179149,
+        "authorized_cap_USD": 10.0,
+        "mean_charge_per_prediction_USD": 0.0010857515151515152,
+        "observed_per_target_p50_USD": 0.001013,
+        "observed_per_target_p90_USD": 0.001158,
+        "max_parallel_targets": 8,
+        "failed_targets": 0
+      },
+      "sha256": {
+        "ranking.csv": "14dc5d68a1c714f70a2c0b9579b5fe18bdaba4e17c15375fb54ed1adc56aec9d",
+        "measurements.csv": "d8f9a2a4174c6e9a243375d5a3502d98c729ff09096fda6f02e8961f4f5312d6",
+        "score_matrix.csv": "fbf8e8bbd68bb71af0bb8b520ed7d70fb8f86d789089ff35252b284fe3b0e633",
+        "heatmap.png": "d1f75f336ade9a61b38229378e4782c43a460194afb80df14d612def609b6fac"
+      },
+      "artifacts": {
+        "ranking.csv": "docs/results/esmfold2-mixed-b2ar-six-ranking.csv",
+        "score_matrix.csv": "docs/results/esmfold2-mixed-b2ar-six-score-matrix.csv",
+        "heatmap.png": "docs/results/esmfold2-mixed-b2ar-six-score-matrix.png"
+      },
+      "local_evidence": "data/japanfold-1771fadf"
+    },
+    "all_japanfold_benchmark": {
+      "run_id": "1771fadf-bdf3-422a-bec7-c7c12b8980bd",
+      "status": "complete",
+      "ordered_inputs": 36,
+      "distinct_structures": 180,
+      "measurements": 360,
+      "ranking_order": [
+        "Nb6B9",
+        "Nb6A9",
+        "Nb6A5",
+        "Nb6B11",
+        "Nb80",
+        "Nb6A10"
+      ],
+      "comparison": {
+        "experimental_order": [
+          "Nb6B9",
+          "Nb6A9",
+          "Nb6A5",
+          "Nb6B11",
+          "Nb6A10",
+          "Nb80"
+        ],
+        "historical_order": [
+          "Nb6B9",
+          "Nb6A5",
+          "Nb6A9",
+          "Nb6A10",
+          "Nb6B11",
+          "Nb80"
+        ],
+        "ranks": {
+          "Nb6B9": 1.0,
+          "Nb6A9": 2.0,
+          "Nb6A5": 3.0,
+          "Nb6B11": 4.0,
+          "Nb6A10": 6.0,
+          "Nb80": 5.0
+        },
+        "spearman_rho": 0.942857142857143,
+        "historical_rho": 0.8857142857142857,
+        "delta_from_historical": 0.05714285714285727,
+        "minimum_rho": 0.8285714285714286,
+        "meets_ranking_criterion": false,
+        "evidence": "JapanFold ESMFold2-Fast for all 180 structures",
+        "spearman_rho_vs_alphafold2_order": 0.7714285714285715
+      },
+      "previous_mixed_nb80_rank": 4.0,
+      "japanfold": {
+        "model": "esmfold2-fast",
+        "params_without_seed": {
+          "fast": true,
+          "recycling_steps": 10,
+          "sampling_steps": 15,
+          "diffusion_samples": 1,
+          "output_format": "cif",
+          "write_pae": true
+        },
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "logged_trunk_passes": 11,
+        "logged_diffusion_steps": 11,
+        "settled_receipts": 30,
+        "processor_seconds": 2698.25,
+        "rerun_charge_usd": 0.015712,
+        "total_charge_usd": 0.194861
+      },
+      "sha256": {
+        "ranking.csv": "6fab3487bd5eb96a34ea5e4f8ca14b83879363826bdc5ac88e3537d6c6bcc3d5",
+        "measurements.csv": "4c2e23d86216ea9d03384f56fb2e980600705d7a2462e33020fba18d81d92295",
+        "score_matrix.csv": "f7dd78bd885b6acf7136bc396cdddd85abf8d41df3b24e1c5a8333dfbb6eacef",
+        "heatmap.png": "a0652b1d1ad5cfa75b1635f8b520cb4576b7b2112561b9a73a0dee7c484d84a1"
+      },
+      "artifacts": {
+        "ranking.csv": "docs/results/esmfold2-japanfold-b2ar-six-ranking.csv",
+        "score_matrix.csv": "docs/results/esmfold2-japanfold-b2ar-six-score-matrix.csv",
+        "heatmap.png": "docs/results/esmfold2-japanfold-b2ar-six-score-matrix.png"
+      },
+      "local_evidence": "data/japanfold-1771fadf/all-japanfold-rerun"
+    }
+  },
+  "default_selection": "The candidate opens the saved-structure CPU example with optional Drive checkpoints. For the published beta2AR construct, auto selects AlphaFold2-multimer v2 with templates on a Colab Tesla T4 with at least 4096 MiB free. ESMFold2-Fast is experimental.",
+  "publication": {
+    "candidate_version": "1.3.2",
+    "merged": false,
+    "tag": null,
+    "published": false,
+    "workflow": "publish.yml",
+    "project": "appraise",
+    "environment": "pypi",
+    "pypi_publisher_verification": "Owner dashboard verified that no Trusted Publisher is registered. The exact configuration is ready for confirmation.",
+    "github_environment": {
+      "name": "pypi",
+      "allowed_tags": ["v1.3.2"],
+      "allowed_branches": []
+    },
+    "version_and_tag_available": true,
+    "local_artifact_check": {
+      "source_revision": "1f6de6b18250ff387bf261a72eec65121a551027",
+      "twine_check": "passed",
+      "installed_wheel_examples_and_resume": "passed",
+      "sha256": {
+        "appraise-1.3.2-py3-none-any.whl": "704651cc188e7f2709c798fc13bfb75fa90d2bd1fae95cec9dbecccb40bbc235",
+        "appraise-1.3.2.tar.gz": "70964b3558afa0ef78bf21647a2c11432702353a29b93c2c720dcbd9e539bc86"
+      }
+    }
+  },
+  "next_action": {
+    "scientific_status": "Retain ESMFold2-Fast as experimental. Use the validated AlphaFold2-multimer fallback for the guided GPU case.",
+    "release_task": "Verify the correction release and PyPI access on the canonical repository."
+  }
+}

@@ -1,0 +1,52 @@
+name: APPRAISE CPU checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    env:
+      MPLBACKEND: Agg
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Build and inspect the candidate
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libgl1 libopengl0 libglu1-mesa
+          python -m pip install build twine
+          python -m build --outdir "$RUNNER_TEMP/distributions"
+          python -m twine check --strict "$RUNNER_TEMP"/distributions/*
+          python -m venv "$RUNNER_TEMP/appraise-wheel"
+          wheel=( "$RUNNER_TEMP"/distributions/*.whl )
+          "$RUNNER_TEMP/appraise-wheel/bin/python" -m pip install "$wheel[structures]" pytest
+      - name: Check the installed wheel outside the source checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          "$RUNNER_TEMP/appraise-wheel/bin/python" -I "$GITHUB_WORKSPACE/tests/verify_release_artifacts.py" \
+            --source "$GITHUB_WORKSPACE" --dist "$RUNNER_TEMP/distributions" --report "$RUNNER_TEMP/wheel-report.json"
+      - name: Run the runner, notebook and compatibility regressions
+        run: |
+          "$RUNNER_TEMP/appraise-wheel/bin/python" -m pytest -q \
+            tests/test_nanobody_runner.py tests/test_candidate_notebook.py \
+            tests/test_colab_notebook.py tests/test_modeling_compatibility.py \
+            tests/test_scoring_workflows.py::ScoringWorkflowTests::test_fasta_generation_count_matches_demo_expectation \
+            tests/test_scoring_workflows.py::ScoringWorkflowTests::test_database_quality_check_raises_helpful_error_on_empty_peptide_database \
+            tests/test_scoring_workflows.py::ScoringWorkflowTests::test_read_appraise_database_recovers_legacy_na_peptide_placeholders
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: appraise-distributions
+          path: ${{ runner.temp }}/distributions/
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: appraise-wheel-report
+          path: ${{ runner.temp }}/wheel-report.json

@@ -12,6 +12,9 @@ import sys
 
 from appraise.modeling_backends import extract_appraise_job_name
 
+SCORE_MATRIX_CMAP = "RdBu"
+
+
 def interactive_input(var_name='', default_value=''):
     """
     Function for getting interactive input in the notebook.
@@ -142,7 +145,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 
             #Count number of winning, losing or tie matches with higher threshold for breaking the ties
             n_contact_win_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] > 2 * tie_threshold)
-            n_contact_tie_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] == tie_threshold**2 * 4)
+            n_contact_tie_tie_breaker = np.sum(np.abs(df_peptide[metric_name+'_tstat']) <= 2 * tie_threshold)
             n_contact_lose_tie_breaker = np.sum(df_peptide[metric_name+'_tstat'] < -2 * tie_threshold)
 
 
@@ -167,7 +170,7 @@ def rank_tournament_results(df_average, metric_name='interface_energy_score_diff
 def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest='receptor', \
     feature_to_plot_with='auto', feature_to_rank_with='auto', fig_size='auto', \
     tie_threshold='auto', p_value_threshold=0.05, number_of_repeats=10, \
-    vmin='auto', vmax='auto', title='auto', palette = "vlag_r",\
+    vmin='auto', vmax='auto', title='auto', palette=SCORE_MATRIX_CMAP,\
     save_figure=True, rank_by_tournament=True, print_label=False, label_dictionary=None,\
     xlabel='Competitor peptide', ylabel='Peptide of interest (POI)',\
     xticklabels='auto', yticklabels='auto'):
@@ -215,8 +218,8 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
 
     title: (float or 'auto') title of the plot to pass to seaborn.
 
-    palette = "vlag_r": (string) color palette of the scale bar to pass to
-    seaborn.
+    palette: (string) color palette to pass to seaborn. The default uses red
+    for negative scores, white near zero, and blue for positive scores.
 
     save_figure: (boolean) if True, the resulting heatmap will be saved as file.
 
@@ -274,14 +277,16 @@ def plot_heatmap(df_average, feature_of_interest='Delta_B', receptor_of_interest
     if fig_size == 'auto':
         fig_size = len(square_matrix)/2.5#/3
 
-    if vmin == 'auto':
-        vmin = -2 * np.sqrt(np.var(df_average[feature_to_plot_with]))
-    if vmax == 'auto':
-        vmax = 2 * np.sqrt(np.var(df_average[feature_to_plot_with]))
-
+    scores = df_average[feature_to_plot_with]
+    limit = 2 * np.sqrt(scores.var(ddof=0))
+    if not np.isfinite(limit) or limit == 0:
+        limit = max(1.0, scores.abs().max())
+    # Ensure even a one-sided manual range leaves room for both signs.
+    vmin = -limit if vmin is None or vmin == 'auto' or vmin >= 0 else vmin
+    vmax = limit if vmax is None or vmax == 'auto' or vmax <= 0 else vmax
 
     sns.set(rc={'figure.figsize':(fig_size,fig_size)})
-    sns.heatmap(square_matrix, cmap=palette, square=True, vmin=vmin, vmax=vmax,\
+    sns.heatmap(square_matrix, cmap=palette, center=0, square=True, vmin=vmin, vmax=vmax,\
                 yticklabels=yticklabels, xticklabels=xticklabels)
     if title=='auto':
         title = feature_to_plot_with

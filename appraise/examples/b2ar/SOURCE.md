@@ -1,0 +1,5 @@
+# Published β₂AR nanobody example
+
+Xiaozhe Ding deposited these structures and measurements in CaltechDATA under CC0 1.0. The source archive is Figure 3 related (non-AAV protein applications), part 2 of 3. Its b2AR_6x6 folder contains the original PDB files and the N-terminal-anchor measurement CSV. The package stores gzip copies. The checksums in panel.json apply after decompression. [Dataset and license](https://data.caltech.edu/records/kxjgj-tfk18)
+
+The two-candidate example contains the five predicted structures from each of the Nb6B9/Nb80 reciprocal competitions. The two candidate chains and receptor in these original PDBs are B, C and D. The six-candidate reference CSV contains two perspectives from each of 180 structures. The archived writer saved the first 70 characters of each candidate sequence. The package verifies the full 120 residues when it reads a structure. Figure 3 reports the experimental ordering used for the comparison. [Publication](https://pmc.ncbi.nlm.nih.gov/articles/PMC11184338/#fig3)

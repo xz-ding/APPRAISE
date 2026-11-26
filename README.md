@@ -1,5 +1,7 @@
 # APPRAISE: Rank binders by structure modeling
 
+**Try the β₂AR nanobody example.** Choose **Runtime → Run all** to rank Nb6B9 and Nb80 on CPU from ten published structures. Download the ranked table and heatmap from the notebook, or enable `save_to_drive` to keep them under `MyDrive/APPRAISE/b2ar`. For fresh predictions on a free T4, choose AlphaFold2-multimer. ESMFold2-Fast is experimental. [Open the candidate in Colab](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb) · [Python and command-line examples](docs/nanobody-runner.md)
+
 ***A***utomated ***P***air-wise ***P***eptide-***R***eceptor binding model ***A***nalys***I***s for ***S***creening ***E***ngineered proteins (***APPRAISE***) is a method that predicts the receptor binding propensity of engineered proteins based on high-precision protein structure prediction tools, such as AlphaFold2-multimer. The APPRAISE Python package includes tools for preparing input files and analyzing the modeled structures.
 
 Current APPRAISE supports backend-specific input generation for legacy ColabFold/AlphaFold-style FASTA files as well as newer open-source multimer tools including **Boltz-1**, **Chai-1**, and **OpenFold3**. On the output side, APPRAISE can now discover nested `.pdb`, `.cif`, and `.mmcif` structure files as long as the APPRAISE job name is preserved as the input file stem or enclosing folder name. Support beyond **AlphaFold2-multimer** and **ESMFold** should currently be treated as **BETA** only.
@@ -28,6 +30,8 @@ The notebook now supports these modeling paths:
 - OpenFold3: prepare inputs in Step 1, run OpenFold3 externally, then return to Step 3 for quantification
 
 At the moment, support beyond AlphaFold2-multimer and ESMFold is **BETA** only. Boltz-1, Chai-1, and OpenFold3 integration are available for early adopters, but they have not yet been validated as extensively as the legacy APPRAISE workflows.
+
+**Planned support.** JapanFold API folding from Colab and Python, with user-set concurrency and spending limits, resumable job monitoring, and automatic APPRAISE analysis of verified predictions. [JapanFold integration requirements](docs/nanobody-runner.md#planned-japanfold-integration) · [ESMFold2 cost estimates and billing](docs/nanobody-runner.md#estimated-esmfold2-usage-costs)
 
 Legacy compatibility is preserved:
 

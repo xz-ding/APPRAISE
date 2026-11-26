@@ -15,6 +15,12 @@ from datetime import datetime
 import numpy as np
 import numpy.linalg as LA
 
+try:
+    from pymol import cmd, stored, selector
+except ImportError:
+    # Filename and CSV helpers are also available on installations without PyMOL.
+    pass
+
 
 from itertools import groupby
 from operator import itemgetter
@@ -193,7 +199,7 @@ def parse_pdb_file_name(pdb_path):
 
 
 def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
-    glycine_linkers='auto', min_linker_length=10):
+    glycine_linkers='auto', min_linker_length=10, chain_order=None):
     """
     Find out the receptor chain ID and a list of peptide chain ID.
 
@@ -202,15 +208,19 @@ def find_chain_IDs(model_name, receptor_chain=receptor_chain_global,
     receptor_chain(string): can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. Use verified chain boundaries for newly processed structures.
     """
     # find out the receptor chain ID and generate a list of chain IDs for peptides
     chain_list = cmd.get_chains(model_name)
+    if chain_order is not None:
+        if len(chain_order) != len(chain_list) or set(chain_order) != set(chain_list):
+            raise ValueError('The declared chain roles do not match the loaded structure.')
+        return chain_order[-1], list(chain_order[:-1])
 
-    if glycine_linkers == True or (glycine_linkers == 'auto' and len(chain_list) == 1):
+    if not chain_list:
+        raise ValueError('The structure has no chains.')
+    if glycine_linkers is True:
         _ = split_by_glycine_linkers(chain_list)
         chain_list = cmd.get_chains(model_name)
 
@@ -356,7 +366,7 @@ def quantify_contact_atom(peptide_chain, receptor_chain=receptor_chain_global, \
 
 
 def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
-    receptor_chain=receptor_chain_global, glycine_linkers='auto'):
+    receptor_chain=receptor_chain_global, glycine_linkers='auto', chain_order=None):
     """
     The main function to measure different metrics for quantifying
         peptide-receptor binding within a single structure file.
@@ -368,10 +378,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
     receptor_chain: (string) can be 'last' or 'A', 'B', 'C' etc.. If 'last', then
     the last chain in the model will be automatically assigned to be the receptor.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. Resolve joined ESMFold v1 files with original input metadata.
 
     """
     rows_appended = 0
@@ -391,10 +399,14 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 
     #Split chains
     receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
-        receptor_chain=receptor_chain, glycine_linkers=glycine_linkers)
-    # if it is a single-chain model (without glycien linkers), skip.
+        receptor_chain=receptor_chain, glycine_linkers=glycine_linkers, chain_order=chain_order)
     if len(list_peptide_chain) == 0:
-        print('[Warning] Skipped! Only one chain was present in the model. APPRAISE analysis requires models containing at least two chains or a single chain separated by glycine linkers. ')
+        if '_and_' in model_name:
+            raise ValueError(
+                f'{pdb_path}: the competition contains only one chain. For an old joined ESMFold v1 model, '
+                'recover the boundaries with restore_esmfold_v1_chains and the original separated input sequences.'
+            )
+        print('[Warning] Skipped a single-chain receptor-only model.')
         return rows_appended
 
     # Auto-disable pairwise mode when there is only one peptide chain.
@@ -435,7 +447,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         cmd.do('delete all')
         cmd.load(pdb_path, model_name)
         receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
-            receptor_chain=receptor_chain, glycine_linkers=glycine_linkers)
+            receptor_chain=receptor_chain, glycine_linkers=glycine_linkers, chain_order=chain_order)
 
         # Measure peptide liength
         peptide_length = len(cmd.get_model('{} and chain {}'.format(model_name, peptide_chain)).get_residues())
@@ -538,7 +550,8 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
         #peptide_direction = LA.norm(receptor_center - peptide_C_end_residue_center) - LA.norm(receptor_center - peptide_N_end_residue_center)
 
         # get peptide sequence
-        peptide_seq = cmd.get_fastastr('{} and chain {}'.format(model_name, peptide_chain ), -1, 1).split('\n')[1]
+        fasta = cmd.get_fastastr('{} and chain {}'.format(model_name, peptide_chain), -1, 1)
+        peptide_seq = ''.join(fasta.splitlines()[1:])
 
         # count contact atom number
         total_contact_atom_in_interface_thresholded = quantify_contact_atom(peptide_chain, receptor_chain, b_threshold=pLDDT_threshold_global)
@@ -563,7 +576,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
             cmd.do('delete all')
             cmd.load(pdb_path, model_name)
             receptor_chain, list_peptide_chain = find_chain_IDs(model_name, \
-                receptor_chain=receptor_chain, glycine_linkers=glycine_linkers)
+                receptor_chain=receptor_chain, glycine_linkers=glycine_linkers, chain_order=chain_order)
 
             # Measure competitor peptide liength
             competitor_peptide_length = len(cmd.get_model('{} and chain {}'.format(model_name, list_competitor_chains[0])).get_residues())
@@ -740,7 +753,7 @@ def quantify_peptide_binding_in_pdb(pairwise_mode=True, \
 def quantify_results_folder(AF2_results_path='./*result*/', \
     receptor_chain='last', anchor_site='C-term', use_relaxed='auto', time_stamp=True,
     mod_start_resi=3, mod_end_resi=9, pLDDT_threshold=0, output_path='auto',
-    glycine_linkers='auto', dt_string='now', pairwise_mode=True):
+    glycine_linkers='auto', dt_string='now', pairwise_mode=True, chain_order=None):
     """
     AF2_results_path: (str) path to the folder(s) that contain the modeling
     results. Wildcard is allowed. Default: all folders containing "results" in
@@ -781,10 +794,8 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
     output_path: (str) the folder that will store the database file. If auto,
     it will be the same folder that stores the AF2_results folder.
 
-    glycine_linkers: (boolean or string) If True, the chains will be split by
-    tandem glycine linkers longer than 10aa before processing. If 'auto', then
-    a model containing only one single chain will be split, while a model
-    containing multiple chains will be processed as is.
+    glycine_linkers: True explicitly opts into the historical glycine-run
+    heuristic. By default APPRAISE expects distinct chains in each competition.
 
     dt_string: (str) the date-time string to be attached to the database file as
     time stamp.
@@ -850,7 +861,7 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
             #"folded_factor", "folded_factor_competitor",\
             "total_contact_atom_in_interface_difference", "total_contact_atom_in_interface_angle_factored", \
             "total_contact_atom_in_interface_difference_angle_factored", \
-            "angle_between_membrane_anchor_and_peptide",
+            "angle_between_membrane_anchor_and_peptide_legacy_copy",
             "average_pLDDT", "pLDDT_threshold_global", "n_atom_above_threshold", \
             "interface_pLDDT", "interface_pLDDT_competitor",\
             "vdw_strain", "clash_number", "vdw_strain_competitor", "clash_number_competitor"]
@@ -889,7 +900,8 @@ def quantify_results_folder(AF2_results_path='./*result*/', \
         #cmd.load(pdb_path)
         pdb_path = pdb_path_loaded
         measurement_rows_added += quantify_peptide_binding_in_pdb(
-            glycine_linkers=glycine_linkers, pairwise_mode=pairwise_mode
+            glycine_linkers=glycine_linkers, pairwise_mode=pairwise_mode,
+            receptor_chain=receptor_chain, chain_order=chain_order
         )
         #cmd.do('delete all')
 

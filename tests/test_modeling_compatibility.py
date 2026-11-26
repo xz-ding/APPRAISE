@@ -4,8 +4,10 @@ import unittest
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from appraise.input_fasta_prep import get_complex_fastas
+from appraise.legacy_esmfold import restore_esmfold_v1_chains
 from appraise.modeling_backends import (
     discover_structure_files,
     extract_appraise_job_name,
@@ -18,6 +20,28 @@ from appraise.pymol_quantify_peptide_binding import (
     parse_pdb_file_name,
 )
 from appraise.utilities import get_peptide_list_from_model_names
+
+
+def test_esmfold_v1_recovery_preserves_natural_glycines_and_coordinates():
+    first = "AG" + "G" * 24 + "CG"
+    second = "GCGA"
+    joined = first + "G" * 30 + second
+    amino_acid = {"A": "ALA", "C": "CYS", "G": "GLY"}
+    original = [f"ATOM  {i:5d}  CA  {amino_acid[aa]} A{i:4d}    "
+                f"{i:8.3f}{0:8.3f}{0:8.3f}{1:6.2f}{89:6.2f}           C"
+                for i, aa in enumerate(joined, 1)]
+    pdb = "\n".join(original + ["TER", "END", ""])
+    repaired = [line for line in restore_esmfold_v1_chains(pdb, [first, second]).splitlines()
+                if line.startswith("ATOM")]
+    retained = original[:len(first)] + original[-len(second):]
+    assert [line[30:] for line in repaired] == [line[30:] for line in retained]
+    assert [line[17:20] for line in repaired] == [line[17:20] for line in retained]
+    assert [line[21] for line in repaired] == ["A"] * len(first) + ["B"] * len(second)
+    assert [int(line[22:26]) for line in repaired if line[21] == "B"] == [1, 2, 3, 4]
+    with pytest.raises(ValueError, match="original separated"):
+        restore_esmfold_v1_chains(pdb, None)
+    with pytest.raises(ValueError, match="does not match"):
+        restore_esmfold_v1_chains(pdb, [second, first])
 
 
 class ModelingInputCompatibilityTests(unittest.TestCase):
@@ -71,6 +95,11 @@ class ModelingInputCompatibilityTests(unittest.TestCase):
                     self.assertEqual(
                         fasta_path.read_text(),
                         "> LY6A_and_pepA\nAAAGGGGGRRR",
+                    )
+                    records = json.loads(fasta_path.with_suffix(".chains.json").read_text())
+                    self.assertEqual(
+                        [(r["chain_id"], r["role"], r["sequence"]) for r in records],
+                        [("A", "peptide", "AAA"), ("B", "receptor", "RRR")],
                     )
 
     def test_boltz_input_generation_uses_multichain_yaml(self):
