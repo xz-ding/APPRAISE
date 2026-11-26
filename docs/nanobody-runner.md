@@ -1,13 +1,13 @@
 # Run the β₂AR nanobody example
 
-Choose **Runtime → Run all** in the candidate notebook. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/6a13198a8d09fea3573ab389d842c08b231cc3a9/notebooks/Colab_APPRAISE_candidate.ipynb)
+Choose **Runtime → Run all** in the candidate notebook. The default reads ten archived AlphaFold2-multimer structures, checks their three chain sequences, measures the two candidates in each structure and displays a rank table and heatmap. Nb6B9 ranks first and Nb80 second. The download buttons and the printed output directory provide the results. [Open the notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/c2c429fa2de7be3458d203a465da7e14436b5896/notebooks/Colab_APPRAISE_candidate.ipynb)
 
 ## Use the same workflow locally
 
 Install this candidate in a Python 3.12 virtual environment. Commands write one JSON result to stdout and progress to stderr.
 
 ```sh
-python -m pip install 'appraise[structures] @ git+https://github.com/xz-ding/APPRAISE.git@da9986b07d7b6967bbdcf75eb1ea2496a78abb14'
+python -m pip install 'appraise[structures] @ git+https://github.com/xz-ding/APPRAISE.git@9c7e2e9590d90b02c46d2cf00e3be904867452ee'
 python -m appraise score --example b2ar-saved --output runs/saved
 python -m appraise resume --run-dir runs/saved
 python -m appraise score --example b2ar-reference --output runs/reference
@@ -57,14 +57,14 @@ The preset checks the 314-residue activated β₂AR construct and both 120-resid
 
 ## Fresh predictions and interpretation
 
-Select a free GPU and the desired validation workflow in the notebook. The two-nanobody run requests ten new structures. Six nanobodies request 180, including both copies in each self-pair. The notebook displays these counts before installing a modeling engine. It checkpoints to `MyDrive/APPRAISE/b2ar`. Choose the same workflow and panel after reconnecting to resume. Select a different output directory for a different engine, input or scientific protocol.
+Select a free GPU and the desired validation workflow in the notebook. The two-nanobody run requests ten new structures. Six nanobodies request 180, including both copies in each self-pair. The notebook displays these counts before installing a modeling engine. Enable `save_to_drive` to keep checkpoints in `MyDrive/APPRAISE/b2ar` across Colab sessions. With that option cleared, download the results before disconnecting. Choose the same workflow and panel after reconnecting to resume a saved run. Select a different output directory for a different engine, input or scientific protocol.
 
 | Route | Current evidence |
 |---|---|
 | Saved AlphaFold2 structures | The installed wheel reproduces the two-candidate ranking on CPU. |
 | Archived six-nanobody measurements | The installed wheel reproduces the paper's AlphaFold2 order and correlation. |
-| ColabFold2 preview ESMFold2-Fast | Experimental native three-chain input, ESM-C tower and pinned converted weights. The five-output protocol uses seeds 0–4 with one sample per seed. Live GPU support and accuracy await qualification. |
-| ColabFold 1.6.3 | Candidate fallback with templates and AlphaFold2-multimer v2. The five-output protocol uses five model checkpoints at one seed. Current free-Colab support awaits validation. |
+| ColabFold2 preview ESMFold2-Fast | The v3.1.20 port with a streamed ESM-C loader produced a validated 554-residue complex on a free T4. The five-output protocol uses seeds 0–4 with one sample per seed. |
+| ColabFold 1.6.3 | Candidate fallback with templates and AlphaFold2-multimer v2. A first template-enabled model passed on a free T4. The five-output protocol uses five model checkpoints at one seed. |
 | Legacy AlphaFold2 choices, ESMFold v1, Boltz-1, Chai-1 and external OpenFold3 | The separate manual notebook retains these paths. Boltz-1, Chai-1 and OpenFold3 retain their existing beta status. |
 
 New folding with `auto` reports a blocked status while hardware qualification is pending. Saved structures and archived measurements are available on CPU. The six-candidate ESMFold2 comparison requires all 180 structures, 360 measurements, Spearman ρ of at least 29/35 and unique first and last places for Nb6B9 and Nb80. [ColabFold release](https://github.com/sokrypton/ColabFold/releases/tag/v1.6.3) · [ColabFold2 preview](https://github.com/sokrypton/ColabFold/blob/eb061aa6706959fdffe15e86d27ca08083d6ed8d/ColabFold2_preview.ipynb) · [ESMFold2-Fast model card](https://huggingface.co/biohub/ESMFold2-Fast)

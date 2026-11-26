@@ -1,30 +1,26 @@
 {
   "schema_version": 1,
   "as_of": "2026-11-25",
-  "status": "awaiting_colab_account",
+  "status": "testing_free_colab",
   "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
   "repository": "xz-ding/APPRAISE",
   "base": "8898c203d35b51d64b4766342ed9a9a32630cc13",
   "pull_request": "https://github.com/xz-ding/APPRAISE/pull/1",
   "branch": "codex/appraise-colab-runner",
-  "package_revision": "da9986b07d7b6967bbdcf75eb1ea2496a78abb14",
-  "notebook_revision": "6a13198a8d09fea3573ab389d842c08b231cc3a9",
-  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/6a13198a8d09fea3573ab389d842c08b231cc3a9/notebooks/Colab_APPRAISE_candidate.ipynb",
+  "package_revision": "9c7e2e9590d90b02c46d2cf00e3be904867452ee",
+  "notebook_revision": "c2c429fa2de7be3458d203a465da7e14436b5896",
+  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/c2c429fa2de7be3458d203a465da7e14436b5896/notebooks/Colab_APPRAISE_candidate.ipynb",
   "cpu": {
     "local": "macOS arm64, Python 3.12.3",
-    "local_tests_passed": 36,
+    "local_tests_passed": 38,
     "local_subtests_passed": 5,
-    "ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45721724297",
+    "ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45728726304",
     "ci_status": "success",
-    "ci_tests_passed": 36,
+    "ci_tests_passed": 38,
     "ci_subtests_passed": 5,
-    "macos_candidate_artifact_sha256": {
-      "appraise-1.3.2-py3-none-any.whl": "9fe2828d8ed25c5525462e89af1c0d53e310a9debee0d3ab12af73ffacde3c34",
-      "appraise-1.3.2.tar.gz": "5cc9ec47e29cf6bcea45df2ce17c2656cef435d91afc91581dac6bebdfb87a1a"
-    },
     "linux_candidate_artifact_sha256": {
-      "appraise-1.3.2-py3-none-any.whl": "b8ec9a6f90fb0a350b086f02feaa9252bb61870670e75a4239018ecc3eefeee2",
-      "appraise-1.3.2.tar.gz": "43a01675d4d9013902ae7c57053fbdcf4570db9c31853c5329ca9a0ea0ecd7de"
+      "appraise-1.3.2-py3-none-any.whl": "4d43d52e0af78b162118d48c64f39c97dde647ff99c04f48007dc4f66b402552",
+      "appraise-1.3.2.tar.gz": "fdcb4652cefed80aba7325b73927ffbd9e714a0fd70232de6872cacbf1dbfd74"
     },
     "examples": {
       "b2ar-reference": {
@@ -84,19 +80,82 @@
         "comparison": null,
         "ranking_sha256": "e64e5e1fda63cde6d5d5803bd8e8f75fc7f7704990563f4e0a1cc870a9b911d1"
       }
+    },
+    "previous_macos_candidate_artifact_sha256": {
+      "appraise-1.3.2-py3-none-any.whl": "9fe2828d8ed25c5525462e89af1c0d53e310a9debee0d3ab12af73ffacde3c34",
+      "appraise-1.3.2.tar.gz": "5cc9ec47e29cf6bcea45df2ce17c2656cef435d91afc91581dac6bebdfb87a1a"
     }
   },
   "free_colab": {
-    "sign_in": "required",
+    "sign_in": "complete",
     "browser": "Codex built-in browser",
-    "gpu": null,
+    "gpu": {
+      "name": "Tesla T4",
+      "memory_total_mib": 15360,
+      "memory_free_mib": 14913,
+      "compute_capability": "7.5",
+      "driver": "580.82.07",
+      "driver_cuda": "13.0"
+    },
     "paid_spend_usd": 0,
     "drive_target": "/content/drive/MyDrive/APPRAISE/b2ar",
     "drive_write_verified": false,
-    "fresh_folding_receipt": null
+    "fresh_folding_receipt": {
+      "model": "ESMFold2-Fast",
+      "port": "alphafold3-colabfold 3.1.20",
+      "port_revision": "3e1e1c19b304dd318e5b59c570ee9c91862b1dd5",
+      "weights_revision": "6527d516857d9006063536809505951e2c30df9f",
+      "tower_loader_sha256": "304ed05b7717130cdfff74f9f1ce80efcde1c08d3b37b1dc42dddc8a66379efc",
+      "run_dir": "/content/appraise-local/b2ar/b2ar-two-esmfold2-fast-v3120",
+      "seed": 0,
+      "steps": 15,
+      "recycles": 10,
+      "residues": 554,
+      "chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "predictions": 1,
+      "measurements": 2,
+      "model_command_elapsed_seconds": 366.207,
+      "peak_observed_device_mib": 11333,
+      "iptm": 0.45,
+      "structure_sha256": "185743114c8474e43a7ba9a6a71cee3a339ee7a926b17b2bdbc08fcdea8dc862",
+      "measurements_sha256": "eb79aab9e17fded7ac7a8fd12fd03b89e46b1226077779029a97b7a904117c61"
+    },
+    "allocation": "free T4",
+    "local_write_verified": true,
+    "local_checkpoint_root": "/content/appraise-local/b2ar",
+    "runtime": {
+      "colab_release": "release-colab-external-images_20261118-060058_RC00",
+      "python": "3.13.16",
+      "jax": "0.11.1",
+      "jaxlib": "0.11.1",
+      "jax_cuda13_plugin": "0.11.1",
+      "system_memory_bytes": 13605818368
+    },
+    "fallback_first_sample": {
+      "status": "validated",
+      "model": "AlphaFold2-multimer v2",
+      "colabfold": "1.6.3",
+      "templated": true,
+      "chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "predictions": 1,
+      "measurements": 2,
+      "iptm": 0.46,
+      "model_command_elapsed_seconds": 791.348,
+      "peak_observed_device_mib": 3083,
+      "structure_sha256": "69863cf47f9a04c10d327f4776c3ada9d267fff76c2c82ce200da6619a4e6360",
+      "measurements_sha256": "3fd193a5441c5210863c24b52326601215be6d9c9c83c957cf819a97a0bbba6b"
+    }
   },
   "esmfold2": {
-    "status": "blocked before qualification",
+    "status": "operational pilot passed; scientific qualification pending",
     "variant": "ColabFold2 preview ESMFold2-Fast",
     "new_benchmark_structures": 0,
     "required_structures": 180,
@@ -104,7 +163,39 @@
     "required_measurements": 360,
     "required_spearman_rho": 0.8285714285714286,
     "required_unique_first": "Nb6B9",
-    "required_unique_last": "Nb80"
+    "required_unique_last": "Nb80",
+    "stock_port_attempts": [
+      {
+        "port": "3.1.18",
+        "loader": "upstream",
+        "elapsed_seconds": 43.241,
+        "peak_observed_device_mib": 11299,
+        "status": "failed before first structure",
+        "evidence": "Model exited during loader initialization."
+      },
+      {
+        "port": "3.1.18",
+        "loader": "upstream",
+        "elapsed_seconds": 44.308,
+        "peak_observed_device_mib": 11299,
+        "status": "failed before first structure",
+        "evidence": "Kernel oom_kill counter increased from 3 to 4 while running ESM-C."
+      },
+      {
+        "port": "3.1.18",
+        "loader": "streamed",
+        "elapsed_seconds": 338.382,
+        "peak_observed_device_mib": 11315,
+        "status": "failed before first structure",
+        "evidence": "ESM-C completed. The trunk expected 447 features and the pinned checkpoint supplied 451."
+      }
+    ],
+    "port_fix": "https://github.com/sokrypton/alphafold3/commit/d87fa1eacaf275847f69e7f3ea854c362985de18",
+    "streamed_candidate": {
+      "port": "3.1.20",
+      "install_seconds": 43.55,
+      "status": "first structure validated; reciprocal run in progress"
+    }
   },
   "default_selection": "CPU saved structures in candidate notebook. Fresh GPU auto blocked pending measured support.",
   "publication": {
@@ -119,7 +210,6 @@
     "github_environment": "absent on read-back; automatic approval declined provisioning without an explicit tag pattern in the creation request"
   },
   "next_action": {
-    "account_holder": "Sign in to Google in the built-in Colab tab.",
-    "agent": "Request a free GPU, verify the checkpoint destination, and run the 554-residue pilot with the pinned candidate."
+    "agent": "Verify the repaired ESMFold2 run and resume AlphaFold2 from its saved first model."
   }
 }
