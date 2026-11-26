@@ -63,7 +63,7 @@ Select a free GPU and the desired validation workflow in the notebook. The two-n
 |---|---|
 | Saved AlphaFold2 structures | The installed wheel reproduces the two-candidate ranking on CPU. |
 | Archived six-nanobody measurements | The installed wheel reproduces the paper's AlphaFold2 order and correlation. |
-| ColabFold2 preview ESMFold2-Fast | The v3.1.20 port with a streamed ESM-C loader produced a validated 554-residue complex on a free T4. The five-output protocol uses seeds 0–4 with one sample per seed. |
+| ColabFold2 preview ESMFold2-Fast | The v3.1.20 port with a streamed ESM-C loader ran both orders of the 554-residue competition on a free T4. All ten structures and 20 measurements passed. The five-output protocol uses seeds 0–4 with one sample per seed. [Live validation](implementation-status.md#free-colab-validation) |
 | ColabFold 1.6.3 | Candidate fallback with templates and AlphaFold2-multimer v2. A first template-enabled model passed on a free T4. The five-output protocol uses five model checkpoints at one seed. |
 | Legacy AlphaFold2 choices, ESMFold v1, Boltz-1, Chai-1 and external OpenFold3 | The separate manual notebook retains these paths. Boltz-1, Chai-1 and OpenFold3 retain their existing beta status. |
 
