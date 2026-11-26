@@ -1,10 +1,10 @@
-# APPRAISE release candidate
+# APPRAISE 1.3.2 release record
 
-The November 25 owner-supplied plan is recorded byte for byte in `AGENT_EXECUTION_PLAN.md`. Its SHA-256 is `3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2`. Work started from `8898c203d35b51d64b4766342ed9a9a32630cc13` on canonical `main`. The package and notebook are on the `codex/appraise-colab-runner` branch. [Draft PR](https://github.com/xz-ding/APPRAISE/pull/1) · [Machine-readable checkpoint](implementation-state.json)
+The November 25 owner-supplied plan is recorded byte for byte in `AGENT_EXECUTION_PLAN.md`. Its SHA-256 is `3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2`. Work started from `8898c203d35b51d64b4766342ed9a9a32630cc13` on canonical `main`. The package and notebook merged in separate pull requests. [Package PR](https://github.com/xz-ding/APPRAISE/pull/1) · [Notebook PR](https://github.com/xz-ding/APPRAISE/pull/2) · [Machine-readable checkpoint](implementation-state.json)
 
 ## What runs today
 
-The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Candidate notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/31934881b32c2ba9c101084bcffad972c0e0f3e6/notebooks/Colab_APPRAISE_candidate.ipynb) · [Usage](nanobody-runner.md)
+The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Public notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb) · [Usage](nanobody-runner.md)
 
 | Evidence | Result |
 |---|---|
@@ -53,10 +53,15 @@ Spearman ρ against experiment was 33/35 (0.943) for the JapanFold panel, 29/35 
 
 JapanFold charged **$0.015712** for the 15 reruns and **$0.194861** in total for 2,698.25 processor-seconds across 30 settled receipts. The estimate for a future run of 180 similar predictions is **about $0.20**. JapanFold bills the actual processor time to the JapanFold account. [Estimated costs and billing](nanobody-runner.md#estimated-esmfold2-usage-costs) · [JapanFold pricing](https://japanfold.aiand.com/docs/models-and-limits/)
 
-## Publication handoff
+## Publication and public Colab
 
-The candidate version is `1.3.2`. The workflow builds and tests the tagged revision, checks that it belongs to canonical main, verifies the artifact hashes and passes those files to PyPI using OIDC. The PyPI owner dashboard showed zero registered Trusted Publishers. The configuration awaiting confirmation uses owner `xz-ding`, repository `APPRAISE`, workflow filename `publish.yml`, environment `pypi`, and project `appraise`. [Publishing workflow](../.github/workflows/publish.yml) · [PyPI publisher settings](https://pypi.org/manage/project/appraise/settings/publishing/)
+APPRAISE `1.3.2` was published through the approved GitHub Trusted Publisher. The `v1.3.2` tag points to `06bc9e024417c9fbbebf6250dd3e1991336f072a`. The two public downloads matched the tested workflow files byte for byte. A fresh PyPI install reproduced both CPU examples and resume. [PyPI release](https://pypi.org/project/appraise/1.3.2/) · [GitHub release](https://github.com/xz-ding/APPRAISE/releases/tag/v1.3.2) · [Publishing run](https://github.com/xz-ding/APPRAISE/actions/runs/45892092792)
 
-GitHub's `pypi` environment allows exactly the `v1.3.2` tag. PyPI and GitHub both returned HTTP 404 for the proposed version or tag before release. The release workflow also checks the canonical repository, version tag and merged source.
+| Published file | SHA-256 |
+|---|---|
+| Wheel | `5c0f05c74aafbe2355c09f4c53bf5f28f86bc2e3fa3dffb3a02fa661ad97b40b` |
+| Source archive | `178b92e967a4680fadfde15df48aa864512cc60b7caa6327421f5cf33f3b5786` |
 
-After the corrections release gates and publication access are verified, merge the package PR, tag the tested merged revision `v1.3.2` and dispatch `publish.yml` from that tag. Compare PyPI’s file digests with the workflow report and test a fresh install from PyPI. Activate the public notebook with the exact published version in a separate change and verify its canonical Colab link.
+The canonical README links to the guided public notebook merged at `fdb8cd14dab4393cceb8588fc8ff3013ec8c51cd`. In a fresh Colab CPU runtime on Python 3.13.18, **Run all** installed APPRAISE `1.3.2` from PyPI in 14.83 seconds. It scored ten published structures in 69 seconds and produced 20 measurements, a rank table, and a heatmap. Nb6B9 ranked first and Nb80 second. All three output hashes matched the run's result record. [Public notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb) · [Output hashes and runtime](implementation-state.json) · [Canonical CI](https://github.com/xz-ding/APPRAISE/actions/runs/45892804374)
+
+Colab declined a free T4 allocation during the release check because of its GPU usage limit. The peptide and miniprotein runtime checks can resume when a free T4 is available. The measured GPU scope remains the 554-residue β₂AR example.
