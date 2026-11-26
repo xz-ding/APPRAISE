@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "as_of": "2026-11-26",
-  "status": "six_nanobody_benchmark_blocked_by_free_colab_gpu_quota",
+  "status": "mixed_backend_six_nanobody_benchmark_complete",
   "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
   "repository": "xz-ding/APPRAISE",
   "base": "8898c203d35b51d64b4766342ed9a9a32630cc13",
   "pull_request": "https://github.com/xz-ding/APPRAISE/pull/1",
   "branch": "codex/appraise-colab-runner",
-  "package_revision": "9c7e2e9590d90b02c46d2cf00e3be904867452ee",
-  "notebook_revision": "c2c429fa2de7be3458d203a465da7e14436b5896",
-  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/c2c429fa2de7be3458d203a465da7e14436b5896/notebooks/Colab_APPRAISE_candidate.ipynb",
+  "package_revision": "34d6a9d3fa71305b0103325bed997d96eccaf5d6",
+  "notebook_revision": "0529084684d3f8a0c3fa08b8ae8d461703139146",
+  "candidate_notebook": "https://colab.research.google.com/github/xz-ding/APPRAISE/blob/0529084684d3f8a0c3fa08b8ae8d461703139146/notebooks/Colab_APPRAISE_candidate.ipynb",
   "cpu": {
     "local": "macOS arm64, Python 3.12.3",
     "local_tests_passed": 38,
@@ -84,6 +84,16 @@
     "previous_macos_candidate_artifact_sha256": {
       "appraise-1.3.2-py3-none-any.whl": "9fe2828d8ed25c5525462e89af1c0d53e310a9debee0d3ab12af73ffacde3c34",
       "appraise-1.3.2.tar.gz": "5cc9ec47e29cf6bcea45df2ce17c2656cef435d91afc91581dac6bebdfb87a1a"
+    },
+    "score_matrix_check": {
+      "local_tests_passed": 40,
+      "local_subtests_passed": 5,
+      "notebooks": [
+        "Colab_APPRAISE.ipynb",
+        "notebooks/Colab_APPRAISE_candidate.ipynb"
+      ],
+      "linux_ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45877547525",
+      "ci_status": "success"
     }
   },
   "free_colab": {
@@ -238,11 +248,11 @@
     }
   },
   "esmfold2": {
-    "status": "Guided GPU workflow passed. Free Colab GPU usage limits interrupted the six-nanobody benchmark.",
+    "status": "The mixed ColabFold2 and JapanFold panel is complete. The correlation reached the cutoff and the required last-place rank was missed.",
     "variant": "ColabFold2 preview ESMFold2-Fast",
-    "new_benchmark_structures": 15,
+    "new_benchmark_structures": 180,
     "required_structures": 180,
-    "new_measurements": 30,
+    "new_measurements": 360,
     "required_measurements": 360,
     "required_spearman_rho": 0.8285714285714286,
     "required_unique_first": "Nb6B9",
@@ -311,7 +321,11 @@
         "gpu_compute_tier": "free",
         "reconnect_outcome": "You cannot currently connect to a GPU due to usage limits in Colab.",
         "original_runtime_disk_present_in_new_session": false,
-        "predictions_to_repeat_after_interruption": [16, 17, 18]
+        "predictions_to_repeat_after_interruption": [
+          16,
+          17,
+          18
+        ]
       },
       "fresh_cpu_restore": {
         "verified_archives": 6,
@@ -371,9 +385,101 @@
       "port": "3.1.20",
       "install_seconds": 43.55,
       "status": "completed the reciprocal two-nanobody run"
+    },
+    "mixed_backend_benchmark": {
+      "run_id": "1771fadf-bdf3-422a-bec7-c7c12b8980bd",
+      "status": "complete",
+      "ordered_inputs": 36,
+      "distinct_structures": 180,
+      "measurements": 360,
+      "colabfold2_preview_structures": 15,
+      "japanfold_esmfold2_fast_structures": 165,
+      "scientific_scope": "The first three ordered inputs are from ColabFold2 and the other 33 are from JapanFold. The accuracy estimate applies to the combined panel. Per-implementation accuracy requires a separate full panel.",
+      "comparison": {
+        "experimental_order": [
+          "Nb6B9",
+          "Nb6A9",
+          "Nb6A5",
+          "Nb6B11",
+          "Nb6A10",
+          "Nb80"
+        ],
+        "historical_order": [
+          "Nb6B9",
+          "Nb6A5",
+          "Nb6A9",
+          "Nb6A10",
+          "Nb6B11",
+          "Nb80"
+        ],
+        "ranks": {
+          "Nb6B9": 1.0,
+          "Nb6A9": 2.0,
+          "Nb6A5": 3.0,
+          "Nb6B11": 5.0,
+          "Nb6A10": 6.0,
+          "Nb80": 4.0
+        },
+        "spearman_rho": 0.8285714285714287,
+        "historical_rho": 0.8857142857142857,
+        "delta_from_historical": -0.05714285714285694,
+        "minimum_rho": 0.8285714285714286,
+        "meets_ranking_criterion": false,
+        "evidence": "ColabFold2 preview and JapanFold ESMFold2-Fast",
+        "spearman_rho_vs_alphafold2_order": 0.7142857142857143
+      },
+      "ranking_order": [
+        "Nb6B9",
+        "Nb6A9",
+        "Nb6A5",
+        "Nb80",
+        "Nb6B11",
+        "Nb6A10"
+      ],
+      "japanfold": {
+        "model": "esmfold2-fast",
+        "requested_params_without_seed": {
+          "fast": true,
+          "recycling_steps": 10,
+          "sampling_steps": 15,
+          "diffusion_samples": 1,
+          "output_format": "cif",
+          "write_pae": true
+        },
+        "logged_counts": {
+          "trunk": [
+            11
+          ],
+          "diffusion": [
+            11
+          ]
+        },
+        "processor_hour_USD": 0.26,
+        "settled_receipts": 25,
+        "processor_seconds": 2480.68,
+        "actual_charge_USD": 0.179149,
+        "authorized_cap_USD": 10.0,
+        "mean_charge_per_prediction_USD": 0.0010857515151515152,
+        "observed_per_target_p50_USD": 0.001013,
+        "observed_per_target_p90_USD": 0.001158,
+        "max_parallel_targets": 8,
+        "failed_targets": 0
+      },
+      "sha256": {
+        "ranking.csv": "14dc5d68a1c714f70a2c0b9579b5fe18bdaba4e17c15375fb54ed1adc56aec9d",
+        "measurements.csv": "d8f9a2a4174c6e9a243375d5a3502d98c729ff09096fda6f02e8961f4f5312d6",
+        "score_matrix.csv": "fbf8e8bbd68bb71af0bb8b520ed7d70fb8f86d789089ff35252b284fe3b0e633",
+        "heatmap.png": "d1f75f336ade9a61b38229378e4782c43a460194afb80df14d612def609b6fac"
+      },
+      "artifacts": {
+        "ranking.csv": "docs/results/esmfold2-mixed-b2ar-six-ranking.csv",
+        "score_matrix.csv": "docs/results/esmfold2-mixed-b2ar-six-score-matrix.csv",
+        "heatmap.png": "docs/results/esmfold2-mixed-b2ar-six-score-matrix.png"
+      },
+      "local_evidence": "data/japanfold-1771fadf"
     }
   },
-  "default_selection": "CPU saved structures in candidate notebook. Fresh GPU auto blocked pending measured support.",
+  "default_selection": "The candidate opens the saved-structure CPU example. AlphaFold2-multimer is the verified manual GPU fallback for the tested input. ESMFold2-Fast is experimental.",
   "publication": {
     "candidate_version": "1.3.2",
     "merged": false,
@@ -386,8 +492,7 @@
     "github_environment": "absent on read-back; automatic approval declined provisioning without an explicit tag pattern in the creation request"
   },
   "next_action": {
-    "account_holder": null,
-    "external_requirement": "A free Colab GPU allocation from Google.",
-    "agent": "In a new free GPU session, restore the six Drive archives in ascending order, verify their SHA-256 values, install the pinned candidate environment and resume run 1771fadf-bdf3-422a-bec7-c7c12b8980bd from prediction 16."
+    "scientific_status": "The mixed test is complete. Qualifying a particular ESMFold2 implementation requires its own complete benchmark with the fixed protocol.",
+    "release_requirement": "Verify the PyPI Trusted Publisher configuration for the corrections release and retain the validated fallback."
   }
 }

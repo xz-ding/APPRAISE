@@ -4,7 +4,7 @@ The November 25 owner-supplied plan is recorded byte for byte in `AGENT_EXECUTIO
 
 ## What runs today
 
-The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Candidate notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/c2c429fa2de7be3458d203a465da7e14436b5896/notebooks/Colab_APPRAISE_candidate.ipynb) · [Usage](nanobody-runner.md)
+The notebook, noninteractive command and Python interface share the published β₂AR workflow. Each sample records the producer, input role and copy, observed chain IDs, structure and measurement hashes. Recovery tests cover interruptions, damaged files and changed chain metadata. The preview adapter requests one ESMFold2-Fast diffusion sample per seed and the fallback requests one AlphaFold2 checkpoint per prediction. The guided test case contains three protein chains and 554 residues. [Candidate notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/0529084684d3f8a0c3fa08b8ae8d461703139146/notebooks/Colab_APPRAISE_candidate.ipynb) · [Usage](nanobody-runner.md)
 
 | Evidence | Result |
 |---|---|
@@ -14,9 +14,9 @@ The notebook, noninteractive command and Python interface share the published β
 | Live free Colab | The built-in browser connected to a free Tesla T4 with 15 GiB VRAM and 12.67 GiB system RAM. Temporary checkpoint write and read-back passed. |
 | AlphaFold2-multimer v2 | ColabFold 1.6.3 used templates and completed both input orders. It produced ten distinct 554-residue structures, 20 measurements, the ranked table and heatmap. Nb6B9 placed first. |
 | ESMFold2-Fast | The v3.1.20 port with the streamed ESM-C loader completed both input orders. It produced ten distinct 554-residue structures, 20 measurements, the ranked table and heatmap. Nb6B9 placed first. |
-| New six-nanobody comparison | Colab interrupted the free T4 run after 18 structures and 36 measurements, then refused a GPU reconnect because of usage limits. The first 15 structures and 30 measurements were restored from Drive on a fresh CPU runtime. |
+| Six-nanobody comparison | The mixed ESMFold2-Fast run completed all 36 ordered inputs, 180 distinct structures and 360 measurements. Spearman ρ was 29/35 against the experimental ranking. Nb80 finished fourth, so the run missed the qualification gate. [Ranking](results/esmfold2-mixed-b2ar-six-ranking.csv) |
 
-All 38 scoped checks and five subtests passed locally and on GitHub’s Linux runner. They cover the two notebooks, backend I/O, the nanobody workflow, and archived measurement parsing. They also test true ties, missing coverage, explicit ensemble identities and checksum recovery. The legacy capsid-ranking regressions were outside this validation. [Hosted CPU checks](https://github.com/xz-ding/APPRAISE/actions/runs/45728726304)
+All 40 scoped checks and five subtests passed locally and on GitHub’s Linux runner. They cover the two notebooks, backend I/O, the nanobody workflow, and archived measurement parsing. They also test ties, missing coverage, ensemble identities, checksum recovery, and signed colors in the guided and manual score matrices. [Hosted CPU checks](https://github.com/xz-ding/APPRAISE/actions/runs/45877547525)
 
 ## Free-Colab validation
 
@@ -26,15 +26,32 @@ The ESMFold2-Fast run took 58 minutes and 53 seconds after setup, and sampled pe
 
 The AlphaFold2-multimer v2 test resumed from the first saved structure using ColabFold alignments and templates prepared for the exact two inputs. The resumed segment took 36 minutes and 18 seconds, excluding this preparation. Sampled peak GPU memory was 3,083 MiB. After Colab reconnected to the same runtime, the first structure's checksum still matched and all ten structures and final artifacts passed verification. [Ranking CSV](results/colab-t4-alphafold2-multimer-b2ar-two-ranking.csv) · [Runtime and file hashes](implementation-state.json)
 
-The 36-input ESMFold2 test is estimated at about 17 GPU hours from the guided test's median model time. It requires 180 complete predictions and a Spearman correlation of at least 29/35 with Nb6B9 uniquely first and Nb80 uniquely last. Default selection follows the measured configuration and scientific outcome.
+The T4 handled the measured 554-residue three-chain workload. The guided ESMFold2 timing implied about 17 T4 GPU hours for the 180-prediction panel. Colab's free usage limit interrupted the run after 18 structures and 36 measurements.
 
-The six-nanobody run used `/content/appraise-local/b2ar/b2ar-six-esmfold2-fast` on the GPU runtime. The automatic approval review declined the Drive filesystem mount because it requested account-wide file access. Six checksum-verified checkpoint archives were saved through the Drive web editor under `My Drive/APPRAISE/b2ar`. The fresh CPU runtime verified all 45 restored structure, confidence and measurement files across the 15 saved samples. The previous GPU runtime's working directory was absent. Predictions 16 through 18 will be recomputed.
+The six-nanobody run used `/content/appraise-local/b2ar/b2ar-six-esmfold2-fast` on the GPU runtime. The automatic approval review declined the Drive filesystem mount because it requested account-wide file access. Six checksum-verified checkpoint archives were saved through the Drive web editor under `My Drive/APPRAISE/b2ar`. The fresh CPU runtime verified all 45 restored structure, confidence and measurement files across the 15 saved samples. Those samples form the durable T4 checkpoint.
 
 On November 26, Colab again declined a free T4 allocation because of the account's GPU usage limit. The pinned APPRAISE `resume` command on a fresh Colab CPU runtime reused three ordered inputs, 15 structures and 30 measurements under the original run ID. All 45 file hashes and the 15 completed sample records still matched. The command exited at prediction 16 with `gpu_unavailable`.
 
-When a free GPU is available, restore the six archives from `001-001` through `011-015` in ascending order into the same run directory. Each Markdown file starts with a marker and JSON metadata, followed by a base64-encoded gzip archive and an end marker. Verify each archive against the SHA-256 in the execution record before unpacking it. The last archive supplies the run manifest for all 15 saved samples. Install APPRAISE at `9c7e2e9590d90b02c46d2cf00e3be904867452ee` with the candidate notebook's pinned ESMFold2-Fast environment and run `python -m appraise resume --run-dir /content/appraise-local/b2ar/b2ar-six-esmfold2-fast`. The saved run ID is `1771fadf-bdf3-422a-bec7-c7c12b8980bd` and the next prediction is 16. [Archive checksums](implementation-state.json)
+For a T4-only replay, restore the six archives from `001-001` through `011-015` in ascending order into the same run directory. Each Markdown file starts with a marker and JSON metadata, followed by a base64-encoded gzip archive and an end marker. Verify each archive against the SHA-256 in the execution record before unpacking it. The last archive supplies the run manifest for all 15 saved samples. Install APPRAISE at `9c7e2e9590d90b02c46d2cf00e3be904867452ee` with the tested ESMFold2-Fast environment and run `python -m appraise resume --run-dir /content/appraise-local/b2ar/b2ar-six-esmfold2-fast`. The saved run ID is `1771fadf-bdf3-422a-bec7-c7c12b8980bd` and the next prediction is 16. [Archive checksums](implementation-state.json)
 
 The new guided runner covers the exact published nanobodies, their subsets and their verified receptor construct. Broader custom receptors, a measured peptide/miniprotein operating range, and legacy ESMFold-v1 boundary recovery remain outside the verified candidate. The manual notebook continues to expose existing advanced engines. The separate proposed SKEMPI 2.0 follow-up and its within-target curation rules are in section 7 of the execution plan.
+
+## JapanFold continuation and ranking
+
+The ranking combines 15 restored ColabFold2 preview structures from the first three ordered inputs with 165 verified JapanFold ESMFold2-Fast structures from the remaining 33 inputs. Each ordered pair retained seeds 0–4 and both candidate perspectives for each structure. JapanFold ran single-sequence Fast mode with one sample per seed, ten requested recycles and fifteen requested diffusion steps. Its logs recorded eleven trunk passes and eleven diffusion steps. The ColabFold2 port was configured for fifteen diffusion steps. The accuracy estimate applies to this mixed panel. [Ranking CSV](results/esmfold2-mixed-b2ar-six-ranking.csv) · [Score matrix CSV](results/esmfold2-mixed-b2ar-six-score-matrix.csv) · [Score matrix PNG](results/esmfold2-mixed-b2ar-six-score-matrix.png)
+
+| Nanobody | Mixed ESMFold2-Fast rank | Archived AlphaFold2-multimer rank | Experimental rank |
+|---|---:|---:|---:|
+| Nb6B9 | 1 | 1 | 1 |
+| Nb6A9 | 2 | 3 | 2 |
+| Nb6A5 | 3 | 2 | 3 |
+| Nb80 | 4 | 6 | 6 |
+| Nb6B11 | 5 | 5 | 4 |
+| Nb6A10 | 6 | 4 | 5 |
+
+Spearman ρ against the experimental order was 29/35 (0.829) for the mixed panel and 31/35 (0.886) for the archived AlphaFold2-multimer panel. The mixed panel reached the correlation cutoff. The qualification gate also required Nb80 to rank last, and Nb80 ranked fourth. ESMFold2-Fast remains experimental. AlphaFold2-multimer is the verified GPU fallback for the guided case.
+
+JapanFold billed **$0.179149** for 2,480.68 processor-seconds across 25 settled receipts. Each batch held up to eight targets. The budget cap was $10. The estimate for 180 similar hosted predictions is **about $0.20**. JapanFold bills actual processor time to the JapanFold account. [Estimated costs and billing](nanobody-runner.md#estimated-esmfold2-usage-costs) · [JapanFold pricing](https://japanfold.aiand.com/docs/models-and-limits/)
 
 ## Publication handoff
 
@@ -42,4 +59,4 @@ The candidate version is `1.3.2`. The workflow builds and tests the tagged revis
 
 GitHub reported no deployment environments at this checkpoint. Automatic approval review declined environment provisioning because the creation request did not itself specify the release-tag pattern. The release workflow checks the canonical repository, version tag and merged source independently.
 
-After qualification and publication access are verified, merge the package PR, tag the tested merged revision `v1.3.2` and dispatch `publish.yml` from that tag. Compare PyPI’s file digests with the workflow report and test a fresh install from PyPI. Activate the public notebook with the exact published version in a separate change and verify its canonical Colab link.
+After the corrections release gates and publication access are verified, merge the package PR, tag the tested merged revision `v1.3.2` and dispatch `publish.yml` from that tag. Compare PyPI’s file digests with the workflow report and test a fresh install from PyPI. Activate the public notebook with the exact published version in a separate change and verify its canonical Colab link.
