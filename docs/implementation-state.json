@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "as_of": "2026-11-25",
-  "status": "free_colab_gpu_tests_complete",
+  "status": "six_nanobody_benchmark_blocked_by_free_colab_gpu_quota",
   "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
   "repository": "xz-ding/APPRAISE",
   "base": "8898c203d35b51d64b4766342ed9a9a32630cc13",
@@ -238,15 +238,90 @@
     }
   },
   "esmfold2": {
-    "status": "guided GPU workflow passed; scientific qualification pending",
+    "status": "Guided GPU workflow passed. Free Colab GPU usage limits interrupted the six-nanobody benchmark.",
     "variant": "ColabFold2 preview ESMFold2-Fast",
-    "new_benchmark_structures": 0,
+    "new_benchmark_structures": 15,
     "required_structures": 180,
-    "new_measurements": 0,
+    "new_measurements": 30,
     "required_measurements": 360,
     "required_spearman_rho": 0.8285714285714286,
     "required_unique_first": "Nb6B9",
     "required_unique_last": "Nb80",
+    "benchmark_run": {
+      "run_id": "1771fadf-bdf3-422a-bec7-c7c12b8980bd",
+      "started_utc": "2026-11-26T05:08:40Z",
+      "working_directory": "/content/appraise-local/b2ar/b2ar-six-esmfold2-fast",
+      "checkpoint_folder": "My Drive/APPRAISE/b2ar",
+      "checkpoint_method": "Checksum-verified Markdown archives written through the Drive web editor. Automatic approval review rejected the broad Drive filesystem mount.",
+      "durably_saved_ordered_inputs": 3,
+      "durably_saved_structures": 15,
+      "durably_saved_measurements": 30,
+      "first_checkpoint": {
+        "name": "APPRAISE checkpoint 1771fadf 001-001.md",
+        "sha256": "06ec71abeba5d9bc1b581aac5ca6a8fc3a59bbb40aed61d2b4fe70e302c719b4",
+        "archive_bytes": 106705,
+        "readback_verified": true,
+        "restored_files_verified": 3
+      },
+      "additional_checkpoints": [
+        {
+          "name": "APPRAISE checkpoint 1771fadf 002-003.md",
+          "sha256": "ba0f30af19a6c5106bfb6356045fb161bad4f4250723be2f3f39aac685497394",
+          "archive_bytes": 209929,
+          "readback_verified": true,
+          "restored_files_verified": 9
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 004-005.md",
+          "sha256": "1b7b5eb755f25140139375f98aab9558c87549fd56d3847f16c9a7ea70f326a6",
+          "archive_bytes": 209981,
+          "readback_verified": true
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 006-008.md",
+          "sha256": "c6facf74a4cef23d0d7cabd62bd921ef4f0fb0a9873e495167b61ac7d48b89a7",
+          "archive_bytes": 313695,
+          "readback_verified": true,
+          "restored_files_verified": 24
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 009-010.md",
+          "sha256": "824f6c372c10051fc64a1ec4df63417efbc321dd1755beb52e811832df6b3ee5",
+          "archive_bytes": 212115,
+          "readback_verified": true
+        },
+        {
+          "name": "APPRAISE checkpoint 1771fadf 011-015.md",
+          "sha256": "94db35bff1d25d158517169a7d4c3794ebf51f18a2670e2914d6e2c726002ce1",
+          "archive_bytes": 520038,
+          "readback_verified": true
+        }
+      ],
+      "initial_device": "Tesla T4",
+      "setup_seconds": 37.07,
+      "first_prediction_and_measurement_seconds": 708.06,
+      "first_five_predictions_and_measurement_seconds": 1975.41,
+      "correlation": null,
+      "first_ten_predictions_and_measurement_seconds": 3520.16,
+      "first_fifteen_predictions_and_measurement_seconds": 5083.26,
+      "interruption": {
+        "last_live_structures": 18,
+        "last_live_measurements": 36,
+        "active_input": "b2AR_and_Nb80_vs_Nb6A5/4",
+        "gpu_compute_tier": "free",
+        "reconnect_outcome": "You cannot currently connect to a GPU due to usage limits in Colab.",
+        "original_runtime_disk_present_in_new_session": false,
+        "predictions_to_repeat_after_interruption": [16, 17, 18]
+      },
+      "fresh_cpu_restore": {
+        "verified_archives": 6,
+        "verified_structures": 15,
+        "verified_measurements": 30,
+        "verified_files": 45,
+        "path": "/content/appraise-checkpoint-readback/1771fadf",
+        "resume_from_prediction": 16
+      }
+    },
     "stock_port_attempts": [
       {
         "port": "3.1.18",
@@ -293,7 +368,8 @@
     "github_environment": "absent on read-back; automatic approval declined provisioning without an explicit tag pattern in the creation request"
   },
   "next_action": {
-    "account_holder": "Approve the Colab Google Drive mount for durable scientific benchmark checkpoints.",
-    "agent": "Verify the approved checkpoint destination and start the 180-structure ESMFold2-Fast comparison across free Colab sessions."
+    "account_holder": null,
+    "external_requirement": "A free Colab GPU allocation from Google.",
+    "agent": "In a new free GPU session, restore the six Drive archives in ascending order, verify their SHA-256 values, install the pinned candidate environment and resume run 1771fadf-bdf3-422a-bec7-c7c12b8980bd from prediction 16."
   }
 }
