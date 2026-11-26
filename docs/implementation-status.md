@@ -12,7 +12,7 @@ The notebook, noninteractive command and Python interface share the published β
 | CPU structure-to-ranking run | Headless PyMOL measured the full chains from both directions in ten archived structures. All 20 perspectives were retained. Nb6B9 ranked first and Nb80 second. |
 | Package | The wheel and source archive are built from a clean source export. The release check compares their package contents with source, installs the wheel outside the checkout, runs both examples and verifies resume. The hosted job retains the exact artifacts and their hashes. |
 | Live free Colab | The built-in browser connected to a free Tesla T4 with 15 GiB VRAM and 12.67 GiB system RAM. Temporary checkpoint write and read-back passed. |
-| AlphaFold2-multimer v2 | ColabFold 1.6.3 used templates and produced one validated 554-residue structure with two APPRAISE measurements. The two-input run resumed from that checkpoint using prepared alignments. |
+| AlphaFold2-multimer v2 | ColabFold 1.6.3 used templates and completed both input orders. It produced ten distinct 554-residue structures, 20 measurements, the ranked table and heatmap. Nb6B9 placed first. |
 | ESMFold2-Fast | The v3.1.20 port with the streamed ESM-C loader completed both input orders. It produced ten distinct 554-residue structures, 20 measurements, the ranked table and heatmap. Nb6B9 placed first. |
 | New six-nanobody comparison | The 180-prediction scientific run is pending. |
 
@@ -23,6 +23,8 @@ All 38 scoped checks and five subtests passed locally and on GitHub’s Linux ru
 The original port exhausted host memory while loading ESM-C. Streaming the same weight records resolved that stage. The original model graph expected 447 features from a 451-feature checkpoint. The pinned v3.1.20 port contains the upstream shape fix. The first new ESMFold2-Fast model and the first AlphaFold2-multimer model both passed written-chain and native-confidence checks. [Upstream checkpoint fix](https://github.com/sokrypton/alphafold3/commit/d87fa1eacaf275847f69e7f3ea854c362985de18)
 
 The ESMFold2-Fast run took 58 minutes and 53 seconds after setup, and sampled peak GPU memory was 11,333 MiB. All ten structures passed chain and hash verification. The pinned environment was newly installed in the session and reused the model weights and ESM-C disk cache built earlier in that runtime. The table, measurements, heatmap and manifest hashes match the live notebook. [Ranking CSV](results/colab-t4-esmfold2-fast-b2ar-two-ranking.csv) · [Runtime and file hashes](implementation-state.json)
+
+The AlphaFold2-multimer v2 test resumed from the first saved structure using ColabFold alignments and templates prepared for the exact two inputs. The resumed segment took 36 minutes and 18 seconds, excluding this preparation. Sampled peak GPU memory was 3,083 MiB. After Colab reconnected to the same runtime, the first structure's checksum still matched and all ten structures and final artifacts passed verification. [Ranking CSV](results/colab-t4-alphafold2-multimer-b2ar-two-ranking.csv) · [Runtime and file hashes](implementation-state.json)
 
 The browser run uses temporary storage under `/content/appraise-local/b2ar`. The 36-input ESMFold2 test is estimated at about 17 GPU hours from the observed median model time. It requires 180 complete predictions and a Spearman correlation of at least 29/35 with Nb6B9 uniquely first and Nb80 uniquely last. Google Drive checkpointing across free sessions requires account permission. Default selection follows the measured configuration and scientific outcome.
 
