@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-11-25",
+  "as_of": "2026-11-26",
   "status": "six_nanobody_benchmark_blocked_by_free_colab_gpu_quota",
   "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
   "repository": "xz-ding/APPRAISE",
@@ -320,6 +320,24 @@
         "verified_files": 45,
         "path": "/content/appraise-checkpoint-readback/1771fadf",
         "resume_from_prediction": 16
+      },
+      "resume_check": {
+        "date_pacific": "2026-11-26",
+        "gpu_reconnect_outcome": "You cannot currently connect to a GPU due to usage limits in Colab.",
+        "runtime": "Free Colab CPU",
+        "appraise_revision": "9c7e2e9590d90b02c46d2cf00e3be904867452ee",
+        "pymol_version": "3.2.0a0.post5859",
+        "run_id_preserved": true,
+        "reused_ordered_inputs": 3,
+        "reused_structures": 15,
+        "reused_measurements": 30,
+        "unchanged_verified_files": 45,
+        "cli_status": "blocked",
+        "cli_exit_code": 3,
+        "failure_code": "gpu_unavailable",
+        "first_missing_input": "b2AR_and_Nb80_vs_Nb6A5/1",
+        "resume_from_prediction": 16,
+        "replay_seconds": 0.497
       }
     },
     "stock_port_attempts": [
