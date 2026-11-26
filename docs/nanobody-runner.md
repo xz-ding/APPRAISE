@@ -66,11 +66,29 @@ Select a free GPU and the desired validation workflow in the notebook. The two-n
 | ColabFold2 preview ESMFold2-Fast | The v3.1.20 port with a streamed ESM-C loader ran both orders of the 554-residue competition on a free T4. All ten structures and 20 measurements passed. The five-output protocol uses seeds 0–4 with one sample per seed. [Live validation](implementation-status.md#free-colab-validation) |
 | ColabFold 1.6.3 | AlphaFold2-multimer v2 with templates completed both input orders on a free T4, with ten distinct structures and 20 measurements. The five-output protocol uses five model checkpoints at one seed. Resume reused the first saved structure. [Live validation](implementation-status.md#free-colab-validation) |
 | Legacy AlphaFold2 choices, ESMFold v1, Boltz-1, Chai-1 and external OpenFold3 | The separate manual notebook retains these paths. Boltz-1, Chai-1 and OpenFold3 retain their existing beta status. |
+| JapanFold API folding | Planned for the Colab notebook and Python interface. [Integration requirements](#planned-japanfold-integration) |
 
-New folding with `auto` reports a blocked status while hardware qualification is pending. Saved structures and archived measurements are available on CPU. The six-candidate ESMFold2 comparison requires all 180 structures, 360 measurements, Spearman ρ of at least 29/35 and unique first and last places for Nb6B9 and Nb80. [ColabFold release](https://github.com/sokrypton/ColabFold/releases/tag/v1.6.3) · [ColabFold2 preview](https://github.com/sokrypton/ColabFold/blob/eb061aa6706959fdffe15e86d27ca08083d6ed8d/ColabFold2_preview.ipynb) · [ESMFold2-Fast model card](https://huggingface.co/biohub/ESMFold2-Fast)
+### Estimated ESMFold2 usage costs
+
+| Where prediction runs | Estimated charge and who bills it |
+|---|---|
+| ColabFold2 ESMFold2-Fast on free Colab | **$0 estimated GPU charge** while Google assigns a free runtime. Google sets Colab's GPU usage limits and charges for optional paid Colab compute. [Google Colab FAQ](https://research.google.com/colaboratory/faq.html#resource-limits) |
+| JapanFold ESMFold2-Fast | **About $0.0026 per prediction** using the 554-residue pilot as an estimate. JapanFold, operated by ai&, bills the JapanFold account for actual occupied processor time. Its published rate was $0.26 per processor-hour on November 26, 2026. [JapanFold pricing and limits](https://japanfold.aiand.com/docs/models-and-limits/) |
+
+These figures are usage estimates. Multiply the predicted processor-hours by the provider's live rate to estimate a larger run. Actual JapanFold charges vary by input, model settings, and the processor time shown on each job's usage receipt. The estimated charge per structure applies to the Fast checkpoint and the benchmark settings described in the validation record. [APPRAISE validation record](implementation-status.md)
+
+Automatic engine selection requires a scientifically qualified configuration. Saved structures and archived measurements are available on CPU. The six-candidate ESMFold2 comparison requires all 180 structures, 360 measurements, Spearman ρ of at least 29/35 and unique first and last places for Nb6B9 and Nb80. [ColabFold release](https://github.com/sokrypton/ColabFold/releases/tag/v1.6.3) · [ColabFold2 preview](https://github.com/sokrypton/ColabFold/blob/eb061aa6706959fdffe15e86d27ca08083d6ed8d/ColabFold2_preview.ipynb) · [ESMFold2-Fast model card](https://huggingface.co/biohub/ESMFold2-Fast)
+
+## Planned JapanFold integration
+
+Use the same APPRAISE workflow from Colab and Python. The user supplies a JapanFold API key through Colab Secrets or the `JAPANFOLD_API_KEY` environment variable, a maximum number of parallel predictions, and a spending cap in USD. Before submission, show the folding method, prediction count, and labeled estimate of JapanFold's charge alongside the spending cap. The concurrency limit counts the targets that a single JapanFold job can run in parallel. Reserve the possible charge for each outstanding prediction and reconcile it against the provider receipt before starting more work. [JapanFold prediction API](https://japanfold.aiand.com/docs/predictions/) · [JapanFold billing](https://japanfold.aiand.com/docs/billing/)
+
+Save submission identities and JapanFold job IDs so a resumed run monitors existing jobs without duplicate charges. Show progress, partial failures, and recorded spend in APPRAISE. Download results automatically and verify each structure's chains, sequence, and sample identity before passing it to quantification and scoring. Start the final ranking when the selected comparison has the required coverage. Verify each supported folding method's actual settings and output format before listing it as available. [JapanFold jobs API](https://japanfold.aiand.com/docs/jobs/)
 
 ## Files and failures
 
 Each run writes `run_manifest.json`, `result.json` and `run.log`. Completed rankings include `measurements.csv`, `ranking.csv` and `heatmap.png` with SHA-256 hashes. Per-model checkpoint files retain the source identity, observed chain IDs, checksum and both candidate measurements. Resuming checks the source and measurement bytes before reusing them. Individual prediction logs and setup logs identify installation, engine or quantification failures.
+
+The default score matrix uses blue for positive scores, red for negative scores, and a neutral midpoint at zero.
 
 The command exits with 0 for a complete run, 1 for failure, 3 for an external or qualification block and 130 for an interruption. An incomplete result identifies its stage, active input, counts, error and next action. Invoke `resume` after restoring the dependency or destination. A changed configuration gets a separate run directory. Historical measurements include only the first 70 residues in their sequence field. Newly quantified structures record all 120.

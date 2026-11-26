@@ -22,6 +22,7 @@ import pandas as pd
 from . import __version__
 from .nanobody import comparison, evaluate, ordered_inputs, panel, reference_measurements, resource
 from .nanobody_models import PROTOCOLS, predict, runtime
+from .utilities import SCORE_MATRIX_CMAP
 
 
 @dataclass(frozen=True)
@@ -238,7 +239,7 @@ def _report(root, frame, settings):
     ax = fig.subplots()
     limit = max(1.0, np.nanmax(np.abs(grid.to_numpy())))
     from matplotlib import colormaps
-    cmap = colormaps["RdBu_r"].with_extremes(bad="#e4e4e4")
+    cmap = colormaps[SCORE_MATRIX_CMAP].with_extremes(bad="#e4e4e4")
     im = ax.imshow(grid.to_numpy(), cmap=cmap, vmin=-limit, vmax=limit)
     ax.set(xticks=range(len(order)), xticklabels=order, yticks=range(len(order)), yticklabels=order,
            xlabel="Competitor", ylabel="Candidate", title="β₂AR nanobody competition")

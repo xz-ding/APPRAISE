@@ -31,6 +31,8 @@ The notebook now supports these modeling paths:
 
 At the moment, support beyond AlphaFold2-multimer and ESMFold is **BETA** only. Boltz-1, Chai-1, and OpenFold3 integration are available for early adopters, but they have not yet been validated as extensively as the legacy APPRAISE workflows.
 
+**Planned support.** JapanFold API folding from Colab and Python, with user-set concurrency and spending limits, resumable job monitoring, and automatic APPRAISE analysis of verified predictions. [JapanFold integration requirements](docs/nanobody-runner.md#planned-japanfold-integration) · [ESMFold2 cost estimates and billing](docs/nanobody-runner.md#estimated-esmfold2-usage-costs)
+
 Legacy compatibility is preserved:
 
 - Step 2A still supports the AlphaFold2-multimer `v1`, `v2`, and `v3` model choices exposed in the notebook

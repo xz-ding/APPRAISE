@@ -10,25 +10,61 @@ import pytest
 
 from appraise import nanobody_models, runner
 from appraise.nanobody import comparison, evaluate, panel, reference_measurements, resource
-from appraise.utilities import rank_tournament_results
+from appraise.utilities import plot_heatmap, rank_tournament_results
 
 
 def read(path):
     return json.loads(path.read_text())
 
 
-def test_reference_cli_and_python_reproduce_published_result(tmp_path):
+def test_reference_cli_and_python_reproduce_published_result(tmp_path, monkeypatch):
+    from matplotlib.axes import Axes
+
+    rendered = []
+    original_imshow = Axes.imshow
+
+    def inspect_colors(axis, *args, **kwargs):
+        image = original_imshow(axis, *args, **kwargs)
+        rendered.append(image)
+        return image
+
+    monkeypatch.setattr(Axes, "imshow", inspect_colors)
     result = runner.run(runner.RunConfig(example="b2ar-reference", output_dir=tmp_path / "api"))
     assert result["status"] == "complete", result
     assert (result["completed_jobs"], result["completed_predictions"], result["completed_measurements"]) == (36, 180, 360)
     assert result["comparison"]["spearman_rho"] == pytest.approx(31 / 35)
     assert result["comparison"]["meets_ranking_criterion"]
     assert pd.read_csv(tmp_path / "api/ranking.csv").peptide_name.tolist() == panel()["historical_order"]
+    image, = rendered
+    red, neutral, blue = image.to_rgba(np.array([image.norm.vmin, 0, image.norm.vmax]))[:, :3]
+    assert red[0] > red[2] and blue[2] > blue[0]
+    assert np.ptp(neutral) < 0.03
     proc = subprocess.run([sys.executable, "-m", "appraise", "score", "--example", "b2ar-reference",
                            "--output", str(tmp_path / "cli")], capture_output=True, text=True, check=True)
     cli = json.loads(proc.stdout)
     assert result["comparison"] == cli["comparison"]
     assert result["artifacts"]["ranking.csv"]["sha256"] == cli["artifacts"]["ranking.csv"]["sha256"]
+
+
+@pytest.mark.parametrize("vmin,vmax", [(-2, 8), (1, 8)])
+def test_legacy_score_matrix_keeps_color_sign_with_manual_bounds(vmin, vmax):
+    from matplotlib import pyplot as plt, rc_context
+
+    scores = pd.DataFrame({
+        "peptide_name": ["A", "A", "B", "B"],
+        "competitor": ["A", "B", "A", "B"],
+        "Delta_B": [0.0, 7.0, -2.0, 0.0],
+    })
+    with rc_context():
+        figure, axis = plt.subplots()
+        try:
+            plot_heatmap(scores, save_figure=False, rank_by_tournament=False, vmin=vmin, vmax=vmax)
+            mesh, = axis.collections
+            red, neutral, blue = mesh.to_rgba(np.array([-2.0, 0.0, 7.0]))[:, :3]
+            assert red[0] > red[2] and blue[2] > blue[0]
+            assert np.ptp(neutral) < 0.03
+        finally:
+            plt.close(figure)
 
 
 def test_missing_duplicate_and_displaced_perspectives():
