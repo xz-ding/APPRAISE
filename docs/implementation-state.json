@@ -660,7 +660,8 @@
       }
     },
     "activation_pr": "https://github.com/xz-ding/APPRAISE/pull/2",
-    "activation_merge": "fdb8cd14dab4393cceb8588fc8ff3013ec8c51cd"
+    "activation_merge": "fdb8cd14dab4393cceb8588fc8ff3013ec8c51cd",
+    "github_release": "https://github.com/xz-ding/APPRAISE/releases/tag/v1.3.2"
   },
   "next_action": {
     "scientific_status": "Retain ESMFold2-Fast as experimental. Use the validated AlphaFold2-multimer fallback for the guided GPU case."
@@ -690,5 +691,12 @@
     },
     "result_sha256": "ee7ed58560f3732a6aac559c4f88eb7c66168e77a0abcf871bf635603a31dd17",
     "main_ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45892804374"
+  },
+  "free_colab_range_check": {
+    "date": "2026-11-26",
+    "configuration": "Google Colab free Tesla T4",
+    "status": "blocked_by_colab_gpu_usage_limit",
+    "allocation_attempts": 1,
+    "next_action": "When free T4 allocation is available, run the plan's peptide and miniprotein runtime and format checks."
   }
 }

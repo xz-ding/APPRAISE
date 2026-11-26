@@ -55,7 +55,7 @@ JapanFold charged **$0.015712** for the 15 reruns and **$0.194861** in total for
 
 ## Publication and public Colab
 
-APPRAISE `1.3.2` was published through the approved GitHub Trusted Publisher. The `v1.3.2` tag points to `06bc9e024417c9fbbebf6250dd3e1991336f072a`. The two public downloads matched the tested workflow files byte for byte. A fresh PyPI install reproduced both CPU examples and resume. [PyPI release](https://pypi.org/project/appraise/1.3.2/) · [Publishing run](https://github.com/xz-ding/APPRAISE/actions/runs/45892092792)
+APPRAISE `1.3.2` was published through the approved GitHub Trusted Publisher. The `v1.3.2` tag points to `06bc9e024417c9fbbebf6250dd3e1991336f072a`. The two public downloads matched the tested workflow files byte for byte. A fresh PyPI install reproduced both CPU examples and resume. [PyPI release](https://pypi.org/project/appraise/1.3.2/) · [GitHub release](https://github.com/xz-ding/APPRAISE/releases/tag/v1.3.2) · [Publishing run](https://github.com/xz-ding/APPRAISE/actions/runs/45892092792)
 
 | Published file | SHA-256 |
 |---|---|
@@ -63,3 +63,5 @@ APPRAISE `1.3.2` was published through the approved GitHub Trusted Publisher. Th
 | Source archive | `178b92e967a4680fadfde15df48aa864512cc60b7caa6327421f5cf33f3b5786` |
 
 The canonical README links to the guided public notebook merged at `fdb8cd14dab4393cceb8588fc8ff3013ec8c51cd`. In a fresh Colab CPU runtime on Python 3.13.18, **Run all** installed APPRAISE `1.3.2` from PyPI in 14.83 seconds. It scored ten published structures in 69 seconds and produced 20 measurements, a rank table, and a heatmap. Nb6B9 ranked first and Nb80 second. All three output hashes matched the run's result record. [Public notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb) · [Output hashes and runtime](implementation-state.json) · [Canonical CI](https://github.com/xz-ding/APPRAISE/actions/runs/45892804374)
+
+Colab declined a free T4 allocation during the release check because of its GPU usage limit. The peptide and miniprotein runtime checks can resume when a free T4 is available. The measured GPU scope remains the 554-residue β₂AR example.
