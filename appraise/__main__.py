@@ -3,6 +3,7 @@
 import argparse
 import json
 import sys
+from contextlib import redirect_stdout
 
 from .runner import RunConfig, resume, run
 
@@ -27,7 +28,9 @@ def main(argv=None):
         print(f"{event['stage']} {event.get('active_input') or ''} "
               f"{event['completed_predictions']}/{event['expected_predictions']} · {event['elapsed_seconds']:.0f}s",
               file=sys.stderr, flush=True)
-    result = resume(args["run_dir"], progress=progress) if command == "resume" else run(RunConfig(**args), progress=progress)
+    # Setup libraries can print diagnostics before returning a result.
+    with redirect_stdout(sys.stderr):
+        result = resume(args["run_dir"], progress=progress) if command == "resume" else run(RunConfig(**args), progress=progress)
     print(json.dumps(result, indent=2, allow_nan=False))
     return {"complete": 0, "failed": 1, "blocked": 3, "interrupted": 130}[result["status"]]
 

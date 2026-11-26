@@ -367,7 +367,7 @@ def run(config, *, progress=None):
                 manifest["config"]["candidates_csv"] = "candidates.csv"
         hardware = runtime()
         # Keep validation/quantification edits independent of expensive inference.
-        manifest.update(inference_revision="b2ar-structure-v1/" + _revision("nanobody_models"),
+        manifest.update(inference_revision="b2ar-structure-v1/" + _revision("nanobody_models", "_esmfold2_port"),
                         quantification_revision=_revision("pymol_quantify_peptide_binding", "nanobody_structure") + "/" + hardware["packages"].get("pymol-open-source", "unknown"),
                         scoring_revision=_revision("nanobody", "score_calculation", "utilities"))
         segment = {"start": _now(), "environment": hardware, "package_version": __version__}
@@ -381,7 +381,7 @@ def run(config, *, progress=None):
         result.update(status=exc.status, failure_code=exc.code, error=str(exc), next_action=exc.action)
     except MemoryError as exc:
         result.update(status="failed", failure_code="insufficient_memory", error=str(exc),
-                      next_action="Review the measured GPU and run.log. Choose a separate saved-structure run or resume on a suitable free GPU.")
+                      next_action="Check run.log for the failing memory stage. Resume on a suitable free runtime or score archived structures in a separate run.")
     except (OSError, ValueError, KeyError, ImportError, subprocess.SubprocessError, RuntimeError) as exc:
         stage = result["stage"]
         action = "Check the inputs and output directory." if stage == "configuration" else "Read run.log, correct the reported error and resume the same directory."

@@ -137,6 +137,44 @@ def test_unqualified_default_and_missing_gpu_return_actionable_status(tmp_path, 
     assert invalid.returncode == 1 and json.loads(invalid.stdout)["failure_code"] == "configuration_error"
 
 
+def test_cli_keeps_library_diagnostics_out_of_result_json(monkeypatch, capsys):
+    from appraise import __main__
+
+    def noisy_run(config, progress):
+        print("Fetched chemical component tables")
+        return {"status": "complete"}
+
+    monkeypatch.setattr(__main__, "run", noisy_run)
+    assert __main__.main(["run", "--output", "unused"]) == 0
+    output = capsys.readouterr()
+    assert json.loads(output.out) == {"status": "complete"}
+    assert "Fetched chemical component tables" in output.err
+
+
+def test_inference_records_host_oom_after_sigkill(tmp_path, monkeypatch):
+    import signal
+
+    class Monitor:
+        def terminate(self):
+            pass
+
+        def wait(self, timeout):
+            pass
+
+    def kill(command, stdout, stderr, check, env):
+        assert env["PYTHONUNBUFFERED"] == "1"
+        stdout.write("Loading the ESM-C tower\n")
+        stdout.flush()
+        raise subprocess.CalledProcessError(-signal.SIGKILL, command)
+
+    events = iter([3, 4])
+    monkeypatch.setattr(nanobody_models, "_host_oom_kills", lambda: next(events))
+    monkeypatch.setattr(nanobody_models.subprocess, "Popen", lambda *args, **kwargs: Monitor())
+    monkeypatch.setattr(nanobody_models.subprocess, "run", kill)
+    with pytest.raises(MemoryError, match="host out-of-memory.*ESM-C tower"):
+        nanobody_models._checked_command(["python", "-m", "model"], tmp_path / "model.log")
+
+
 def test_csv_exact_panel_and_freeze_sample_counts(tmp_path):
     path = tmp_path / "panel.csv"
     spec = panel()
@@ -157,7 +195,7 @@ def test_csv_exact_panel_and_freeze_sample_counts(tmp_path):
 
 @pytest.mark.parametrize("engine", ["colabfold", "esmfold2-fast"])
 def test_backend_requests_one_identifiable_sample_on_resume(tmp_path, monkeypatch, engine):
-    monkeypatch.setattr(nanobody_models.metadata, "version", lambda name: "1.6.3" if name == "colabfold" else "3.1.18")
+    monkeypatch.setattr(nanobody_models.metadata, "version", lambda name: "1.6.3" if name == "colabfold" else "3.1.20")
     monkeypatch.setattr(nanobody_models, "runtime", lambda: {"gpu": {"compute_cap": "7.5"}})
     monkeypatch.setattr(nanobody_models, "_ported_files", lambda path: tmp_path / "entry.py")
     job = "b2AR_and_Nb80_vs_Nb80"
