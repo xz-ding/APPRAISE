@@ -7,7 +7,7 @@ Choose **Runtime → Run all** in the candidate notebook. The default reads ten 
 Install this candidate in a Python 3.12 virtual environment. Commands write one JSON result to stdout and progress to stderr.
 
 ```sh
-python -m pip install 'appraise[structures] @ git+https://github.com/xz-ding/APPRAISE.git@9c7e2e9590d90b02c46d2cf00e3be904867452ee'
+python -m pip install 'appraise[structures] @ git+https://github.com/xz-ding/APPRAISE.git@1f6de6b18250ff387bf261a72eec65121a551027'
 python -m appraise score --example b2ar-saved --output runs/saved
 python -m appraise resume --run-dir runs/saved
 python -m appraise score --example b2ar-reference --output runs/reference
@@ -68,16 +68,35 @@ Select a free GPU and the desired validation workflow in the notebook. The two-n
 | Legacy AlphaFold2 choices, ESMFold v1, Boltz-1, Chai-1 and external OpenFold3 | The separate manual notebook retains these paths. Boltz-1, Chai-1 and OpenFold3 retain their existing beta status. |
 | JapanFold API folding | Planned for the Colab notebook and Python interface. [Integration requirements](#planned-japanfold-integration) |
 
+### Recover joined ESMFold v1 structures
+
+For an older single-chain ESMFold v1 PDB, use the original separated sequences in the same order as the model inputs. Newly generated glycine-joined FASTA inputs carry that information in a `.chains.json` file. Recover the chain boundaries before running quantification, keeping the original PDB and writing the recovered file to a separate results folder.
+
+```python
+import json
+from pathlib import Path
+from appraise.legacy_esmfold import restore_esmfold_v1_chains
+
+source = Path("old-results/example_and_candidate.pdb")
+original = json.loads(Path("inputs/example_and_candidate.chains.json").read_text())
+restored = restore_esmfold_v1_chains(source.read_text(), [chain["sequence"] for chain in original])
+destination = Path("recovered-results") / source.name
+destination.parent.mkdir(exist_ok=True)
+destination.write_text(restored)
+```
+
+When no sidecar exists, supply the original separated sequence strings directly. The recovery step checks the exact joined sequence and removes the intervening artificial glycines. If the original sequences are unavailable, the chain assignment is ambiguous.
+
 ### Estimated ESMFold2 usage costs
 
 | Where prediction runs | Estimated charge and who bills it |
 |---|---|
 | ColabFold2 ESMFold2-Fast on free Colab | **$0 estimated GPU charge** while Google assigns a free runtime. Google sets Colab's GPU usage limits and charges for optional paid Colab compute. [Google Colab FAQ](https://research.google.com/colaboratory/faq.html#usage-limits) |
-| JapanFold ESMFold2-Fast | **Estimated $0.0011 per prediction or $0.20 for 180 similar predictions.** The estimate uses the $0.179149 JapanFold charged for 165 predictions of 554-residue complexes. JapanFold, operated by ai&, bills actual occupied processor time to the JapanFold account. Its rate was $0.26 per processor-hour on November 26, 2026. [JapanFold pricing and limits](https://japanfold.aiand.com/docs/models-and-limits/) |
+| JapanFold ESMFold2-Fast | **Estimated $0.0011 per prediction or $0.20 for 180 similar predictions.** The estimate uses the $0.194861 JapanFold charged for 180 predictions of 554-residue complexes. JapanFold, operated by ai&, bills actual occupied processor time to the JapanFold account. Its rate was $0.26 per processor-hour on November 26, 2026. [JapanFold pricing and limits](https://japanfold.aiand.com/docs/models-and-limits/) |
 
 The first hosted prediction cost $0.002617. Multiply estimated processor-hours by the provider's live rate when planning a new run. Actual JapanFold charges vary by input, batching, model settings, and the processor time shown on each job's usage receipt. These estimates apply to the Fast checkpoint and the benchmark settings described in the validation record. [APPRAISE validation record](implementation-status.md)
 
-Automatic engine selection requires a scientifically qualified configuration. Saved structures and archived measurements are available on CPU. The six-candidate ESMFold2 comparison requires all 180 structures, 360 measurements, Spearman ρ of at least 29/35 and unique first and last places for Nb6B9 and Nb80. [ColabFold release](https://github.com/sokrypton/ColabFold/releases/tag/v1.6.3) · [ColabFold2 preview](https://github.com/sokrypton/ColabFold/blob/eb061aa6706959fdffe15e86d27ca08083d6ed8d/ColabFold2_preview.ipynb) · [ESMFold2-Fast model card](https://huggingface.co/biohub/ESMFold2-Fast)
+For fresh β₂AR predictions, `auto` selects AlphaFold2-multimer v2 with templates on a Colab Tesla T4 with at least 4 GiB of free GPU memory. The threshold leaves headroom above the 3,083 MiB observed in the guided run. A resumed run keeps the selected engine. Saved structures and archival measurements are available on CPU. ESMFold2-Fast remains experimental. The all-JapanFold comparison reached ρ = 33/35 against the experimental order and placed Nb80 fifth. The six-candidate qualification gate requires 180 structures, 360 measurements, ρ of at least 29/35, and unique first and last places for Nb6B9 and Nb80. [Benchmark results](implementation-status.md#japanfold-benchmark-and-ranking)
 
 ## Planned JapanFold integration
 

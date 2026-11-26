@@ -1,4 +1,6 @@
 import json
+import logging
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -21,9 +23,9 @@ class ColabNotebookRegressionTests(unittest.TestCase):
 
     def test_step0_installs_appraise_from_pypi(self):
         self._find_cell("### **0.2 Install APPRAISE package**")
-        install_cell = self._find_cell("!pip install -q --upgrade appraise")
+        install_cell = self._find_cell('"-m", "pip", "install", "-q", "appraise==1.2.6"')
 
-        self.assertIn("Install the latest released APPRAISE package from PyPI", install_cell)
+        self.assertIn("Install APPRAISE 1.2.6 from PyPI", install_cell)
         self.assertIn("recommended path for the public notebook", install_cell)
         self.assertIn("replace this command with a GitHub install manually", install_cell)
         self.assertNotIn("git+https://github.com/xz-ding/APPRAISE.git", install_cell)
@@ -38,6 +40,28 @@ class ColabNotebookRegressionTests(unittest.TestCase):
     def test_step1_passes_backend_into_input_preparation(self):
         source = self._find_cell("get_complex_fastas(")
         self.assertIn("modeling_backend=modeling_backend", source)
+
+        calls = []
+
+        def prepare(**settings):
+            calls.append((settings["random_seed"], settings["prepare_receptor_model"]))
+            return [], []
+
+        scope = dict(load_peptides=lambda _: (["candidate"], ["AG"]), get_complex_fastas=prepare,
+                     csv_file_path="unused", competition_mode="pooled", number_of_groupings=2, square_matrix=True,
+                     receptor_name="example", receptor_seq="CG", pool_size=4, folder_path_for_fastas="unused",
+                     use_glycine_linker=False, glycine_linker_length=30, random_seed=42,
+                     modeling_backend="colabfold", prepare_receptor_model=True)
+        for _ in range(2):
+            exec(compile(source, "prepare inputs", "exec"), scope)
+        self.assertEqual(calls, [(42, True), (43, False)] * 2)
+
+    def test_unselected_modeling_cells_skip_setup_and_execution(self):
+        guarded = [source for source in self.cell_sources if source.startswith('if globals().get("modeling_backend"')
+                   or '\nif globals().get("modeling_backend"' in source]
+        self.assertEqual(len(guarded), 16)
+        for source in guarded:
+            exec(compile(source, "unselected backend", "exec"), {"modeling_backend": "openfold3"})
 
     def test_step2_includes_boltz_and_chai_blocks(self):
         boltz_step = self._find_cell("### **Step 2C - Predict structures with Boltz-1**")
@@ -73,13 +97,33 @@ class ColabNotebookRegressionTests(unittest.TestCase):
         install = self._find_cell("Transformers-based ESMFold workflow")
         run_cell = self._find_cell("pdb_filename = result_dir.joinpath(f\"{jobname}_unrelaxed_ptm")
 
-        self.assertIn("keep `modeling_backend='colabfold'` in Step 1.3", step)
+        self.assertIn("select `legacy_engine='ESMFold v1'` in Step 1.3", step)
         self.assertIn("def safe_filename", install)
         self.assertIn("def setup_logging", install)
         self.assertIn("default_data_dir = Path.home() / '.cache' / 'huggingface'", install)
         self.assertIn('tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")', self._find_cell('tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")'))
         self.assertIn("if 'logging_setup' not in globals():", run_cell)
         self.assertIn('with open(pdb_filename,"w") as out:', run_cell)
+
+    def test_legacy_esmfold_reader_skips_unrelated_files(self):
+        import ast
+
+        import pandas
+
+        source = self._find_cell("def get_queries(")
+        guard = ast.parse(source).body[0]
+        reader = ast.Module(body=[node for node in guard.body if isinstance(node, ast.FunctionDef)
+                                  and node.name in {"parse_fasta", "get_queries"}], type_ignores=[])
+        from typing import List, Optional, Tuple, Union
+        scope = dict(Path=Path, pandas=pandas, logger=logging.getLogger(__name__),
+                     List=List, Optional=Optional, Tuple=Tuple, Union=Union)
+        exec(compile(reader, "ESMFold query reader", "exec"), scope)
+        self.assertLess(source.index("logger = logging.getLogger"), source.index("def get_queries("))
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            (folder / "test.fasta").write_text(">test\nAG:CG\n")
+            (folder / "unrelated.txt").write_text("Notes")
+            self.assertEqual(scope["get_queries"](folder), ([("test", ["AG", "CG"], None)], True))
 
     def test_step2_guide_mentions_external_openfold3(self):
         source = self._find_cell("**Guide to step 2**")
