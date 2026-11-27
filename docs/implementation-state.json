@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-11-26",
+  "as_of": "2026-11-27",
   "status": "published_and_public_colab_verified",
   "plan_sha256": "3337349356d7503966539223616ed40017c56cf653a7e9ae355038ca650a66e2",
   "repository": "xz-ding/APPRAISE",
@@ -693,6 +693,274 @@
     "main_ci": "https://github.com/xz-ding/APPRAISE/actions/runs/45892804374"
   },
   "free_colab_range_check": {
+    "date": "2026-11-27",
+    "status": "passed",
+    "backend": "free_google_colab_t4",
+    "purpose": "Runtime and format checks for protein-only controls with the previously measured β₂AR construct.",
+    "source_main": "d56b71f8df3be5ce10781bd7bf8d29910629031d",
+    "runtime": {
+      "colab_release": "release-colab-external-images_20261118-060058_RC00",
+      "gpu": {
+        "compute_cap": "7.5",
+        "driver_version": "580.82.07",
+        "memory.free": "14913",
+        "memory.total": "15360",
+        "name": "Tesla T4"
+      },
+      "packages": {
+        "alphafold3-colabfold": "3.1.20",
+        "appraise": "1.3.2",
+        "dm-haiku": "0.0.17",
+        "huggingface-hub": "1.33.0",
+        "jax": "0.11.1",
+        "jax-cuda13-plugin": "0.11.1",
+        "jaxlib": "0.11.1",
+        "numpy": "2.4.6",
+        "nvidia-cuda-runtime-cu12": "12.9.79",
+        "pandas": "2.2.3",
+        "pymol-open-source": "3.2.0a0.post5859",
+        "tokamax": "0.0.11"
+      },
+      "platform": "linux",
+      "python": "3.13.16",
+      "system_memory_bytes": 13605818368
+    },
+    "cuda_version_reported_by_driver": "13.0",
+    "setup_seconds": {
+      "dependency_install": 11.69,
+      "weight_and_script_setup": 42.66,
+      "total": 63.15
+    },
+    "protocol": {
+      "attention": "xla",
+      "engine": "ColabFold2 preview ESMFold2-Fast",
+      "implementation": "3e1e1c19b304dd318e5b59c570ee9c91862b1dd5",
+      "port_version": "3.1.20",
+      "preview": "eb061aa6706959fdffe15e86d27ca08083d6ed8d",
+      "recycles": 10,
+      "samples_per_seed": 1,
+      "sampling_steps": 15,
+      "tower": "esmc",
+      "tower_loader_sha256": "304ed05b7717130cdfff74f9f1ce80efcde1c08d3b37b1dc42dddc8a66379efc",
+      "weight_storage": "int8",
+      "weights_repo": "sokrypton/af3-any-model",
+      "weights_revision": "6527d516857d9006063536809505951e2c30df9f"
+    },
+    "ordered_inputs": 2,
+    "predictions_per_input": 1,
+    "structures": 2,
+    "appraise_measurements": 4,
+    "msa": "query-only",
+    "anchor_site": "N-term",
+    "cases": [
+      {
+        "category": "peptide",
+        "status": "passed",
+        "chain_count": 3,
+        "chains": [
+          {
+            "id": "A",
+            "name": "Chignolin",
+            "role": "control",
+            "source": "https://www.rcsb.org/structure/1UAO",
+            "source_sha256": "047be99ed60b2fcda4e0aa43af01b7b11a2cf11c84a398c4d7c4ff6695670147",
+            "length": 10,
+            "sequence_sha256": "539b322bacb5376ca1c0a5ccad3196eb77b38dae8a09ae4a6cb83f40826936a7"
+          },
+          {
+            "id": "B",
+            "name": "TrpCageTC5b",
+            "role": "control",
+            "source": "https://www.rcsb.org/structure/1L2Y",
+            "source_sha256": "bb69f436df4243ef0fb0d1efb4acf2d4839509997b77f715e73cfaa91f70c7d5",
+            "length": 20,
+            "sequence_sha256": "19cebf871155837d795f57cbb6fcc40d006098dfebed5a1b449ee106ff6d0c30"
+          },
+          {
+            "id": "C",
+            "name": "b2AR",
+            "role": "receptor",
+            "source": "https://data.caltech.edu/records/kxjgj-tfk18",
+            "length": 314,
+            "sequence_sha256": "a817e5ddd60e6a38720157986c0f15d069427019d232aef935c371c2d7c7843f"
+          }
+        ],
+        "total_residues": 344,
+        "seed": 0,
+        "predictions": 1,
+        "seconds": {
+          "elapsed_seconds": 542.254,
+          "peak_observed_device_mib": 11331,
+          "sampling_interval_seconds": 1,
+          "weight_and_script_setup_seconds": 0.196
+        },
+        "feature_preparation_seconds": 442.5,
+        "native_inference_seconds": 84.29,
+        "quantification_seconds": 0.723,
+        "observed_chain_ids": [
+          "A",
+          "B",
+          "C"
+        ],
+        "native_confidence": {
+          "contact_probs": {
+            "shape": [
+              344,
+              344
+            ],
+            "unit": "probability"
+          },
+          "pae": {
+            "shape": [
+              344,
+              344
+            ],
+            "unit": "angstrom"
+          },
+          "token_count": 344
+        },
+        "native_iptm_present": true,
+        "outputs": {
+          "b2AR_and_Chignolin_vs_TrpCageTC5b_unrelaxed_model_1.cif": {
+            "bytes": 239662,
+            "sha256": "1e9743c100e71a2109260ec98cb80114b34f74ccde6c11b8b5527907f60bfedf"
+          },
+          "measurements.csv": {
+            "bytes": 3065,
+            "sha256": "716c50e1a96e83c0babbfa2785defe8320fe00f416c2c9a954355789df91edf1"
+          },
+          "native_confidences.json": {
+            "bytes": 1025945,
+            "sha256": "000e10fd4e50d3c536bca326946f80222a655a30565165b0c8fb02dfe9b9d468"
+          },
+          "prediction.log": {
+            "bytes": 5131,
+            "sha256": "b52108644a4493100ec666c04b32b1b4420f9d76286c183c2519b064b0723d47"
+          },
+          "summary_confidences.json": {
+            "bytes": 2882,
+            "sha256": "ed4680c8d1db6a967e89d5ec094003c11ad1b405ff34cd0a168feaf78fe21376"
+          }
+        },
+        "archive_bytes": 216319,
+        "archive_sha256": "d29f13e6ef5683d98b4dfaa6ca7bfc65c13cef5374979a0d953dacca786e15bc",
+        "colab_report_sha256": "8bb91eb314ebaac8630bd71a62361e141012791ca4ef976379f52d7b252aa290",
+        "measurements": 2,
+        "independent_wheel_measurements": 2
+      },
+      {
+        "category": "miniprotein",
+        "status": "passed",
+        "chain_count": 3,
+        "chains": [
+          {
+            "id": "A",
+            "name": "HP35N68H",
+            "role": "control",
+            "source": "https://www.rcsb.org/structure/1YRF",
+            "source_sha256": "7d04bf6f5fa2cdc48ee53038a4b40ad37fedb47977155d10de2c0cb80c50a038",
+            "length": 35,
+            "sequence_sha256": "5ba6ada7a80f669bdc6a5975db8c3d7c4ffa2b776540fb488c5655117ded7820"
+          },
+          {
+            "id": "B",
+            "name": "Crambin",
+            "role": "control",
+            "source": "https://www.rcsb.org/structure/1CRN",
+            "source_sha256": "a2a4b983b7cda1fb3783f3945242c6d2a42331cef50ee1c985c6e664350853b7",
+            "length": 46,
+            "sequence_sha256": "6f284e8edba221b51718d8f6864cb976e35f7708dd5bccd0c144b6ebe307be6d"
+          },
+          {
+            "id": "C",
+            "name": "b2AR",
+            "role": "receptor",
+            "source": "https://data.caltech.edu/records/kxjgj-tfk18",
+            "length": 314,
+            "sequence_sha256": "a817e5ddd60e6a38720157986c0f15d069427019d232aef935c371c2d7c7843f"
+          }
+        ],
+        "total_residues": 395,
+        "seed": 0,
+        "predictions": 1,
+        "seconds": {
+          "elapsed_seconds": 160.124,
+          "peak_observed_device_mib": 11331,
+          "sampling_interval_seconds": 1,
+          "weight_and_script_setup_seconds": 0.228
+        },
+        "feature_preparation_seconds": 22.08,
+        "native_inference_seconds": 126.57,
+        "quantification_seconds": 0.748,
+        "observed_chain_ids": [
+          "A",
+          "B",
+          "C"
+        ],
+        "native_confidence": {
+          "contact_probs": {
+            "shape": [
+              395,
+              395
+            ],
+            "unit": "probability"
+          },
+          "pae": {
+            "shape": [
+              395,
+              395
+            ],
+            "unit": "angstrom"
+          },
+          "token_count": 395
+        },
+        "native_iptm_present": true,
+        "outputs": {
+          "b2AR_and_HP35N68H_vs_Crambin_unrelaxed_model_1.cif": {
+            "bytes": 272227,
+            "sha256": "aa3812ba090acecd5b938a07a7012b26ad444dfae4eef71f7ccb486ce9d34f07"
+          },
+          "measurements.csv": {
+            "bytes": 3092,
+            "sha256": "bcbe18ee9b8295b164e03a14c72e5f7d9686bad11f85392276c52a2235e7cfc6"
+          },
+          "native_confidences.json": {
+            "bytes": 1392661,
+            "sha256": "effb4de75a628615d3779cefa9f9765338a50dd54bd8fec5becd71b31ce3718d"
+          },
+          "prediction.log": {
+            "bytes": 5118,
+            "sha256": "62eea77d731b922319dcaffbcd85d2cc9bca27057c681e4705e0341fee9ac469"
+          },
+          "summary_confidences.json": {
+            "bytes": 3242,
+            "sha256": "848188045e7ba0b688776993e64d42113334ae68e2dd18906ef49c567b2b6bc9"
+          }
+        },
+        "archive_bytes": 283479,
+        "archive_sha256": "db6d2203e0b9be9b5aad27e1a0e58ef0ee741429b362a6a69529b82083b31fa1",
+        "colab_report_sha256": "cdb0146b77df782703f8c8183a580185d0ff8fe28c34cbfe87d05ca80c21fc93",
+        "measurements": 2,
+        "independent_wheel_measurements": 2
+      }
+    ],
+    "runtime_notes": [
+      "The first feature-preparation stage included the ESM-C tower in a cold runtime.",
+      "The upstream port continued with XLA attention after its optional Tokamax autotuner reported an MLIR API error."
+    ],
+    "billing": {
+      "additional_cost_usd": 0,
+      "earlier_japanfold_charges_usd": 0.194861,
+      "tracked_plan_total_usd": 0.194861,
+      "authorized_total_usd": 20
+    },
+    "local_evidence": "data/appraise-runtime-2026-11-27",
+    "local_regression": {
+      "passed": 45,
+      "passed_subtests": 5
+    }
+  },
+  "previous_free_colab_range_check": {
     "date": "2026-11-26",
     "configuration": "Google Colab free Tesla T4",
     "status": "blocked_by_colab_gpu_usage_limit",

@@ -34,7 +34,22 @@ On November 26, Colab again declined a free T4 allocation because of the account
 
 For a T4-only replay, restore the six archives from `001-001` through `011-015` in ascending order into the same run directory. Each Markdown file starts with a marker and JSON metadata, followed by a base64-encoded gzip archive and an end marker. Verify each archive against the SHA-256 in the execution record before unpacking it. The last archive supplies the run manifest for all 15 saved samples. Install APPRAISE at `9c7e2e9590d90b02c46d2cf00e3be904867452ee` with the tested ESMFold2-Fast environment and run `python -m appraise resume --run-dir /content/appraise-local/b2ar/b2ar-six-esmfold2-fast`. The saved run ID is `1771fadf-bdf3-422a-bec7-c7c12b8980bd` and the next prediction is 16. [Archive checksums](implementation-state.json)
 
-The guided runner covers the exact published nanobodies, their subsets and their verified receptor construct. Broader custom receptors and a measured peptide/miniprotein operating range remain open. Synthetic tests verify legacy ESMFold v1 export and recovery from exact source sequences. The manual notebook retains the existing advanced engines. The SKEMPI 2.0 follow-up and its within-target curation rules are in section 7 of the execution plan.
+The guided runner covers the exact published nanobodies, their subsets and their verified receptor construct. The small-protein checks below establish runtime and format evidence for two additional inputs. Broader custom receptors remain outside the guided runner's measured scope. Synthetic tests verify legacy ESMFold v1 export and recovery from exact source sequences. The manual notebook retains the existing advanced engines. The SKEMPI 2.0 follow-up and its within-target curation rules are in section 7 of the execution plan.
+
+## Peptide and miniprotein runtime checks
+
+On November 27, a free Colab Tesla T4 ran the released APPRAISE 1.3.2 adapter with the pinned ColabFold2 ESMFold2-Fast port 3.1.20. The T4 reported 15,360 MiB total VRAM and 14,913 MiB free at setup. System RAM was 12.67 GiB. The runtime used Python 3.13.16, NVIDIA driver 580.82.07, and driver-reported CUDA 13.0. Setup took 63.15 seconds, including 11.69 seconds for package installation and 42.66 seconds for the pinned weight and script cache. [Runtime and dependency details](implementation-state.json)
+
+The test harness passed two deposited folding controls and the published 314-residue β₂AR construct to the released prediction and quantification functions. Chains A and B held the controls and chain C held the receptor. Each ordered input requested one diffusion sample at seed 0, ten recycles and fifteen sampling steps, with query-only input, int8 weights and XLA attention. [Chignolin](https://www.rcsb.org/structure/1UAO) · [Trp-cage TC5b](https://www.rcsb.org/structure/1L2Y) · [Villin HP35 N68H](https://www.rcsb.org/structure/1YRF) · [Crambin](https://www.rcsb.org/structure/1CRN) · [β₂AR sequence source](../appraise/examples/b2ar/SOURCE.md)
+
+| Case | Control lengths | Total residues | Prediction command | Logged inference | Peak VRAM at 1 s | APPRAISE rows |
+|---|---:|---:|---:|---:|---:|---:|
+| Peptide | 10 + 20 | 344 | 542.25 s | 84.29 s | 11,331 MiB | 2 |
+| Miniprotein | 35 + 46 | 395 | 160.12 s | 126.57 s | 11,331 MiB | 2 |
+
+The prediction command includes model startup and feature preparation. Feature preparation, including ESM-C, took 442.50 seconds for the first case and 22.08 seconds for the later case. Both completed with XLA attention after the upstream optional Tokamax autotuner reported an MLIR API error.
+
+Released APPRAISE reproduced four measurement rows and verified the exact chain sequences, finite coordinates and native pLDDT. Both archives contained complete PAE and contact probability arrays in chain order. Their SHA-256 checksums matched the live Colab exports. The measured points for the Fast port on T4 are 344 and 395 residues here and 554 residues in the earlier nanobody example. These are runtime and output-format measurements. The recommendation continues to follow the six-nanobody ranking criterion. This follow-up cost $0, bringing tracked plan spending to $0.194861 of the $20 cap. [Inputs, artifact hashes and timings](implementation-state.json)
 
 ## JapanFold benchmark and ranking
 
@@ -64,4 +79,4 @@ APPRAISE `1.3.2` was published through the approved GitHub Trusted Publisher. Th
 
 The canonical README links to the guided public notebook merged at `fdb8cd14dab4393cceb8588fc8ff3013ec8c51cd`. In a fresh Colab CPU runtime on Python 3.13.18, **Run all** installed APPRAISE `1.3.2` from PyPI in 14.83 seconds. It scored ten published structures in 69 seconds and produced 20 measurements, a rank table, and a heatmap. Nb6B9 ranked first and Nb80 second. All three output hashes matched the run's result record. [Public notebook](https://colab.research.google.com/github/xz-ding/APPRAISE/blob/main/notebooks/Colab_APPRAISE.ipynb) · [Output hashes and runtime](implementation-state.json) · [Canonical CI](https://github.com/xz-ding/APPRAISE/actions/runs/45892804374)
 
-Colab declined a free T4 allocation during the release check because of its GPU usage limit. The peptide and miniprotein runtime checks can resume when a free T4 is available. The measured GPU scope remains the 554-residue β₂AR example.
+Colab declined a free T4 allocation during the November 26 release check. The November 27 allocation completed the [peptide and miniprotein runtime checks](#peptide-and-miniprotein-runtime-checks).
