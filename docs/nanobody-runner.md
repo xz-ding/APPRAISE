@@ -68,6 +68,10 @@ Select a free GPU and the desired validation workflow in the notebook. The two-n
 | Legacy AlphaFold2 choices, ESMFold v1, Boltz-1, Chai-1 and external OpenFold3 | The separate manual notebook retains these paths. Boltz-1, Chai-1 and OpenFold3 retain their existing beta status. |
 | JapanFold API folding | Planned for the Colab notebook and Python interface. [Integration requirements](#planned-japanfold-integration) |
 
+### Measured peptide and miniprotein inputs
+
+The experimental ColabFold2 ESMFold2-Fast port completed two three-chain checks on a free Tesla T4 with the exact 314-residue β₂AR construct. The peptide controls had 10 and 20 residues and the miniprotein controls had 35 and 46. Both native mmCIF structures and confidence matrices passed validation, and APPRAISE 1.3.2 produced two measurement rows per input. These checks cover runtime and file handling for the measured inputs. [Hardware, timings, and output checksums](implementation-status.md#peptide-and-miniprotein-runtime-checks)
+
 ### Recover joined ESMFold v1 structures
 
 For an older single-chain ESMFold v1 PDB, use the original separated sequences in the same order as the model inputs. Newly generated glycine-joined FASTA inputs carry that information in a `.chains.json` file. Recover the chain boundaries before running quantification, keeping the original PDB and writing the recovered file to a separate results folder.
